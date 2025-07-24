@@ -38,8 +38,6 @@ public class Character {
     private int currentHp;
     private int maxEp;
     private int currentEp;
-    private int hp;
-    private int ep;
   
 
     
@@ -261,14 +259,7 @@ public class Character {
         );
     }
 
-     public int getHp() {
-        return hp;
-    }
 
-
-    public int getEp() {
-        return ep;
-    }
 
 
 

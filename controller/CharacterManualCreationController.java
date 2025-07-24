@@ -85,9 +85,9 @@ public final class CharacterManualCreationController {
 
     // --- UI Event Binding ---
     private void bindUI() {
-        view.addCreateCharacterListener(_ -> handleCreateCharacter());
-        view.addReturnListener(_-> view.dispose());
-        view.addClassDropdownListener(_ -> handleClassSelection());
+        view.addCreateCharacterListener(e -> handleCreateCharacter());
+        view.addReturnListener(e -> view.dispose());
+        view.addClassDropdownListener(e -> handleClassSelection());
     }
 
     // --- Event Handlers ---

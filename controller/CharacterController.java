@@ -37,9 +37,9 @@ public final class CharacterController {
     // ------------------ CharacterManagementView Integration -----------------------
 
    private void bindCharacterManagementView() {
-        managementView.addManagePlayer1Listener(_ -> openCharacterListView());
-        managementView.addManagePlayer2Listener(_ -> openCharacterListView());
-        managementView.addReturnToMenuListener(_ -> managementView.dispose());
+        managementView.addManagePlayer1Listener(e -> openCharacterListView());
+        managementView.addManagePlayer2Listener(e -> openCharacterListView());
+        managementView.addReturnToMenuListener(e -> managementView.dispose());
 
         updateManagementViewCharacterList();
     }
@@ -72,9 +72,9 @@ public final class CharacterController {
             creationView.setAbilityOptions(slot, new String[] {"Select Class First"});
         }
 
-        creationView.addCreateCharacterListener(_ -> handleCreateButton(creationView));
-        creationView.addReturnListener(_ -> creationView.dispose());
-        creationView.addClassDropdownListener(_ -> {
+        creationView.addCreateCharacterListener(e -> handleCreateButton(creationView));
+        creationView.addReturnListener(e -> creationView.dispose());
+        creationView.addClassDropdownListener(e -> {
     String selectedClass = creationView.getSelectedClass();
     if (selectedClass != null && !selectedClass.isEmpty()) {
         ClassType classType = ClassType.valueOf(selectedClass);
@@ -86,7 +86,7 @@ public final class CharacterController {
     }
 });
 
-        creationView.getClassDropdown().addActionListener(_ -> {
+        creationView.getClassDropdown().addActionListener(e -> {
             String selectedClass = creationView.getSelectedClass();
             if (selectedClass != null && !selectedClass.isEmpty()) {
                 ClassType classType = ClassType.valueOf(selectedClass);
