@@ -157,16 +157,16 @@ public class BattleView extends JPanel {
      * Updates Player 1's stats dynamically.
      */
     public void updatePlayer1Stats() {
-        lblPlayer1Stats.setText("HP: " + character1.getHp() + "/" + character1.getMaxHp()
-                              + " | EP: " + character1.getEp() + "/" + character1.getMaxEp());
+        lblPlayer1Stats.setText("HP: " + character1.getCurrentHp() + "/" + character1.getMaxHp()
+                              + " | EP: " + character1.getCurrentEp() + "/" + character1.getMaxEp());
     }
 
     /**
      * Updates Player 2's stats dynamically.
      */
     public void updatePlayer2Stats() {
-        lblPlayer2Stats.setText("HP: " + character2.getHp() + "/" + character2.getMaxHp()
-                              + " | EP: " + character2.getEp() + "/" + character2.getMaxEp());
+        lblPlayer2Stats.setText("HP: " + character2.getCurrentHp() + "/" + character2.getMaxHp()
+                              + " | EP: " + character2.getCurrentEp() + "/" + character2.getMaxEp());
     }
 
     // --- GUI Helper Methods ---
