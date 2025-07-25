@@ -81,6 +81,10 @@ public class PlayerCharacterManagementController {
                 specView.dispose();
             } else {
                 String name = specView.getSelectedCharacter();
+                // ignore events where no character is selected
+                if (name == null || name.isBlank()) {
+                    return;
+                }
                 Character c = player.getCharacter(name).orElse(null);
                 String details = (c == null) ? "Character not found." : c.toString() + "\nAbilities:\n" +
                         c.getAbilities().stream().map(Ability::getName).collect(Collectors.joining("\n"));
