@@ -12,6 +12,9 @@ package model.util;
  */
 public final class GameException extends RuntimeException {
 
+    /** For serialization compatibility. */
+    private static final long serialVersionUID = 1L;
+
     /**
      * Creates a {@code GameException} with a human-readable message.
      *
