@@ -1,17 +1,20 @@
 package controller;
 
+import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import model.core.Ability;
 import model.core.Character;
-import model.core.ClassType;
 import model.core.Player;
 import model.item.MagicItem;
 import model.service.ClassService;
 import model.util.GameException;
-import view.*;
-
-import java.awt.event.ActionListener;
-import java.util.List;
-import java.util.stream.Collectors;
+import view.CharacterDeleteView;
+import view.CharacterEditView;
+import view.CharacterListViewingView;
+import view.CharacterSpecViewingView;
+import view.PlayerCharacterManagementView;
 
 /** Controller for per-player character management menu. */
 public class PlayerCharacterManagementController {
@@ -269,5 +272,6 @@ public class PlayerCharacterManagementController {
             }
         });
         refreshCharacterList(delView);
+        delView.setVisible(true);
     }
 }

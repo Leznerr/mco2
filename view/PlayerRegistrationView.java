@@ -1,12 +1,8 @@
 package view;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -20,30 +16,31 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+// import controller._;
+
 /**
  * The player registration view for Fatal Fantasy: Tactics Game.
- * <p>
- * Allows user to enter names for Player 1 and Player 2.
- * All GUI logic is decoupled from game logic per MVC.
  */
 public class PlayerRegistrationView extends JFrame {
     // Button labels
-    public static final String REGISTER = "Register";
-    public static final String RETURN = "Return";
+    public static final String NEW_PLAYERS = "New Players";
+    public static final String SAVED_PLAYERS = "Saved Players";
+    public static final String RETURN_TO_MENU = "Return to Menu";
 
-    private RoundedTextField player1Field;
-    private RoundedTextField player2Field;
-    private JButton btnRegister;
-    private JButton btnReturn;
-    private ActionListener externalListener;
-
+    // UI components
+    private JButton btnNewPlayers;
+    private JButton btnSavedPlayers;
+    private JButton btnReturnToMenu;
+    
+    
     /**
-     * Constructs the Player Registration screen.
+     * Constructs the PlayerRegistrationView UI of Fatal Fantasy: Tactics Game.
      */
     public PlayerRegistrationView() {
-        super("Fatal Fantasy: Tactics | Player Registration");
-        initUI();
+        super("Fatal Fantasy: Tactics | Players Registration Menu");
 
+        initUI();
+        
         setSize(800, 700);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -57,24 +54,25 @@ public class PlayerRegistrationView extends JFrame {
                     JOptionPane.YES_NO_OPTION
                 );
 
-                if (choice == JOptionPane.YES_OPTION && externalListener != null) {
-                    ActionEvent evt = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Exit");
-                    externalListener.actionPerformed(evt);
+                if (choice == JOptionPane.YES_OPTION) {
+                    dispose(); // closes the window
                 }
             }
         });
 
         setLocationRelativeTo(null);
         setResizable(false);
+        setVisible(true);
     }
 
+
     /**
-     * Initializes and arranges all UI components.
+     * Initializes the UI components and arranges them in the main layout.
      */
     private void initUI() {
         JPanel backgroundPanel = new JPanel() {
             private Image bg = new ImageIcon("view/assets/PlayersRegistrationBG.jpg").getImage();
-
+            
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -82,7 +80,10 @@ public class PlayerRegistrationView extends JFrame {
                 int panelHeight = getHeight();
                 int imgWidth = bg.getWidth(this);
                 int imgHeight = bg.getHeight(this);
-                double scale = Math.max(panelWidth / (double) imgWidth, panelHeight / (double) imgHeight);
+                double scale = Math.max(
+                    panelWidth / (double) imgWidth,
+                    panelHeight / (double) imgHeight
+                );
                 int width = (int) (imgWidth * scale);
                 int height = (int) (imgHeight * scale);
                 int x = (panelWidth - width) / 2;
@@ -91,89 +92,57 @@ public class PlayerRegistrationView extends JFrame {
             }
         };
 
-        backgroundPanel.setLayout(new BorderLayout());
+        backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.Y_AXIS));
 
-        JPanel centerPanel = new JPanel();
-        centerPanel.setOpaque(false);
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        // Add vertical space at the top
+        backgroundPanel.add(Box.createVerticalStrut(100));
 
-        centerPanel.add(Box.createVerticalStrut(100));
+        // Logo image centered and scaled
         ImageIcon logoIcon = new ImageIcon("view/assets/PlayerRegLogo.png");
-        Image logoImg = logoIcon.getImage().getScaledInstance(400, -1, Image.SCALE_SMOOTH);
+        Image logoImg = logoIcon.getImage().getScaledInstance(500, -1, Image.SCALE_SMOOTH);
         JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        centerPanel.add(logoLabel);
-        centerPanel.add(Box.createVerticalStrut(40));
+        backgroundPanel.add(logoLabel);
 
-        player1Field = new RoundedTextField("Enter name for Player 1", 20);
-        player1Field.setMaximumSize(new Dimension(300, 45));
-        centerPanel.add(player1Field);
-        centerPanel.add(Box.createVerticalStrut(20));
+        // Add vertical space between logo and buttons
+        backgroundPanel.add(Box.createVerticalStrut(60));
 
-        player2Field = new RoundedTextField("Enter name for Player 2", 20);
-        player2Field.setMaximumSize(new Dimension(300, 45));
-        centerPanel.add(player2Field);
-
-        backgroundPanel.add(centerPanel, BorderLayout.CENTER);
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 50));
+        // Panel for buttons, centered
+        JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 
-        btnRegister = new RoundedButton(REGISTER);
-        btnReturn = new RoundedButton(RETURN);
+        btnNewPlayers = new RoundedButton(NEW_PLAYERS);
+        btnSavedPlayers = new RoundedButton(SAVED_PLAYERS);
+        btnReturnToMenu = new RoundedButton(RETURN_TO_MENU);
 
-        buttonPanel.add(btnRegister);
-        buttonPanel.add(btnReturn);
+        // Add buttons with vertical spacing (how they stack)
+        buttonPanel.add(btnNewPlayers);
+        buttonPanel.add(Box.createVerticalStrut(20));
+        buttonPanel.add(btnSavedPlayers);
+        buttonPanel.add(Box.createVerticalStrut(20));
+        buttonPanel.add(btnReturnToMenu);
 
-        backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
+        // Center the button panel horizontally
+        buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        backgroundPanel.add(buttonPanel);
+
+        // Add vertical glue to push everything to the center
+        backgroundPanel.add(Box.createVerticalGlue());
 
         setContentPane(backgroundPanel);
     }
 
+
     /**
-     * Registers an action listener to all interactive buttons and window exit.
-     *
-     * @param listener The controller-provided listener
+     * Sets the action listener for the button click events.
+     * 
+     * @param listener The listener
      */
     public void setActionListener(ActionListener listener) {
-        this.externalListener = listener;
-        btnRegister.addActionListener(listener);
-        btnReturn.addActionListener(listener);
+        btnNewPlayers.addActionListener(listener);
+        btnSavedPlayers.addActionListener(listener);
+        btnReturnToMenu.addActionListener(listener);
     }
 
-    /**
-     * Returns trimmed Player 1 name input.
-     *
-     * @return Player 1 name
-     */
-    public String getPlayer1Name() {
-        return player1Field.getText().trim();
-    }
-
-    /**
-     * Returns trimmed Player 2 name input.
-     *
-     * @return Player 2 name
-     */
-    public String getPlayer2Name() {
-        return player2Field.getText().trim();
-    }
-
-     /** Dialog helpers used by the controller. */
-    public void showInfoMessage(String msg)  {
-        JOptionPane.showMessageDialog(this, msg, "Info",  JOptionPane.INFORMATION_MESSAGE);
-    }   
-    public void showErrorMessage(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    /**
- * Clears both player-name text fields.
- * <p>Called by SceneManager each time the “Register Players” card is shown
- * so the user always starts with blank inputs.</p>
- */
-public void resetFields() {
-    player1Field.setText("");
-    player2Field.setText("");
-}
 }
