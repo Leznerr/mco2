@@ -175,6 +175,16 @@ public final class CharacterAutoCreationView extends JFrame {
         return nameField.getText().trim();
     }
 
+    /**
+     * Programmatically sets the character name in the text field. Used by the
+     * controller when generating a random character.
+     *
+     * @param name the name to display
+     */
+    public void setCharacterName(String name) {
+        nameField.setText(name);
+    }
+
     public String getGeneratedCharacterDetails() {
         return charDetailsArea.getText().trim();
     }

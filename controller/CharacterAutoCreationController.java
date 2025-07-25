@@ -35,6 +35,11 @@ public final class CharacterAutoCreationController {
     private final RaceService raceService = RaceService.INSTANCE;
     private final Random random = new Random();
 
+    // Stores the last generated character components so the user can confirm
+    private RaceType generatedRace;
+    private ClassType generatedClass;
+    private List<Ability> generatedAbilities;
+
     /**
      * Constructs the auto character creation controller.
      *
@@ -79,29 +84,29 @@ public final class CharacterAutoCreationController {
      * Performs all validation, updates the player model, and closes the dialog.
      */
     private void handleAutoCreateCharacter() {
+        String name = view.getCharacterName();
+        if (name.isBlank()) {
+            view.showErrorMessage("Please enter a character name.");
+            return;
+        }
+        if (generatedRace == null || generatedClass == null || generatedAbilities == null) {
+            view.showErrorMessage("Please randomize a character first.");
+            return;
+        }
+
         try {
-            String name = generateRandomName();
-            RaceType race = getRandomRace();
-            ClassType classType = getRandomClass();
-            List<Ability> abilities = classService.getRandomAbilitiesForClass(classType, 3);
-            if (race == RaceType.GNOME) {
-                List<Ability> all = classService.getAllAbilities();
-                abilities.add(all.get(random.nextInt(all.size())));
+            if (!view.confirmCharacterCreation(name)) {
+                return;
             }
 
-            if (view.confirmCharacterCreation(name)) {
-                Player player = getPlayerByName(playerName);
+            Player player = getPlayerByName(playerName);
+            Character newCharacter = new Character(name, generatedRace, generatedClass, generatedAbilities);
+            player.addCharacter(newCharacter);
+            gameManagerController.handleSaveGameRequest();
 
-                Character newCharacter = new Character(name, race, classType);
-                newCharacter.setAbilities(abilities);
-
-                player.addCharacter(newCharacter);
-                // Persist the updated roster immediately
-                gameManagerController.handleSaveGameRequest();
-
-                view.showInfoMessage("Character \"" + name + "\" created successfully!");
-                view.dispose();
-            }
+            view.showInfoMessage("Character \"" + name + "\" created successfully!");
+            view.dispose();
+            gameManagerController.handleNavigateToCharacterManagement(player);
         } catch (GameException ge) {
             view.showErrorMessage("Failed to create character: " + ge.getMessage());
         }
@@ -112,26 +117,22 @@ public final class CharacterAutoCreationController {
      */
     private void handleRandomize() {
         String name = generateRandomName();
-        RaceType race = getRandomRace();
-        ClassType classType = getRandomClass();
-        List<Ability> abilities = classService.getRandomAbilitiesForClass(classType, 3);
-        if (race == RaceType.GNOME) {
+        generatedRace = getRandomRace();
+        generatedClass = getRandomClass();
+        generatedAbilities = classService.getRandomAbilitiesForClass(generatedClass, 3);
+        if (generatedRace == RaceType.GNOME) {
             List<Ability> all = classService.getAllAbilities();
-            abilities.add(all.get(random.nextInt(all.size())));
+            generatedAbilities.add(all.get(random.nextInt(all.size())));
         }
 
-        StringBuilder details = new StringBuilder();
-        details.append("Name: ").append(name).append("\n")
-                .append("Race: ").append(race.name()).append("\n")
-                .append("Class: ").append(classType.name()).append("\n")
-                .append("Abilities: ");
-        for (Ability a : abilities) {
-            details.append(a.getName()).append(", ");
+        try {
+            Character preview = new Character(name, generatedRace, generatedClass, generatedAbilities);
+            String details = formatCharacter(preview);
+            view.setCharacterName(name);
+            view.showGeneratedDetails(details);
+        } catch (GameException ge) {
+            view.showErrorMessage("Error generating character: " + ge.getMessage());
         }
-        if (!abilities.isEmpty()) {
-            details.setLength(details.length() - 2); // remove trailing comma
-        }
-        view.showGeneratedDetails(details.toString());
     }
 
     /**
@@ -188,5 +189,24 @@ public final class CharacterAutoCreationController {
                 .filter(p -> p.getName().equalsIgnoreCase(playerName))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Player not found: " + playerName));
+    }
+
+    /**
+     * Formats the preview character details including stats and abilities.
+     */
+    private static String formatCharacter(Character c) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Name: ").append(c.getName()).append('\n');
+        sb.append("Race: ").append(c.getRaceType()).append(" (HP+")
+          .append(c.getRaceType().getHpBonus()).append(", EP+")
+          .append(c.getRaceType().getEpBonus()).append(")\n");
+        sb.append("Class: ").append(c.getClassType()).append('\n');
+        sb.append("Max HP: ").append(c.getMaxHp()).append('\n');
+        sb.append("Max EP: ").append(c.getMaxEp()).append('\n');
+        sb.append("Abilities:\n");
+        for (Ability a : c.getAbilities()) {
+            sb.append("  - ").append(a.getName()).append('\n');
+        }
+        return sb.toString();
     }
 }
