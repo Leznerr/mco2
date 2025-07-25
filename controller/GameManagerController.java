@@ -206,49 +206,100 @@ public void actionPerformed(ActionEvent e) {
 
 
     public boolean handleRegisterPlayers(String player1Name, String player2Name) {
-    boolean hasConflict = false;
-    StringBuilder errorMsg = new StringBuilder();
+        boolean hasConflict = false;
+        StringBuilder errorMsg = new StringBuilder();
 
-    if (player1Name.equalsIgnoreCase(player2Name)) {
-        errorMsg.append("Player names must be unique.\n");
-        hasConflict = true;
-    }
+        if (player1Name.equalsIgnoreCase(player2Name)) {
+            errorMsg.append("Player names must be unique.\n");
+            hasConflict = true;
+        }
 
-    GameData gameData = SaveLoadService.loadGame();
-    List<Player> existing = new ArrayList<>(gameData.getAllPlayers());
+        GameData gameData = SaveLoadService.loadGame();
+        List<Player> existing = new ArrayList<>(gameData.getAllPlayers());
 
-    int duplicateCount = 0;
-    for (int i = 0; i < existing.size(); i++) {
-        Player p = existing.get(i);
-        boolean match1 = p.getName().equalsIgnoreCase(player1Name);
-        boolean match2 = p.getName().equalsIgnoreCase(player2Name);
+        int duplicateCount = 0;
+        for (Player p : existing) {
+            boolean match1 = p.getName().equalsIgnoreCase(player1Name);
+            boolean match2 = p.getName().equalsIgnoreCase(player2Name);
+            if (match1 || match2) {
+                duplicateCount++;
+            }
+        }
 
-        if (match1 || match2) {
-            duplicateCount++;
+        if (duplicateCount > 0) {
+            errorMsg.append("One or both player names already exist in saved data.\n");
+            hasConflict = true;
+        }
+
+        if (!hasConflict) {
+            Player player1 = new Player(player1Name);
+            Player player2 = new Player(player2Name);
+            existing.add(player1);
+            existing.add(player2);
+            gameData.setAllPlayers(existing);
+            SaveLoadService.saveGame(gameData);
+            players.clear();
+            players.addAll(existing);
+            System.out.println("Players " + player1Name + " and " + player2Name + " have been registered.");
+            return true;
+        } else {
+            JOptionPane.showMessageDialog(null, errorMsg.toString(), "Player Registration Error", JOptionPane.ERROR_MESSAGE);
+            return false;
         }
     }
 
-    if (duplicateCount > 0) {
-        errorMsg.append("One or both player names already exist in saved data.\n");
-        hasConflict = true;
+    /**
+     * Loads two previously saved players and sets them as active for this session.
+     *
+     * @param player1Name name of first player
+     * @param player2Name name of second player
+     * @return {@code true} if players were loaded successfully
+     */
+    public boolean handleRegisterSavedPlayers(String player1Name, String player2Name) {
+        StringBuilder errorMsg = new StringBuilder();
+        if (player1Name == null || player2Name == null || player1Name.isBlank() || player2Name.isBlank()) {
+            errorMsg.append("Both players must be selected.\n");
+        }
+        if (player1Name != null && player1Name.equalsIgnoreCase(player2Name)) {
+            errorMsg.append("Player names must be unique.\n");
+        }
+
+        if (!errorMsg.isEmpty()) {
+            JOptionPane.showMessageDialog(null, errorMsg.toString(), "Player Selection Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        try {
+            GameData data = SaveLoadService.loadGame();
+            List<Player> all = data.getAllPlayers();
+            Player p1 = findByName(all, player1Name);
+            Player p2 = findByName(all, player2Name);
+
+            if (p1 == null || p2 == null) {
+                JOptionPane.showMessageDialog(null, "Selected players could not be loaded.", "Player Selection Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+
+            players.clear();
+            players.add(p1);
+            players.add(p2);
+            // ensure persistence unaffected but save to ensure data file exists
+            SaveLoadService.saveGame(data);
+            return true;
+        } catch (GameException e) {
+            JOptionPane.showMessageDialog(null, "Failed to load players: " + e.getMessage(), "Player Selection Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
     }
 
-    if (!hasConflict) {
-        Player player1 = new Player(player1Name);
-        Player player2 = new Player(player2Name);
-        existing.add(player1);
-        existing.add(player2);
-        gameData.setAllPlayers(existing);
-        SaveLoadService.saveGame(gameData);
-        players.clear();
-        players.addAll(existing);
-        System.out.println("Players " + player1Name + " and " + player2Name + " have been registered.");
-        return true;
-    } else {
-        JOptionPane.showMessageDialog(null, errorMsg.toString(), "Player Registration Error", JOptionPane.ERROR_MESSAGE);
-        return false;
+    private static Player findByName(List<Player> list, String name) {
+        for (Player p : list) {
+            if (p.getName().equalsIgnoreCase(name)) {
+                return p;
+            }
+        }
+        return null;
     }
-}
 
 
     public void navigateBackToMainMenu() {
