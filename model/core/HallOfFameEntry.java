@@ -2,6 +2,7 @@ package model.core;
 
 import model.util.GameException;
 import model.util.InputValidator;
+import java.io.Serializable;
 
 /**
  * Data Transfer Object (DTO) representing a single Hall of Fame leaderboard entry.
@@ -9,7 +10,9 @@ import model.util.InputValidator;
  * <p>Stores immutable player identity and mutable win count.
  * Designed for display purposes and simple cumulative tracking.</p>
  */
-public final class HallOfFameEntry {
+public final class HallOfFameEntry implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /** Player's display name (immutable). */
     private final String playerName;

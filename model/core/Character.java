@@ -8,6 +8,7 @@ import model.util.GameException;
 import model.util.InputValidator;
 import model.util.StatusEffect;
 import model.util.StatusEffectType;
+import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +21,9 @@ import java.util.List;
  * inventory, abilities, and status effects. It is responsible for enforcing
  * the game's mechanical constraints on its own state.
  */
-public class Character {
+public class Character implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     // --- Core Immutable Attributes ---
     private final String name;
@@ -30,7 +33,7 @@ public class Character {
     // --- Core Mutable Attributes ---
     private final List<Ability> abilities;
     private final Inventory inventory;
-    private final List<StatusEffect> activeStatusEffects;
+    private final transient List<StatusEffect> activeStatusEffects;
     private MagicItem equippedItem;
 
     // --- Dynamic Stats ---
