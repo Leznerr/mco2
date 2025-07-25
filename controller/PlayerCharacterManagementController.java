@@ -269,5 +269,6 @@ public class PlayerCharacterManagementController {
             }
         });
         refreshCharacterList(delView);
+        delView.setVisible(true);
     }
 }
