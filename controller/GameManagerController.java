@@ -252,7 +252,7 @@ public void actionPerformed(ActionEvent e) {
 
 
     public void navigateBackToMainMenu() {
-        SwingUtilities.invokeLater(() -> mainMenuView.setVisible(true));
+        SwingUtilities.invokeLater(sceneManager::showMainMenu);
     }
 
     /**
