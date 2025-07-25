@@ -12,12 +12,16 @@ import model.core.Character;
 import model.core.Player;
 import model.util.DialogUtils;
 import model.util.GameException;
+import persistence.GameData;
+import persistence.SaveLoadService;
 import view.BattleView;
 import view.CharacterManagementMenuView;
 import view.HallOfFameManagementView;
 import view.MainMenuView;
 import view.PlayerCharacterManagementView;
 import view.PlayerRegistrationView;
+import view.NewPlayersRegistrationView;
+import view.SavedPlayersRegistrationView;
 
 public final class SceneManager {
 
@@ -29,6 +33,8 @@ public final class SceneManager {
     // ---------- Card Identifiers ----------
     private static final String CARD_MAIN_MENU  = "mainMenu";
     private static final String CARD_PLAYER_REG = "playerReg";
+    private static final String CARD_NEW_PLAYER_REG = "newPlayerReg";
+    private static final String CARD_SAVED_PLAYER_REG = "savedPlayerReg";
     private static final String CARD_HALL_OF_FAME = "hallOfFame";
     private static final String CARD_CHARACTER_MENU = "characterMenu";
     private static final String CARD_PLAYER_CHARACTER = "playerCharacter";
@@ -37,6 +43,8 @@ public final class SceneManager {
     // ---------- Cached View Instances ----------
     private MainMenuView mainMenuView;
     private PlayerRegistrationView playerRegView;
+    private NewPlayersRegistrationView newPlayersRegView;
+    private SavedPlayersRegistrationView savedPlayersRegView;
     private HallOfFameManagementView hallOfFameView;
     private CharacterManagementMenuView characterMenuView;
     private PlayerCharacterManagementView playerCharacterView;
@@ -85,37 +93,85 @@ public final class SceneManager {
             playerRegView = new PlayerRegistrationView();
             playerRegView.setActionListener(e -> {
                 String cmd = e.getActionCommand();
-                if (PlayerRegistrationView.RETURN.equals(cmd)) {
-                    showMainMenu();
-                }
-                if (PlayerRegistrationView.REGISTER.equals(cmd)) {
-                    String player1Name = playerRegView.getPlayer1Name();
-                    String player2Name = playerRegView.getPlayer2Name();
-
-                    boolean emptyFields = player1Name.isEmpty() || player2Name.isEmpty();
-                    if (emptyFields) {
-                        JOptionPane.showMessageDialog(playerRegView, "Both player names must be entered.",
-                                "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                    boolean noEmptyFields = !emptyFields;
-                    if (noEmptyFields) {
-                        boolean registered = gameManagerController.handleRegisterPlayers(player1Name, player2Name);
-                        if (registered) {
-                            JOptionPane.showMessageDialog(playerRegView,
-                                    "Players Registered: " + player1Name + " and " + player2Name,
-                                    "Success", JOptionPane.INFORMATION_MESSAGE);
-                            System.out.println("Players Registered: " + player1Name + " and " + player2Name);
-                            showMainMenu();
-                        } else {
-                            playerRegView.resetFields();
-                        }
-                    }
+                switch (cmd) {
+                    case PlayerRegistrationView.NEW_PLAYERS -> showNewPlayersRegistration();
+                    case PlayerRegistrationView.SAVED_PLAYERS -> showSavedPlayersRegistration();
+                    case PlayerRegistrationView.RETURN_TO_MENU -> showMainMenu();
                 }
             });
             root.add(playerRegView.getContentPane(), CARD_PLAYER_REG);
         }
-        playerRegView.resetFields();
         cards.show(root, CARD_PLAYER_REG);
+    }
+
+    /** Shows the new players registration form. */
+    public void showNewPlayersRegistration() {
+        if (newPlayersRegView == null) {
+            newPlayersRegView = new NewPlayersRegistrationView();
+            newPlayersRegView.setActionListener(e -> {
+                String cmd = e.getActionCommand();
+                if (NewPlayersRegistrationView.RETURN.equals(cmd)) {
+                    showPlayerRegistration();
+                } else if (NewPlayersRegistrationView.REGISTER.equals(cmd)) {
+                    String p1 = newPlayersRegView.getPlayer1Name();
+                    String p2 = newPlayersRegView.getPlayer2Name();
+                    if (p1.isEmpty() || p2.isEmpty()) {
+                        JOptionPane.showMessageDialog(newPlayersRegView, "Both player names must be entered.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                    } else if (gameManagerController.handleRegisterPlayers(p1, p2)) {
+                        JOptionPane.showMessageDialog(newPlayersRegView,
+                                "Players Registered: " + p1 + " and " + p2,
+                                "Success", JOptionPane.INFORMATION_MESSAGE);
+                        showMainMenu();
+                    } else {
+                        newPlayersRegView.resetFields();
+                    }
+                }
+            });
+            root.add(newPlayersRegView.getContentPane(), CARD_NEW_PLAYER_REG);
+        }
+        newPlayersRegView.resetFields();
+        cards.show(root, CARD_NEW_PLAYER_REG);
+    }
+
+    /** Shows the saved players registration form. */
+    public void showSavedPlayersRegistration() {
+        if (savedPlayersRegView == null) {
+            savedPlayersRegView = new SavedPlayersRegistrationView();
+            savedPlayersRegView.setActionListener(e -> {
+                String cmd = e.getActionCommand();
+                if (SavedPlayersRegistrationView.RETURN.equals(cmd)) {
+                    showPlayerRegistration();
+                } else if (SavedPlayersRegistrationView.REGISTER.equals(cmd)) {
+                    String n1 = savedPlayersRegView.getSelectedPlayer1();
+                    String n2 = savedPlayersRegView.getSelectedPlayer2();
+                    if (n1 == null || n2 == null) {
+                        JOptionPane.showMessageDialog(savedPlayersRegView, "Both players must be selected.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    if (gameManagerController.handleRegisterSavedPlayers(n1, n2)) {
+                        JOptionPane.showMessageDialog(savedPlayersRegView,
+                                "Players Loaded: " + n1 + " and " + n2,
+                                "Success", JOptionPane.INFORMATION_MESSAGE);
+                        showMainMenu();
+                    }
+                }
+            });
+            root.add(savedPlayersRegView.getContentPane(), CARD_SAVED_PLAYER_REG);
+        }
+        try {
+            GameData data = SaveLoadService.loadGame();
+            List<Player> ps = data.getAllPlayers();
+            String[] opts = ps.stream().map(Player::getName).toArray(String[]::new);
+            savedPlayersRegView.setPlayer1Options(opts);
+            savedPlayersRegView.setPlayer2Options(opts);
+            savedPlayersRegView.resetDropdowns();
+        } catch (GameException e) {
+            JOptionPane.showMessageDialog(stage, "Failed to load saved players: " + e.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        cards.show(root, CARD_SAVED_PLAYER_REG);
     }
 
     /** Displays the Hall of Fame screen. */
