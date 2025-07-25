@@ -3,6 +3,7 @@ package persistence;
 import model.core.Player;
 import model.core.HallOfFameEntry;
 import model.util.GameException;
+import model.util.Constants;
 import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -10,8 +11,8 @@ import java.util.ArrayList;
 public class SaveLoadService {
 
     // File paths for saving and loading game data
-    private static final String GAME_DATA_FILE = "game_data.dat"; 
-    private static final String HALL_OF_FAME_FILE = "hall_of_fame.dat"; 
+    private static final String GAME_DATA_FILE = Constants.SAVE_FILE_PATH;
+    private static final String HALL_OF_FAME_FILE = Constants.HALL_OF_FAME_SAVE_PATH;
 
     // Saves the game data to a file
     public static void saveGame(GameData gameData) throws GameException {

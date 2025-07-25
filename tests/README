@@ -1,0 +1,11 @@
+# Test Instructions
+
+Compile all test sources and application sources:
+
+```bash
+javac $(find .. -name '*.java')
+```
+
+Run individual tests with `java` followed by the class name.
+
+The save and hall of fame files are defined by `Constants.SAVE_FILE_PATH` and `Constants.HALL_OF_FAME_SAVE_PATH` in `model.util.Constants`.
