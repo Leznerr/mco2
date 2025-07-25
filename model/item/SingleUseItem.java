@@ -37,6 +37,7 @@ public final class SingleUseItem extends MagicItem {
     public SingleUseItem(String name, String description, String rarity)
             throws GameException {
         super(name, description, ItemType.SINGLE_USE, rarity);
+
     }
 
     /**
