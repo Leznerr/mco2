@@ -144,10 +144,16 @@ public final class SceneManager {
     public void showCharacterManagement(Player player) {
         if (characterManagementView == null) {
             characterManagementView = new CharacterManagementView(player);
+            try {
+                new CharacterController(player, characterManagementView);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(stage, "Failed to initialize character management: " + e.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
             root.add(characterManagementView.getContentPane(), CARD_CHARACTER_MANAGEMENT);
         }
 
-     
+        cards.show(root, CARD_CHARACTER_MANAGEMENT);
     }
 
     /** Entry point for testing this class in isolation. */
