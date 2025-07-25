@@ -4,21 +4,23 @@ This project is a simple Java-based tactics game used for demonstrations.
 
 ## Building
 
-A standard JDK 21 or higher is required. Compile all sources using:
+This project now uses **Maven** for compilation and testing. Ensure Maven and JDK&nbsp;21+ are installed then run:
 
 ```bash
-javac $(find . -name '*.java')
+mvn package
 ```
+
+This command compiles the sources under `src/main/java` and executes any JUnit tests.
 
 ## Running
 
-After compilation, run the `Main` class:
+There is currently no packaged executable, but unit tests can be run separately:
 
 ```bash
-java Main
+mvn test
 ```
 
-Tests are minimal; see `MainMenuTest.java` for a small example.
+See `src/test/java` for example tests.
 
 # Fatal Fantasy: Tactics — MCO2
 **CCPROG3 | Group 17 | Member B (Core Logic, Controllers, Persistence)**
