@@ -4,10 +4,12 @@ This project implements a turn-based tactics game in Java using a Swing based GU
 
 ## Building
 
-A JDK 21 or newer is required. From the project root compile all sources with:
+A JDK 21 or newer is required. The project uses Maven to manage
+dependencies and run the unit tests. To compile and execute the test
+suite run:
 
 ```bash
-javac $(find . -name '*.java')
+mvn test
 ```
 
 ## Running
@@ -26,7 +28,7 @@ controller/  - Controllers for all views and game logic
 model/       - Core game models, battle system and utilities
 persistence/ - Save and load services
 view/        - Swing UI classes and assets
-MainMenuTest.java - Minimal example test
+src/test/java  - JUnit test suite
 ```
 
 The game code was refactored from an earlier CLI version and all features are accessed through the GUI.
