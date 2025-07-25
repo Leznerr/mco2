@@ -71,12 +71,9 @@ public final class GameManagerController implements ActionListener {
         this.sceneManager = sceneManager;
         this.hallOfFameController = hallOfFameController;
         this.mainMenuView = mainMenuView;
-        this.players = new ArrayList<>(SaveLoadService.loadGame().getAllPlayers());
-       
+
         GameData gameData = SaveLoadService.loadGame();
-        if (gameData != null) {
-        this.players.addAll(gameData.getAllPlayers());
-        }
+        this.players = new ArrayList<>(gameData.getAllPlayers());
 
         bindUI();
     }
