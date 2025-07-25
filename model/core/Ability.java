@@ -17,7 +17,6 @@ public final class Ability {
     private final AbilityEffectType abilityEffectType;
     private final int effectValue;
     private final StatusEffectType statusEffectApplied;
-    private int cost;
 
     /**
      * Full constructor for abilities with full metadata.
@@ -68,8 +67,8 @@ public final class Ability {
     }
 
 
-      public int getCost() {
-        return cost;
+    public int getCost() {
+        return epCost;
     }
 
 
