@@ -81,16 +81,21 @@ public final class CharacterManualCreationController {
         view.setAbilityOptions(1, new String[0]);
         view.setAbilityOptions(2, new String[0]);
         view.setAbilityOptions(3, new String[0]);
+        view.setAbilityOptions(4, new String[0]);
     }
 
     // --- UI Event Binding ---
     private void bindUI() {
         view.addCreateCharacterListener(e -> handleCreateCharacter());
-        view.addReturnListener(e -> {
-            view.dispose();
-            gameManagerController.navigateBackToMainMenu();
-        });
+        view.addReturnListener(e -> handleReturn());
         view.addClassDropdownListener(e -> handleClassSelection());
+        view.addRaceDropdownListener(e -> handleRaceSelection());
+    }
+
+    private void handleReturn() {
+        view.dispose();
+        Player player = getPlayerByName(this.playerName);
+        gameManagerController.handleNavigateToCharacterManagement(player);
     }
 
     // --- Event Handlers ---
@@ -105,23 +110,33 @@ public final class CharacterManualCreationController {
             InputValidator.requireNonBlank(name, "Character name");
             InputValidator.requireNonNull(raceStr, "Race");
             InputValidator.requireNonNull(classStr, "Class");
-            InputValidator.requireSize(selectedAbilityNames.length, 3, 3,
-                    "You must choose exactly 3 abilities.");
+
+            RaceType race = RaceType.valueOf(raceStr);
+
+            int expectedAbilities = 3 + (race == RaceType.GNOME ? 1 : 0);
+
+            long count = Arrays.stream(selectedAbilityNames)
+                    .filter(a -> a != null && !a.isBlank()).count();
+            InputValidator.requireSize((int) count, expectedAbilities, expectedAbilities,
+                    "You must choose exactly " + expectedAbilities + " abilities.");
 
             // Validate abilities are unique
             if (!areDistinct(selectedAbilityNames)) {
-                throw new GameException("All three selected abilities must be unique.");
+                throw new GameException("All selected abilities must be unique.");
             }
 
             // Convert to enums/objects
-            RaceType race = RaceType.valueOf(raceStr);
             ClassType classType = ClassType.valueOf(classStr);
-            List<Ability> abilities = classService.getAbilitiesByNames(selectedAbilityNames);
+            String[] usedNames = Arrays.stream(selectedAbilityNames)
+                    .filter(a -> a != null && !a.isBlank())
+                    .toArray(String[]::new);
+            List<Ability> abilities = classService.getAbilitiesByNames(usedNames);
 
-            // Business rule: abilities must match class!
+            // Business rule: first three abilities must match class
             List<String> allowedAbilityNames = classService.getAvailableAbilities(classType)
                     .stream().map(Ability::getName).collect(Collectors.toList());
-            for (String abilityName : selectedAbilityNames) {
+            for (int i = 0; i < 3; i++) {
+                String abilityName = selectedAbilityNames[i];
                 if (!allowedAbilityNames.contains(abilityName)) {
                     throw new GameException("Ability \"" + abilityName + "\" is not valid for the selected class.");
                 }
@@ -151,6 +166,17 @@ public final class CharacterManualCreationController {
         refreshAbilityOptions();
     }
 
+    private void handleRaceSelection() {
+        String raceStr = view.getSelectedRace();
+        if (raceStr != null && !raceStr.isBlank()) {
+            RaceType race = RaceType.valueOf(raceStr);
+            view.setAbility4Visible(race == RaceType.GNOME);
+        } else {
+            view.setAbility4Visible(false);
+        }
+        refreshAbilityOptions();
+    }
+
     private void refreshAbilityOptions() {
         String classStr = view.getSelectedClass();
         if (classStr == null || classStr.isBlank()) {
@@ -165,6 +191,13 @@ public final class CharacterManualCreationController {
             view.setAbilityOptions(1, options);
             view.setAbilityOptions(2, options);
             view.setAbilityOptions(3, options);
+
+            String raceStr = view.getSelectedRace();
+            if (raceStr != null && !raceStr.isBlank() && RaceType.valueOf(raceStr) == RaceType.GNOME) {
+                List<String> allAbilityNames = classService.getAllAbilities().stream()
+                        .map(Ability::getName).toList();
+                view.setAbilityOptions(4, allAbilityNames.toArray(new String[0]));
+            }
         } catch (Exception e) {
             clearAbilityOptions();
         }

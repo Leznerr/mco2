@@ -91,11 +91,10 @@ public final class RaceService {
 
     private static Map<RaceType, RaceBonus> initializeBonuses() {
         EnumMap<RaceType, RaceBonus> map = new EnumMap<>(RaceType.class);
-        map.put(RaceType.HUMAN , new RaceBonus(0 ,  0, 0));
-        map.put(RaceType.ELF   , new RaceBonus(0 , 10, 1));
-        // Negative bonuses violate validation constraints; use zero instead
-        map.put(RaceType.GNOME , new RaceBonus(0 , 15, 1));
-        map.put(RaceType.DWARF , new RaceBonus(20, 0, 0));
+        map.put(RaceType.HUMAN , new RaceBonus(15, 5, 0));
+        map.put(RaceType.ELF   , new RaceBonus(0 , 15, 0));
+        map.put(RaceType.GNOME , new RaceBonus(0 , 0, 1));
+        map.put(RaceType.DWARF , new RaceBonus(30, 0, 0));
         return map;
     }
 }

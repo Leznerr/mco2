@@ -69,8 +69,9 @@ public class Character implements Serializable {
         InputValidator.requireNonNull(race, "Race");
         InputValidator.requireNonNull(classType, "Class");
         InputValidator.requireNonNull(abilities, "Initial abilities list");
-        if (!abilities.isEmpty() && abilities.size() != Constants.NUM_ABILITIES_PER_CHAR) {
-            throw new GameException("A character must start with exactly " + Constants.NUM_ABILITIES_PER_CHAR + " abilities, or none.");
+        int expected = Constants.NUM_ABILITIES_PER_CHAR + race.getExtraAbilitySlots();
+        if (!abilities.isEmpty() && abilities.size() != expected) {
+            throw new GameException("A character must start with exactly " + expected + " abilities, or none.");
         }
 
         // --- Initialization ---
@@ -219,10 +220,10 @@ public class Character implements Serializable {
      */
     public void setAbilities(List<Ability> newAbilities) {
         InputValidator.requireNonNull(newAbilities, "New abilities list");
+        int expected = Constants.NUM_ABILITIES_PER_CHAR + race.getExtraAbilitySlots();
         InputValidator.requireSize(newAbilities.size(),
-                Constants.NUM_ABILITIES_PER_CHAR,
-                "A character must have exactly "
-                        + Constants.NUM_ABILITIES_PER_CHAR + " abilities.");
+                expected,
+                "A character must have exactly " + expected + " abilities.");
         this.abilities.clear();
         this.abilities.addAll(newAbilities);
     }
