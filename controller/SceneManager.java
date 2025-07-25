@@ -18,9 +18,9 @@ import view.BattleView;
 import view.CharacterManagementMenuView;
 import view.HallOfFameManagementView;
 import view.MainMenuView;
+import view.NewPlayersRegistrationView;
 import view.PlayerCharacterManagementView;
 import view.PlayerRegistrationView;
-import view.NewPlayersRegistrationView;
 import view.SavedPlayersRegistrationView;
 
 public final class SceneManager {
