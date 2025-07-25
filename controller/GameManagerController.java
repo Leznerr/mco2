@@ -71,7 +71,12 @@ public final class GameManagerController implements ActionListener {
         this.sceneManager = sceneManager;
         this.hallOfFameController = hallOfFameController;
         this.mainMenuView = mainMenuView;
-        this.players = new ArrayList<>();
+        this.players = new ArrayList<>(SaveLoadService.loadGame().getAllPlayers());
+       
+        GameData gameData = SaveLoadService.loadGame();
+        if (gameData != null) {
+        this.players.addAll(gameData.getAllPlayers());
+        }
 
         bindUI();
     }
@@ -233,6 +238,8 @@ public void actionPerformed(ActionEvent e) {
         existing.add(player2);
         gameData.setAllPlayers(existing);
         SaveLoadService.saveGame(gameData);
+        players.clear();
+        players.addAll(existing);
         System.out.println("Players " + player1Name + " and " + player2Name + " have been registered.");
         return true;
     } else {

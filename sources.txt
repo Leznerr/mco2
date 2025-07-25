@@ -4,10 +4,12 @@ C:\Users\User\Downloads\mco2-main\mco2\controller\BattleController.java
 C:\Users\User\Downloads\mco2-main\mco2\controller\CharacterAutoCreationController.java 
 C:\Users\User\Downloads\mco2-main\mco2\controller\CharacterController.java 
 C:\Users\User\Downloads\mco2-main\mco2\controller\CharacterGeneratorController.java 
+C:\Users\User\Downloads\mco2-main\mco2\controller\CharacterManagementMenuController.java 
 C:\Users\User\Downloads\mco2-main\mco2\controller\CharacterManualCreationController.java 
 C:\Users\User\Downloads\mco2-main\mco2\controller\GameManagerController.java 
 C:\Users\User\Downloads\mco2-main\mco2\controller\HallOfFameController.java 
 C:\Users\User\Downloads\mco2-main\mco2\controller\InventoryController.java 
+C:\Users\User\Downloads\mco2-main\mco2\controller\PlayerCharacterManagementController.java 
 C:\Users\User\Downloads\mco2-main\mco2\controller\SceneManager.java 
 C:\Users\User\Downloads\mco2-main\mco2\controller\TradeController.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\battle\AbilityMove.java 
@@ -59,6 +61,7 @@ C:\Users\User\Downloads\mco2-main\mco2\view\CharacterCreationManagementView.java
 C:\Users\User\Downloads\mco2-main\mco2\view\CharacterDeleteView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\CharacterEditView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\CharacterListViewingView.java 
+C:\Users\User\Downloads\mco2-main\mco2\view\CharacterManagementMenuView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\CharacterManagementView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\CharacterManualCreationView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\CharacterSpecViewingView.java 
@@ -67,6 +70,7 @@ C:\Users\User\Downloads\mco2-main\mco2\view\HallOfFameManagementView.java
 C:\Users\User\Downloads\mco2-main\mco2\view\HallOfFamePlayersView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\MainMenuView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\OutlinedLabel.java 
+C:\Users\User\Downloads\mco2-main\mco2\view\PlayerCharacterManagementView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\PlayerRegistrationView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\RoundedButton.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\RoundedDisplayBox.java 
