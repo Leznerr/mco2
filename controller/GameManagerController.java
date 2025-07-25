@@ -9,6 +9,11 @@ import persistence.GameData;
 import persistence.SaveLoadService;
 import view.*;
 import app.Main;
+import model.util.RandomCharacterGenerator;
+import model.util.SimpleBot;
+import model.util.Constants;
+import model.item.MagicItem;
+import model.service.MagicItemFactory;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
