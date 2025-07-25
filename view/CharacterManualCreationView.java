@@ -29,8 +29,11 @@ public class CharacterManualCreationView extends JFrame {
     private final JComboBox<String> dropdownAbility1 = new JComboBox<>();
     private final JComboBox<String> dropdownAbility2 = new JComboBox<>();
     private final JComboBox<String> dropdownAbility3 = new JComboBox<>();
+    private final JComboBox<String> dropdownAbility4 = new JComboBox<>();
     private final JButton btnCreate;
     private final JButton btnReturn;
+
+    private JPanel ability4Panel;
 
     private CharacterManualCreationController controller;
 
@@ -111,6 +114,10 @@ public class CharacterManualCreationView extends JFrame {
         centerPanel.add(createDropdownPanel("Select Ability 2:", dropdownAbility2));
         centerPanel.add(Box.createVerticalStrut(10));
         centerPanel.add(createDropdownPanel("Select Ability 3:", dropdownAbility3));
+        ability4Panel = createDropdownPanel("Select Ability 4:", dropdownAbility4);
+        ability4Panel.setVisible(false);
+        centerPanel.add(Box.createVerticalStrut(10));
+        centerPanel.add(ability4Panel);
         centerPanel.add(Box.createVerticalStrut(20));
 
         backgroundPanel.add(centerPanel, BorderLayout.CENTER);
@@ -164,6 +171,10 @@ public class CharacterManualCreationView extends JFrame {
         dropdownClass.addActionListener(l);
     }
 
+    public void addRaceDropdownListener(ActionListener l) {
+        dropdownRace.addActionListener(l);
+    }
+
     // --- Setters for Controller to populate dropdowns ---
 
     public void setRaceOptions(String[] races) {
@@ -181,6 +192,7 @@ public class CharacterManualCreationView extends JFrame {
             case 1 -> dropdownAbility1;
             case 2 -> dropdownAbility2;
             case 3 -> dropdownAbility3;
+            case 4 -> dropdownAbility4;
             default -> throw new IllegalArgumentException("Invalid ability slot: " + abilitySlot);
         };
         target.removeAllItems();
@@ -194,6 +206,7 @@ public class CharacterManualCreationView extends JFrame {
         dropdownAbility1.setSelectedIndex(-1);
         dropdownAbility2.setSelectedIndex(-1);
         dropdownAbility3.setSelectedIndex(-1);
+        dropdownAbility4.setSelectedIndex(-1);
     }
 
     // --- Getters for Controller to retrieve input ---
@@ -205,6 +218,14 @@ public class CharacterManualCreationView extends JFrame {
     public String getSelectedClass() { return (String) dropdownClass.getSelectedItem(); }
 
     public String[] getSelectedAbilities() {
+        if (ability4Panel.isVisible()) {
+            return new String[] {
+                (String) dropdownAbility1.getSelectedItem(),
+                (String) dropdownAbility2.getSelectedItem(),
+                (String) dropdownAbility3.getSelectedItem(),
+                (String) dropdownAbility4.getSelectedItem()
+            };
+        }
         return new String[] {
             (String) dropdownAbility1.getSelectedItem(),
             (String) dropdownAbility2.getSelectedItem(),
@@ -237,6 +258,11 @@ public class CharacterManualCreationView extends JFrame {
     public JComboBox<String> getAbility1Dropdown() { return dropdownAbility1; }
     public JComboBox<String> getAbility2Dropdown() { return dropdownAbility2; }
     public JComboBox<String> getAbility3Dropdown() { return dropdownAbility3; }
+    public JComboBox<String> getAbility4Dropdown() { return dropdownAbility4; }
+
+    public void setAbility4Visible(boolean visible) {
+        ability4Panel.setVisible(visible);
+    }
 
     // Controller setter (optional, for reference by controller)
     public void setController(CharacterManualCreationController controller) {

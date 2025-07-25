@@ -84,6 +84,10 @@ public final class CharacterAutoCreationController {
             RaceType race = getRandomRace();
             ClassType classType = getRandomClass();
             List<Ability> abilities = classService.getRandomAbilitiesForClass(classType, 3);
+            if (race == RaceType.GNOME) {
+                List<Ability> all = classService.getAllAbilities();
+                abilities.add(all.get(random.nextInt(all.size())));
+            }
 
             if (view.confirmCharacterCreation(name)) {
                 Player player = getPlayerByName(playerName);
@@ -111,6 +115,10 @@ public final class CharacterAutoCreationController {
         RaceType race = getRandomRace();
         ClassType classType = getRandomClass();
         List<Ability> abilities = classService.getRandomAbilitiesForClass(classType, 3);
+        if (race == RaceType.GNOME) {
+            List<Ability> all = classService.getAllAbilities();
+            abilities.add(all.get(random.nextInt(all.size())));
+        }
 
         StringBuilder details = new StringBuilder();
         details.append("Name: ").append(name).append("\n")
@@ -131,7 +139,8 @@ public final class CharacterAutoCreationController {
      */
     private void handleReturn() {
         view.dispose();
-        gameManagerController.navigateBackToMainMenu();
+        Player player = getPlayerByName(this.playerName);
+        gameManagerController.handleNavigateToCharacterManagement(player);
     }
 
     /**
