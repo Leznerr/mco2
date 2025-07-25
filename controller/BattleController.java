@@ -12,6 +12,7 @@ import model.util.GameException;
 import model.util.InputValidator;
 import view.BattleView;
 import controller.AIController;
+import java.util.function.Consumer;
 
 import java.util.*;
 
@@ -37,6 +38,9 @@ public final class BattleController {
     /* ----------------------------------------------------------- SESSION */
     private Battle battle; // null ⇢ idle
     private final Map<Character, Move> selections = new HashMap<>(2);
+
+    /** Optional listener invoked when the battle ends. */
+    private Consumer<Character> battleEndListener = c -> {};
 
     // AI support
     private AIController aiController;
@@ -86,6 +90,11 @@ public final class BattleController {
         this.humanOpponent = human;
 
         queueAIMove(); // Bot selects its first move immediately
+    }
+
+    /** Registers a callback to be notified when the battle ends. */
+    public void setBattleEndListener(Consumer<Character> listener) {
+        battleEndListener = (listener != null) ? listener : c -> {};
     }
 
     /**
@@ -173,6 +182,7 @@ public final class BattleController {
                     ? battle.getCharacter1()
                     : battle.getCharacter2();
             view.displayBattleEnd(winner);
+            battleEndListener.accept(winner);
             battle = null; // back to idle state
             aiController = null;
         }

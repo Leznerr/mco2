@@ -15,6 +15,9 @@ import model.util.GameException;
 import persistence.GameData;
 import persistence.SaveLoadService;
 import view.BattleView;
+import model.battle.LevelingSystem;
+import model.item.SingleUseItem;
+import java.util.ArrayList;
 import view.CharacterManagementMenuView;
 import view.HallOfFameManagementView;
 import view.MainMenuView;
@@ -219,29 +222,70 @@ public final class SceneManager {
         return 1;
     }
 
-    /** Displays a battle between two characters. */
-    public void showPlayerVsBotBattle(Character human, Character bot, AIController aiController) {
+    /** Displays a battle between a human player and an AI-controlled bot. */
+    public void showPlayerVsBotBattle(Player player, Character human, Character bot, AIController aiController) {
         battleView = new BattleView(human, bot);
         battleView.setPlayer2ControlsEnabled(false);
         try {
             BattleController battleController = new BattleController(battleView);
-            battleView.addUseAbilityP1Listener(e -> {
-                int idx = battleView.getAbilitySelectorP1().getSelectedIndex();
-                if (idx >= 0) {
+
+            for (int i = 0; i < Math.min(3, human.getAbilities().size()); i++) {
+                final int idx = i;
+                battleView.addAbilityListenerP1(i, e -> {
                     try {
                         battleController.submitMove(human, new model.battle.AbilityMove(human.getAbilities().get(idx)));
                     } catch (GameException ex) {
                         DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
                     }
+                });
+            }
+
+            battleView.addDefendListenerP1(e -> {
+                try { battleController.defend(human); } catch (GameException ex) { DialogUtils.showErrorDialog("Battle Error", ex.getMessage()); }
+            });
+            battleView.addRechargeListenerP1(e -> {
+                try { battleController.recharge(human); } catch (GameException ex) { DialogUtils.showErrorDialog("Battle Error", ex.getMessage()); }
+            });
+            battleView.addUseItemListenerP1(e -> {
+                if (human.getEquippedItem() instanceof SingleUseItem item) {
+                    try { battleController.useSingleUseItem(human, item); } catch (GameException ex) { DialogUtils.showErrorDialog("Battle Error", ex.getMessage()); }
                 }
             });
+
+            battleView.addRematchListener(e -> {
+                resetCharacter(human);
+                resetCharacter(bot);
+                battleView.updatePlayerPanels();
+                try { battleController.startBattleVsBot(human, bot, aiController); } catch (GameException ex) { DialogUtils.showErrorDialog("Battle Error", ex.getMessage()); }
+            });
+
             battleView.addReturnListener(e -> cards.show(root, CARD_MAIN_MENU));
+
+            battleController.setBattleEndListener(winner -> {
+                if (winner == human) {
+                    try {
+                        int xp = LevelingSystem.calculateXpGained(human, bot);
+                        human.addXp(xp);
+                        gameManagerController.handlePlayerWin(player, human);
+                    } catch (GameException ex) {
+                        DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
+                    }
+                }
+            });
+
             root.add(battleView, CARD_BATTLE);
             battleController.startBattleVsBot(human, bot, aiController);
         } catch (GameException e) {
             JOptionPane.showMessageDialog(stage, "Unable to start battle: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
         cards.show(root, CARD_BATTLE);
+    }
+
+    private static void resetCharacter(Character c) {
+        c.heal(c.getMaxHp());
+        c.gainEp(c.getMaxEp());
+        c.setStunned(false);
+        new ArrayList<>(c.getActiveStatusEffects()).forEach(se -> c.removeStatusEffect(se.getType()));
     }
 
     /** Entry point for testing this class in isolation. */

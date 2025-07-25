@@ -1,265 +1,231 @@
 package view;
 
 import model.core.Character;
-import model.battle.CombatLog;
+import model.item.MagicItem;
+import model.item.SingleUseItem;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Battle View for Two-Character Mode in Fatal Fantasy: Tactics.
- * <p>Renders character panels, battle log, ability selectors, and controls.
- * All game logic handled via BattleController.</p>
+ * Graphical battle arena for two characters.
+ * <p>
+ * Displays player panels with ability buttons, item usage, defend/recharge
+ * actions, a combat log, and a battle outcome box. The view exposes methods
+ * for controllers to attach listeners and to update HP/EP/status in real time.
+ * </p>
  */
 public class BattleView extends JPanel {
 
-    // Buttons
-    private JButton btnUseAbilityP1;
-    private JButton btnUseAbilityP2;
-    private JButton btnRematch;
-    private JButton btnReturn;
-
-    // Dropdown selectors
-    private JComboBox<String> abilitySelectorP1;
-    private JComboBox<String> abilitySelectorP2;
-
-    // Display components
-    private JTextArea battleLogArea;
-    private JTextArea abilitiesListP1;
-    private JTextArea abilitiesListP2;
-    private JLabel lblPlayer1Name;
-    private JLabel lblPlayer2Name;
-    private JLabel lblPlayer1Stats;
-    private JLabel lblPlayer2Stats;
-
-    // Characters (Model)
     private final Character character1;
     private final Character character2;
 
-    /**
-     * Constructs the BattleView using two characters.
-     * @param character1 Character controlled by Player 1
-     * @param character2 Character controlled by Player 2 (or bot)
-     */
-    public BattleView(Character character1, Character character2) {
-        this.character1 = character1;
-        this.character2 = character2;
+    private final PlayerPanel panelP1;
+    private final PlayerPanel panelP2;
 
+    private final JTextArea combatLogArea = new JTextArea();
+    private final JTextArea outcomeArea   = new JTextArea();
+
+    private final JButton btnRematch = new JButton("Rematch");
+    private final JButton btnReturn  = new JButton("Return to Main Menu");
+
+    /**
+     * Constructs the battle view for the given characters.
+     */
+    public BattleView(Character c1, Character c2) {
+        this.character1 = c1;
+        this.character2 = c2;
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
 
-        initializeComponents();
-        renderInitialState();
+        panelP1 = new PlayerPanel(c1);
+        panelP2 = new PlayerPanel(c2);
+
+        initLayout();
+        updatePlayerPanels();
     }
 
-    /**
-     * Initializes static GUI components.
-     */
-    private void initializeComponents() {
-        JPanel backgroundPanel = new JPanel() {
-            // Background image for the battle screen. BattleArenaBG.jpg was
-            // referenced previously but no such asset exists. Use the generic
-            // battle background that is already bundled with the project.
+    private void initLayout() {
+        JPanel background = new JPanel() {
             private final Image bg = new ImageIcon("view/assets/CharSelectAndBattleBG.jpg").getImage();
-
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 g.drawImage(bg, 0, 0, getWidth(), getHeight(), this);
             }
         };
-        backgroundPanel.setLayout(null);
+        background.setLayout(new BorderLayout());
 
-        // Player 1 GUI
-        lblPlayer1Name = createLabel("", 30, 30, 200, 30);
-        backgroundPanel.add(lblPlayer1Name);
+        JPanel center = new JPanel(new BorderLayout());
+        center.setOpaque(false);
 
-        lblPlayer1Stats = createLabel("", 30, 60, 250, 30);
-        backgroundPanel.add(lblPlayer1Stats);
+        combatLogArea.setEditable(false);
+        combatLogArea.setOpaque(false);
+        combatLogArea.setForeground(Color.WHITE);
+        combatLogArea.setLineWrap(true);
+        combatLogArea.setWrapStyleWord(true);
 
-        abilitiesListP1 = createTextArea(30, 100, 300, 200);
-        backgroundPanel.add(abilitiesListP1);
+        JScrollPane logScroll = new JScrollPane(combatLogArea);
+        logScroll.setOpaque(false);
+        logScroll.getViewport().setOpaque(false);
+        center.add(logScroll, BorderLayout.CENTER);
 
-        abilitySelectorP1 = new JComboBox<>();
-        abilitySelectorP1.setBounds(30, 320, 250, 30);
-        backgroundPanel.add(abilitySelectorP1);
+        outcomeArea.setEditable(false);
+        outcomeArea.setOpaque(false);
+        outcomeArea.setForeground(Color.YELLOW);
+        outcomeArea.setVisible(false);
+        center.add(outcomeArea, BorderLayout.EAST);
 
-        btnUseAbilityP1 = new JButton("Use Ability");
-        btnUseAbilityP1.setBounds(30, 360, 150, 30);
-        backgroundPanel.add(btnUseAbilityP1);
+        background.add(panelP1, BorderLayout.WEST);
+        background.add(panelP2, BorderLayout.EAST);
+        background.add(center, BorderLayout.CENTER);
 
-        // Player 2 GUI
-        lblPlayer2Name = createLabel("", 760, 30, 200, 30);
-        backgroundPanel.add(lblPlayer2Name);
+        JPanel bottom = new JPanel();
+        bottom.setOpaque(false);
+        bottom.add(btnRematch);
+        bottom.add(btnReturn);
+        background.add(bottom, BorderLayout.SOUTH);
 
-        lblPlayer2Stats = createLabel("", 730, 60, 250, 30);
-        backgroundPanel.add(lblPlayer2Stats);
-
-        abilitiesListP2 = createTextArea(670, 100, 300, 200);
-        backgroundPanel.add(abilitiesListP2);
-
-        abilitySelectorP2 = new JComboBox<>();
-        abilitySelectorP2.setBounds(720, 320, 250, 30);
-        backgroundPanel.add(abilitySelectorP2);
-
-        btnUseAbilityP2 = new JButton("Use Ability");
-        btnUseAbilityP2.setBounds(820, 360, 150, 30);
-        backgroundPanel.add(btnUseAbilityP2);
-
-        // Battle Log
-        battleLogArea = new JTextArea();
-        battleLogArea.setEditable(false);
-        battleLogArea.setOpaque(false);
-        battleLogArea.setForeground(Color.WHITE);
-        battleLogArea.setLineWrap(true);
-        battleLogArea.setWrapStyleWord(true);
-
-        JScrollPane battleLogScroll = new JScrollPane(battleLogArea);
-        battleLogScroll.setBounds(360, 100, 300, 250);
-        battleLogScroll.setOpaque(false);
-        battleLogScroll.getViewport().setOpaque(false);
-        backgroundPanel.add(battleLogScroll);
-
-        // Control Buttons
-        btnRematch = new JButton("Rematch");
-        btnRematch.setBounds(420, 380, 100, 30);
-        backgroundPanel.add(btnRematch);
-
-        btnReturn = new JButton("Return");
-        btnReturn.setBounds(530, 380, 100, 30);
-        backgroundPanel.add(btnReturn);
-
-        add(backgroundPanel, BorderLayout.CENTER);
+        add(background, BorderLayout.CENTER);
     }
 
-    /**
-     * Renders the characters' starting stats and abilities.
-     */
-    private void renderInitialState() {
-        lblPlayer1Name.setText(character1.getName());
-        lblPlayer2Name.setText(character2.getName());
-
-        updatePlayer1Stats();
-        updatePlayer2Stats();
-
-        abilitiesListP1.setText(character1.getAbilitiesDescription());
-        abilitiesListP2.setText(character2.getAbilitiesDescription());
-
-        abilitySelectorP1.removeAllItems();
-        character1.getAbilities().forEach(ability ->
-            abilitySelectorP1.addItem(ability.getName() + " (EP: " + ability.getEpCost() + ")")
-        );
-
-        abilitySelectorP2.removeAllItems();
-        character2.getAbilities().forEach(ability ->
-            abilitySelectorP2.addItem(ability.getName() + " (EP: " + ability.getEpCost() + ")")
-        );
+    /** Updates labels for both player panels. */
+    public void updatePlayerPanels() {
+        panelP1.updateStats();
+        panelP2.updateStats();
+        panelP1.updateItemDisplay();
+        panelP2.updateItemDisplay();
     }
 
-    /**
-     * Updates Player 1's stats dynamically.
-     */
-    public void updatePlayer1Stats() {
-        lblPlayer1Stats.setText("HP: " + character1.getCurrentHp() + "/" + character1.getMaxHp()
-                              + " | EP: " + character1.getCurrentEp() + "/" + character1.getMaxEp());
-    }
+    /* ------------------------------------------------------------------ */
+    /* Public view operations                                             */
+    /* ------------------------------------------------------------------ */
 
-    /**
-     * Updates Player 2's stats dynamically.
-     */
-    public void updatePlayer2Stats() {
-        lblPlayer2Stats.setText("HP: " + character2.getCurrentHp() + "/" + character2.getMaxHp()
-                              + " | EP: " + character2.getCurrentEp() + "/" + character2.getMaxEp());
-    }
-
-    // --- Battle Flow Display Methods ---
-
-    /**
-     * Clears the log and posts initial battle info.
-     */
     public void displayBattleStart(Character c1, Character c2) {
-        clearBattleLog();
-        appendToBattleLog("\u2500\u2500 Battle Start \u2500\u2500");
-        appendToBattleLog(c1.getName() + " vs " + c2.getName());
-        updatePlayer1Stats();
-        updatePlayer2Stats();
+        combatLogArea.setText("");
+        appendToCombatLog("-- Battle Start --");
+        appendToCombatLog(c1.getName() + " vs " + c2.getName());
+        updatePlayerPanels();
     }
 
-    /**
-     * Refreshes the log and stat panels after each turn.
-     */
-    public void displayTurnResults(model.battle.CombatLog log) {
-        battleLogArea.setText(String.join("\n", log.getLogEntries()));
-        updatePlayer1Stats();
-        updatePlayer2Stats();
+    public void displayTurnResults(CombatLog log) {
+        combatLogArea.setText(String.join("\n", log.getLogEntries()));
+        updatePlayerPanels();
     }
 
-    /**
-     * Announces the winner and finalises the log.
-     */
     public void displayBattleEnd(Character winner) {
-        appendToBattleLog(winner.getName() + " wins the battle!");
-        JOptionPane.showMessageDialog(this,
-                winner.getName() + " is victorious!",
-                "Battle Over",
-                JOptionPane.INFORMATION_MESSAGE);
+        appendToCombatLog(winner.getName() + " wins the battle!");
+        outcomeArea.setText("Winner: " + winner.getName());
+        outcomeArea.setVisible(true);
+        lockPlayerControls();
     }
 
-    // --- GUI Helper Methods ---
-    private JLabel createLabel(String text, int x, int y, int width, int height) {
-        JLabel lbl = new JLabel(text);
-        lbl.setForeground(Color.WHITE);
-        lbl.setBounds(x, y, width, height);
-        return lbl;
+    public void appendToCombatLog(String text) {
+        combatLogArea.append(text + "\n");
     }
 
-    private JTextArea createTextArea(int x, int y, int width, int height) {
-        JTextArea area = new JTextArea();
-        area.setEditable(false);
-        area.setOpaque(false);
-        area.setForeground(Color.WHITE);
-        area.setFont(new Font("Monospaced", Font.PLAIN, 12));
+    /* ------------------------------------------------------------------ */
+    /* Listener registration helpers                                      */
+    /* ------------------------------------------------------------------ */
 
-        JScrollPane scrollPane = new JScrollPane(area);
-        scrollPane.setBounds(x, y, width, height);
-        scrollPane.setOpaque(false);
-        scrollPane.getViewport().setOpaque(false);
-
-        return area;
+    public void addAbilityListenerP1(int index, ActionListener l) {
+        panelP1.getAbilityButton(index).addActionListener(l);
     }
 
-    // --- Battle Log Updates ---
-    public void appendToBattleLog(String text) {
-        battleLogArea.append(text + "\n");
+    public void addAbilityListenerP2(int index, ActionListener l) {
+        panelP2.getAbilityButton(index).addActionListener(l);
     }
 
-    public void clearBattleLog() {
-        battleLogArea.setText("");
-    }
+    public void addDefendListenerP1(ActionListener l) { panelP1.defendButton.addActionListener(l); }
+    public void addDefendListenerP2(ActionListener l) { panelP2.defendButton.addActionListener(l); }
+    public void addRechargeListenerP1(ActionListener l) { panelP1.rechargeButton.addActionListener(l); }
+    public void addRechargeListenerP2(ActionListener l) { panelP2.rechargeButton.addActionListener(l); }
+    public void addUseItemListenerP1(ActionListener l) { panelP1.useItemButton.addActionListener(l); }
+    public void addUseItemListenerP2(ActionListener l) { panelP2.useItemButton.addActionListener(l); }
+    public void addRematchListener(ActionListener l)   { btnRematch.addActionListener(l); }
+    public void addReturnListener(ActionListener l)    { btnReturn.addActionListener(l); }
 
-
-    // --- Ability Selectors ---
-    public JComboBox<String> getAbilitySelectorP1() { return abilitySelectorP1; }
-    public JComboBox<String> getAbilitySelectorP2() { return abilitySelectorP2; }
-
-    /**
-     * Enables or disables the ability selector and action button for Player 2.
-     * Useful when Player 2 is controlled by the AI.
-     *
-     * @param enabled {@code true} to allow interaction; {@code false} to disable
-     */
+    /** Enables or disables player two's controls (for AI battles). */
     public void setPlayer2ControlsEnabled(boolean enabled) {
-        btnUseAbilityP2.setEnabled(enabled);
-        abilitySelectorP2.setEnabled(enabled);
+        panelP2.setControlsEnabled(enabled);
     }
 
-    // --- Action Listener Registration (wired via controller) ---
-    public void addUseAbilityP1Listener(ActionListener listener) { btnUseAbilityP1.addActionListener(listener); }
-    public void addUseAbilityP2Listener(ActionListener listener) { btnUseAbilityP2.addActionListener(listener); }
-    public void addRematchListener(ActionListener listener) { btnRematch.addActionListener(listener); }
-    public void addReturnListener(ActionListener listener) { btnReturn.addActionListener(listener); }
+    /** Disables all action buttons for both players. */
+    public void lockPlayerControls() {
+        panelP1.setControlsEnabled(false);
+        panelP2.setControlsEnabled(false);
+    }
 
-    /* ----------------------------------------------------- Display Hooks */
+    /* ------------------------------------------------------------------ */
+    /* Inner PlayerPanel class                                            */
+    /* ------------------------------------------------------------------ */
 
+    private static class PlayerPanel extends JPanel {
+        private final Character character;
+        private final JLabel nameLabel = new JLabel();
+        private final JLabel classLabel = new JLabel();
+        private final JLabel hpLabel = new JLabel();
+        private final JLabel epLabel = new JLabel();
+        private final JLabel itemLabel = new JLabel();
+        private final List<JButton> abilityButtons = new ArrayList<>(3);
+        private final JButton defendButton = new JButton("Defend");
+        private final JButton rechargeButton = new JButton("Recharge");
+        private final JButton useItemButton = new JButton("Use Item");
+
+        PlayerPanel(Character c) {
+            this.character = c;
+            setOpaque(false);
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            nameLabel.setForeground(Color.WHITE);
+            classLabel.setForeground(Color.WHITE);
+            hpLabel.setForeground(Color.WHITE);
+            epLabel.setForeground(Color.WHITE);
+            itemLabel.setForeground(Color.WHITE);
+
+            add(nameLabel);
+            add(classLabel);
+            add(hpLabel);
+            add(epLabel);
+            add(itemLabel);
+
+            for (int i = 0; i < 3 && i < c.getAbilities().size(); i++) {
+                JButton b = new JButton(c.getAbilities().get(i).getName());
+                abilityButtons.add(b);
+                add(b);
+            }
+            add(defendButton);
+            add(rechargeButton);
+            add(useItemButton);
+        }
+
+        JButton getAbilityButton(int idx) { return abilityButtons.get(idx); }
+
+        void setControlsEnabled(boolean enabled) {
+            for (JButton b : abilityButtons) b.setEnabled(enabled);
+            defendButton.setEnabled(enabled);
+            rechargeButton.setEnabled(enabled);
+            useItemButton.setEnabled(enabled);
+        }
+
+        void updateStats() {
+            nameLabel.setText(character.getName());
+            classLabel.setText(character.getClassType() + " " + character.getRaceType());
+            hpLabel.setText("HP: " + character.getCurrentHp() + "/" + character.getMaxHp());
+            epLabel.setText("EP: " + character.getCurrentEp() + "/" + character.getMaxEp());
+        }
+
+        void updateItemDisplay() {
+            MagicItem item = character.getEquippedItem();
+            if (item == null) {
+                itemLabel.setText("Item: None");
+                useItemButton.setEnabled(false);
+            } else {
+                itemLabel.setText("Item: " + item.getName());
+                useItemButton.setEnabled(item instanceof SingleUseItem);
+            }
+        }
+    }
 }
