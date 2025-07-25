@@ -92,6 +92,9 @@ public final class CharacterAutoCreationController {
                 newCharacter.setAbilities(abilities);
 
                 player.addCharacter(newCharacter);
+                // Persist the updated roster immediately
+                gameManagerController.handleSaveGameRequest();
+
                 view.showInfoMessage("Character \"" + name + "\" created successfully!");
                 view.dispose();
             }
