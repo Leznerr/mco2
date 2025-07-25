@@ -105,18 +105,22 @@ public final class SceneManager {
                                 "Error", JOptionPane.ERROR_MESSAGE);
                     } else {
                         // Register the players and save them to the file
-                        GameManagerController controller = new GameManagerController(this, 
-                                new HallOfFameController(new HallOfFameManagementView()), mainMenuView);
-                        controller.handleRegisterPlayers(player1Name, player2Name); // Save the players
+                        boolean registered = gameManagerController.handleRegisterPlayers(player1Name, player2Name);
 
-                        // Show confirmation message
-                        JOptionPane.showMessageDialog(playerRegView, "Players Registered: " + player1Name + " and " + player2Name, 
-                                "Success", JOptionPane.INFORMATION_MESSAGE);
+                        if (registered) {
+                            // Show confirmation message
+                            JOptionPane.showMessageDialog(playerRegView,
+                                    "Players Registered: " + player1Name + " and " + player2Name,
+                                    "Success", JOptionPane.INFORMATION_MESSAGE);
 
-                        System.out.println("Players Registered: " + player1Name + " and " + player2Name);
+                            System.out.println("Players Registered: " + player1Name + " and " + player2Name);
 
-                        // After successful registration, return to the main menu
-                        showMainMenu(); 
+                            // After successful registration, return to the main menu
+                            showMainMenu();
+                        } else {
+                            // Clear the fields so the user can try again
+                            playerRegView.resetFields();
+                        }
                     }
                 }
             }

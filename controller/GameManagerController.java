@@ -200,7 +200,7 @@ public void actionPerformed(ActionEvent e) {
     }
 
 
-     public void handleRegisterPlayers(String player1Name, String player2Name) {
+    public boolean handleRegisterPlayers(String player1Name, String player2Name) {
     boolean hasConflict = false;
     StringBuilder errorMsg = new StringBuilder();
 
@@ -236,8 +236,10 @@ public void actionPerformed(ActionEvent e) {
         gameData.setAllPlayers(existing);
         SaveLoadService.saveGame(gameData);
         System.out.println("Players " + player1Name + " and " + player2Name + " have been registered.");
+        return true;
     } else {
         JOptionPane.showMessageDialog(null, errorMsg.toString(), "Player Registration Error", JOptionPane.ERROR_MESSAGE);
+        return false;
     }
 }
 
