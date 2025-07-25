@@ -86,7 +86,10 @@ public final class CharacterManualCreationController {
     // --- UI Event Binding ---
     private void bindUI() {
         view.addCreateCharacterListener(e -> handleCreateCharacter());
-        view.addReturnListener(e -> view.dispose());
+        view.addReturnListener(e -> {
+            view.dispose();
+            gameManagerController.navigateBackToMainMenu();
+        });
         view.addClassDropdownListener(e -> handleClassSelection());
     }
 

@@ -37,7 +37,10 @@ public class PlayerCharacterManagementController {
                 case PlayerCharacterManagementView.CREATE_CHARACTER -> gameManagerController.handleNavigateToCharacterCreationManagement(player.getName());
                 case PlayerCharacterManagementView.EDIT_CHARACTER -> openEditCharacter();
                 case PlayerCharacterManagementView.DELETE_CHARACTER -> openDeleteCharacter();
-                case PlayerCharacterManagementView.RETURN -> view.dispose();
+                case PlayerCharacterManagementView.RETURN -> {
+                    view.dispose();
+                    gameManagerController.navigateBackToMainMenu();
+                }
             }
         };
         view.setActionListener(l);
