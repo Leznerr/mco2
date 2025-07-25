@@ -175,7 +175,33 @@ public class PlayerCharacterManagementController {
         }
 
         try {
-            List<Ability> newAbilities = classService.getAbilitiesByNames(ev.getSelectedAbilities());
+            String[] abilityNames = ev.getSelectedAbilities();
+            // Ensure all abilities are chosen
+            for (String a : abilityNames) {
+                if (a == null || a.isBlank()) {
+                    ev.showErrorMessage("All ability slots must be selected.");
+                    return;
+                }
+            }
+
+            // Check for duplicates
+            java.util.Set<String> unique = new java.util.HashSet<>(java.util.Arrays.asList(abilityNames));
+            if (unique.size() != abilityNames.length) {
+                ev.showErrorMessage("Abilities must be unique.");
+                return;
+            }
+
+            // Validate abilities for the character's class
+            java.util.List<String> valid = classService.getAvailableAbilities(c.getClassType())
+                    .stream().map(Ability::getName).toList();
+            for (String a : abilityNames) {
+                if (!valid.contains(a)) {
+                    ev.showErrorMessage("Invalid ability selection for class.");
+                    return;
+                }
+            }
+
+            java.util.List<Ability> newAbilities = classService.getAbilitiesByNames(abilityNames);
             c.setAbilities(newAbilities);
 
             String itemName = ev.getSelectedMagicItem();

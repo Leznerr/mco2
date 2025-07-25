@@ -37,6 +37,7 @@ public class CharacterEditView extends JFrame {
 
         initUI();
         configureWindow();
+        setVisible(true);
     }
 
     private void configureWindow() {
