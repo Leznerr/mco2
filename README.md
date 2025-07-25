@@ -210,8 +210,9 @@ src/
 - **Main Menu to Player Registration**: Clicking "Register Players" shows the PlayerRegistrationView. Two players must be registered (unique, not empty). Data is saved, and confirmation is shown. Fields are reset after registration.
 - **Player data persistence**: Uses SaveLoadService and GameData.
 - **Manage Characters**: Enabled after registration.
-- **Hall of Fame**: Loads from file.  
-- **Ongoing**: Integration of inventory, trading, AI, and battle screens.
+- **Hall of Fame**: Loads from file.
+- **Ongoing**: Integration of inventory, AI, and battle screens.
+- **New**: Magic item trading GUI using `TradeView`/`TradeController`.
 
 ---
 
@@ -406,6 +407,7 @@ Status Effects (e.g., stun, poison)
 Leveling system (XP and rewards)
 
 Magic Item Trading GUI
+  - Trade magic items between players via a dedicated screen.
 
 More classes/races
 
@@ -427,6 +429,7 @@ src/
   controller/
     GameManagerController.java
     SceneManager.java
+    TradeController.java
     (etc)
   model/
     core/
@@ -436,6 +439,7 @@ src/
     mainmenu/
     character/
     battle/
+    TradeView.java
     (etc)
   persistence/
     SaveLoadService.java
