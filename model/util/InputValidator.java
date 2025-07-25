@@ -111,39 +111,21 @@ public final class InputValidator {
     }
 
 
-    public static void requireSize(Object[] array, int expectedSize, String message) throws GameException {
-    if (array.length != expectedSize) {
-        throw new GameException(message);
+    /** Validates that {@code size} equals {@code expectedSize}. */
+    public static void requireSize(int size, int expectedSize,
+                                   String message) throws GameException {
+        if (size != expectedSize) {
+            throw new GameException(message);
+        }
     }
-}
 
-/**
- * Ensures an array has an exact size.
- *
- * @param array         the array to check
- * @param expectedSize  the required size of the array
- * @param message       the exception message to use on failure
- * @throws GameException if the array's length is not equal to expectedSize
- */
-public static void requireSize(Object[] array, int minSize, int maxSize, String message) throws GameException {
-    if (array.length < minSize || array.length > maxSize) {
-        throw new GameException(message);
+    /** Validates that {@code size} lies within the range {@code [minSize, maxSize]}. */
+    public static void requireSize(int size, int minSize, int maxSize,
+                                   String message) throws GameException {
+        if (size < minSize || size > maxSize) {
+            throw new GameException(message);
+        }
     }
-}
-
-/**
- * Ensures a List has an exact size.
- *
- * @param list         the List to check
- * @param expectedSize the required size of the list
- * @param message      the exception message to use on failure
- * @throws GameException if the list's size is not equal to expectedSize
- */
-public static void requireSize(List<?> list, int expectedSize, String message) throws GameException {
-    if (list.size() != expectedSize) {
-        throw new GameException(message);
-    }
-}
 
  public static void requireNonEmpty(String input, String fieldName) throws IllegalArgumentException {
         if (input == null || input.trim().isEmpty()) {

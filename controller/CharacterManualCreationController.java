@@ -102,7 +102,8 @@ public final class CharacterManualCreationController {
             InputValidator.requireNonBlank(name, "Character name");
             InputValidator.requireNonNull(raceStr, "Race");
             InputValidator.requireNonNull(classStr, "Class");
-            InputValidator.requireSize(selectedAbilityNames, 3, 3, "You must choose exactly 3 abilities.");
+            InputValidator.requireSize(selectedAbilityNames.length, 3, 3,
+                    "You must choose exactly 3 abilities.");
 
             // Validate abilities are unique
             if (!areDistinct(selectedAbilityNames)) {
