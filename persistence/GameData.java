@@ -29,8 +29,11 @@ public class GameData implements Serializable {
     /* Fields (UML-specified)                                             */
     /* ------------------------------------------------------------------ */
 
-    private List<Player>          allPlayers;
-    private List<HallOfFameEntry> hallOfFame;
+    // Mark transient to avoid serialization warnings when contained types
+    // are not themselves serializable. On deserialization these fields are
+    // reinitialised to empty lists.
+    private transient List<Player>          allPlayers;
+    private transient List<HallOfFameEntry> hallOfFame;
 
     /* ------------------------------------------------------------------ */
     /* Constructors                                                       */
@@ -80,5 +83,19 @@ public class GameData implements Serializable {
     public void setHallOfFame(List<HallOfFameEntry> entries) throws GameException {
         InputValidator.requireNonNull(entries, "hallOfFame");
         this.hallOfFame = new ArrayList<>(entries);
+    }
+
+    /**
+     * Ensures transient collections are initialised when deserialised.
+     */
+    private void readObject(java.io.ObjectInputStream in)
+            throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        if (allPlayers == null) {
+            allPlayers = new ArrayList<>();
+        }
+        if (hallOfFame == null) {
+            hallOfFame = new ArrayList<>();
+        }
     }
 }
