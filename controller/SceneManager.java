@@ -2,21 +2,20 @@ package controller;
 
 import java.awt.CardLayout;
 import java.awt.Container;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import model.core.Player;
 import model.core.Character;
+import model.core.Player;
+import model.util.DialogUtils;
+import model.util.GameException;
+import view.BattleView;
 import view.CharacterManagementView;
 import view.HallOfFameManagementView;
 import view.MainMenuView;
 import view.PlayerRegistrationView;
-import view.BattleView;
-import model.util.GameException;
-import model.util.DialogUtils;
-import controller.BattleController;
-import controller.AIController;
 
 /**
  * Central navigator that swaps View cards inside ONE shared JFrame.

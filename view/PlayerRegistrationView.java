@@ -1,135 +1,179 @@
 package view;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.ActionListener;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
- * View for registering two players before they can manage characters or battle.
- * <p>Pure GUI with no business logic.</p>
+ * The player registration view for Fatal Fantasy: Tactics Game.
+ * <p>
+ * Allows user to enter names for Player 1 and Player 2.
+ * All GUI logic is decoupled from game logic per MVC.
  */
 public class PlayerRegistrationView extends JFrame {
+    // Button labels
+    public static final String REGISTER = "Register";
+    public static final String RETURN = "Return";
 
-    public static final String REGISTER = "REGISTER";
-    public static final String RETURN   = "RETURN";
+    private RoundedTextField player1Field;
+    private RoundedTextField player2Field;
+    private JButton btnRegister;
+    private JButton btnReturn;
+    private ActionListener externalListener;
 
-    private final RoundedTextField player1Field;
-    private final RoundedTextField player2Field;
-    private final JButton btnRegister;
-    private final JButton btnReturn;
-
+    /**
+     * Constructs the Player Registration screen.
+     */
     public PlayerRegistrationView() {
         super("Fatal Fantasy: Tactics | Player Registration");
-
-        player1Field = new RoundedTextField("Enter Player 1 name", 20);
-        player2Field = new RoundedTextField("Enter Player 2 name", 20);
-        btnRegister   = new RoundedButton("Register");
-        btnReturn     = new RoundedButton("Return");
-
         initUI();
-        configureWindow();
-    }
 
-    private void configureWindow() {
         setSize(800, 700);
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setResizable(false);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                int opt = JOptionPane.showConfirmDialog(
-                        PlayerRegistrationView.this,
-                        "Are you sure you want to quit?",
-                        "Confirm Exit",
-                        JOptionPane.YES_NO_OPTION);
-                if (opt == JOptionPane.YES_OPTION) dispose();
+                int choice = JOptionPane.showConfirmDialog(
+                    PlayerRegistrationView.this,
+                    "Are you sure you want to quit?",
+                    "Confirm Exit",
+                    JOptionPane.YES_NO_OPTION
+                );
+
+                if (choice == JOptionPane.YES_OPTION && externalListener != null) {
+                    ActionEvent evt = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Exit");
+                    externalListener.actionPerformed(evt);
+                }
             }
         });
+
+        setLocationRelativeTo(null);
+        setResizable(false);
     }
 
+    /**
+     * Initializes and arranges all UI components.
+     */
     private void initUI() {
         JPanel backgroundPanel = new JPanel() {
-            private final Image bg = new ImageIcon("view/assets/PlayersRegistrationBG.jpg").getImage();
+            private Image bg = new ImageIcon("view/assets/PlayersRegistrationBG.jpg").getImage();
+
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                int w = getWidth();
-                int h = getHeight();
-                double scale = Math.max(w / (double) bg.getWidth(null), h / (double) bg.getHeight(null));
-                int ww = (int) (bg.getWidth(null) * scale);
-                int hh = (int) (bg.getHeight(null) * scale);
-                g.drawImage(bg, (w - ww) / 2, (h - hh) / 2, ww, hh, this);
+                int panelWidth = getWidth();
+                int panelHeight = getHeight();
+                int imgWidth = bg.getWidth(this);
+                int imgHeight = bg.getHeight(this);
+                double scale = Math.max(panelWidth / (double) imgWidth, panelHeight / (double) imgHeight);
+                int width = (int) (imgWidth * scale);
+                int height = (int) (imgHeight * scale);
+                int x = (panelWidth - width) / 2;
+                int y = (panelHeight - height) / 2;
+                g.drawImage(bg, x, y, width, height, this);
             }
         };
-        backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.Y_AXIS));
-        backgroundPanel.add(Box.createVerticalStrut(60));
 
+        backgroundPanel.setLayout(new BorderLayout());
+
+        JPanel centerPanel = new JPanel();
+        centerPanel.setOpaque(false);
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+
+        centerPanel.add(Box.createVerticalStrut(100));
         ImageIcon logoIcon = new ImageIcon("view/assets/PlayerRegLogo.png");
-        Image logoImg = logoIcon.getImage().getScaledInstance(500, -1, Image.SCALE_SMOOTH);
+        Image logoImg = logoIcon.getImage().getScaledInstance(400, -1, Image.SCALE_SMOOTH);
         JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        backgroundPanel.add(logoLabel);
-        backgroundPanel.add(Box.createVerticalStrut(40));
+        centerPanel.add(logoLabel);
+        centerPanel.add(Box.createVerticalStrut(40));
 
-        JPanel fieldsPanel = new JPanel();
-        fieldsPanel.setOpaque(false);
-        fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
-        fieldsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        player1Field = new RoundedTextField("Enter name for Player 1", 20);
+        player1Field.setMaximumSize(new Dimension(300, 45));
+        centerPanel.add(player1Field);
+        centerPanel.add(Box.createVerticalStrut(20));
 
-        player1Field.setMaximumSize(new Dimension(300, 35));
-        player2Field.setMaximumSize(new Dimension(300, 35));
+        player2Field = new RoundedTextField("Enter name for Player 2", 20);
+        player2Field.setMaximumSize(new Dimension(300, 45));
+        centerPanel.add(player2Field);
 
-        fieldsPanel.add(player1Field);
-        fieldsPanel.add(Box.createVerticalStrut(10));
-        fieldsPanel.add(player2Field);
-
-        backgroundPanel.add(fieldsPanel);
-        backgroundPanel.add(Box.createVerticalStrut(30));
+        backgroundPanel.add(centerPanel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 50));
         buttonPanel.setOpaque(false);
+
+        btnRegister = new RoundedButton(REGISTER);
+        btnReturn = new RoundedButton(RETURN);
+
         buttonPanel.add(btnRegister);
         buttonPanel.add(btnReturn);
-        backgroundPanel.add(buttonPanel);
-        backgroundPanel.add(Box.createVerticalGlue());
+
+        backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         setContentPane(backgroundPanel);
     }
 
-    /** Assigns an ActionListener to the buttons. */
-    public void setActionListener(ActionListener l) {
-        btnRegister.setActionCommand(REGISTER);
-        btnReturn.setActionCommand(RETURN);
-        btnRegister.addActionListener(l);
-        btnReturn.addActionListener(l);
+    /**
+     * Registers an action listener to all interactive buttons and window exit.
+     *
+     * @param listener The controller-provided listener
+     */
+    public void setActionListener(ActionListener listener) {
+        this.externalListener = listener;
+        btnRegister.addActionListener(listener);
+        btnReturn.addActionListener(listener);
     }
 
-    /** Returns the trimmed name from player 1 text field. */
+    /**
+     * Returns trimmed Player 1 name input.
+     *
+     * @return Player 1 name
+     */
     public String getPlayer1Name() {
         return player1Field.getText().trim();
     }
 
-    /** Returns the trimmed name from player 2 text field. */
+    /**
+     * Returns trimmed Player 2 name input.
+     *
+     * @return Player 2 name
+     */
     public String getPlayer2Name() {
         return player2Field.getText().trim();
     }
 
-    /** Clears both text fields. */
-    public void resetFields() {
-        player1Field.setText("");
-        player2Field.setText("");
-    }
-
-    /** Convenience dialog helpers. */
-    public void showInfoMessage(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Info", JOptionPane.INFORMATION_MESSAGE);
-    }
-
+     /** Dialog helpers used by the controller. */
+    public void showInfoMessage(String msg)  {
+        JOptionPane.showMessageDialog(this, msg, "Info",  JOptionPane.INFORMATION_MESSAGE);
+    }   
     public void showErrorMessage(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
     }
+
+    /**
+ * Clears both player-name text fields.
+ * <p>Called by SceneManager each time the “Register Players” card is shown
+ * so the user always starts with blank inputs.</p>
+ */
+public void resetFields() {
+    player1Field.setText("");
+    player2Field.setText("");
+}
 }

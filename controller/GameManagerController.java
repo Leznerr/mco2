@@ -1,21 +1,5 @@
 package controller;
 
-import model.core.Player;
-import model.core.Character;
-
-import model.util.GameException;
-import model.util.InputValidator;
-import persistence.GameData;
-import persistence.SaveLoadService;
-import view.*;
-import app.Main;
-import model.util.RandomCharacterGenerator;
-import model.util.SimpleBot;
-import model.util.Constants;
-import model.item.MagicItem;
-import model.service.MagicItemFactory;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -23,6 +7,26 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
+import app.Main;
+import model.core.Character;
+import model.core.Player;
+import model.item.MagicItem;
+import model.service.MagicItemFactory;
+import model.util.Constants;
+import model.util.GameException;
+import model.util.InputValidator;
+import model.util.RandomCharacterGenerator;
+import model.util.SimpleBot;
+import persistence.GameData;
+import persistence.SaveLoadService;
+import view.CharacterAutoCreationView;
+import view.CharacterCreationManagementView;
+import view.CharacterManualCreationView;
+import view.MainMenuView;
 
 /**
  * Central controller for managing players, navigation, and game save/load in
@@ -196,34 +200,47 @@ public void actionPerformed(ActionEvent e) {
     }
 
 
-       // Method to handle player registration
-    public void handleRegisterPlayers(String player1Name, String player2Name) {
-        // Create new Player objects with the provided names
+     public void handleRegisterPlayers(String player1Name, String player2Name) {
+    boolean hasConflict = false;
+    StringBuilder errorMsg = new StringBuilder();
+
+    if (player1Name.equalsIgnoreCase(player2Name)) {
+        errorMsg.append("Player names must be unique.\n");
+        hasConflict = true;
+    }
+
+    GameData gameData = SaveLoadService.loadGame();
+    List<Player> existing = new ArrayList<>(gameData.getAllPlayers());
+
+    int duplicateCount = 0;
+    for (int i = 0; i < existing.size(); i++) {
+        Player p = existing.get(i);
+        boolean match1 = p.getName().equalsIgnoreCase(player1Name);
+        boolean match2 = p.getName().equalsIgnoreCase(player2Name);
+
+        if (match1 || match2) {
+            duplicateCount++;
+        }
+    }
+
+    if (duplicateCount > 0) {
+        errorMsg.append("One or both player names already exist in saved data.\n");
+        hasConflict = true;
+    }
+
+    if (!hasConflict) {
         Player player1 = new Player(player1Name);
         Player player2 = new Player(player2Name);
-
-        // Load existing game data (or create new if no data exists)
-        GameData gameData = SaveLoadService.loadGame();
-
-        // Add the new players to the game data using a mutable copy
-        List<Player> existing = new ArrayList<>(gameData.getAllPlayers());
         existing.add(player1);
         existing.add(player2);
         gameData.setAllPlayers(existing);
-
-        // Save the updated game data with the new players
-        SaveLoadService.saveGame(gameData);  // Save the game data with the newly added players
-
+        SaveLoadService.saveGame(gameData);
         System.out.println("Players " + player1Name + " and " + player2Name + " have been registered.");
+    } else {
+        JOptionPane.showMessageDialog(null, errorMsg.toString(), "Player Registration Error", JOptionPane.ERROR_MESSAGE);
     }
+}
 
-    public void handleNavigateToHallOfFame() {
-        SwingUtilities.invokeLater(() -> {
-            HallOfFameManagementView view = new HallOfFameManagementView();
-            HallOfFameController controller = new HallOfFameController(view);
-            view.setController(controller);
-        });
-    }
 
     public void navigateBackToMainMenu() {
         SwingUtilities.invokeLater(() -> mainMenuView.setVisible(true));

@@ -1,37 +1,44 @@
 package view;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
-/**
- * Simple JButton with a rounded background and border.
- *
- * <p>This component is purely cosmetic and behaves exactly like a
- * normal {@link JButton} but with a rounded appearance.</p>
- */
+import javax.swing.JButton;
+
 public class RoundedButton extends JButton {
-    private static final int ARC_WIDTH = 20;
-    private static final int ARC_HEIGHT = 20;
-
     public RoundedButton(String text) {
         super(text);
         setOpaque(false);
-        setFocusPainted(false);
         setContentAreaFilled(false);
-        setBorderPainted(false);
-        setForeground(Color.WHITE);
-        setBackground(new Color(0, 0, 0, 170));
-        setFont(getFont().deriveFont(Font.BOLD, 16f));
+        setFocusPainted(false);
+        setBorderPainted(false); 
+        setFont(new Font("Serif", Font.BOLD, 24));
+        setForeground(new Color(80, 50, 30));
+        setBackground(Color.WHITE);
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        setAlignmentX(Component.CENTER_ALIGNMENT);
+        setMaximumSize(new Dimension(250, 50));
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(getBackground());
-        g2.fillRoundRect(0, 0, getWidth(), getHeight(), ARC_WIDTH, ARC_HEIGHT);
-        super.paintComponent(g2);
+
+        if (getModel().isPressed()) {
+            g2.setColor(new Color(200, 180, 150));
+        } else {
+            g2.setColor(getBackground());
+        }
+        g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
+
+        super.paintComponent(g);
         g2.dispose();
     }
 
@@ -39,15 +46,8 @@ public class RoundedButton extends JButton {
     protected void paintBorder(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(getForeground());
-        g2.setStroke(new BasicStroke(2f));
-        g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, ARC_WIDTH, ARC_HEIGHT);
+        g2.setColor(Color.LIGHT_GRAY);
+        g2.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, 30, 30);
         g2.dispose();
-    }
-
-    @Override
-    public boolean contains(int x, int y) {
-        Shape shape = new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), ARC_WIDTH, ARC_HEIGHT);
-        return shape.contains(x, y);
     }
 }
