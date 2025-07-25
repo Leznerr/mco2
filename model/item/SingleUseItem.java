@@ -1,5 +1,8 @@
 package model.item;
 
+import model.battle.CombatLog;
+import model.core.Character;
+import model.util.Constants;
 import model.util.GameException;
 import model.util.InputValidator;
 
@@ -26,14 +29,22 @@ import model.util.InputValidator;
  */
 public final class SingleUseItem extends MagicItem {
 
-    /**
-     * Constructs a new single-use magic item.
-     *
-     * @param name        the item’s display name (non-blank)
-     * @param description tooltip text / effect blurb (non-blank)
-     * @param rarity      rarity label (e.g., "Common", "Rare")
-     * @throws GameException if validation fails
-     */
+    /** Effect behaviour of this item. */
+    private final SingleUseEffectType effectType;
+
+    /** Numeric value for the effect (HP/EP amount or percent for revive). */
+    private final int effectValue;
+
+    /** @return the effect category of this item */
+    public SingleUseEffectType getEffectType() {
+        return effectType;
+    }
+
+    /** @return the numeric effect value */
+    public int getEffectValue() {
+        return effectValue;
+    }
+
 
 
     /**
@@ -43,6 +54,45 @@ public final class SingleUseItem extends MagicItem {
      */
     @Override
     public MagicItem copy() {
-        return new SingleUseItem(getName(), getDescription(), getRarity());
+        return new SingleUseItem(getName(), getDescription(), getRarity(),
+                effectType, effectValue);
+    }
+
+    /**
+     * Applies this item's effect to the given user within a battle.
+     *
+     * @param user the character consuming the item (non-null)
+     * @param log  combat log to record actions (non-null)
+     * @throws GameException if the effect cannot be applied
+     */
+    public void applyEffect(Character user, CombatLog log) throws GameException {
+        InputValidator.requireNonNull(user, "item user");
+        InputValidator.requireNonNull(log,  "combat log");
+
+        switch (effectType) {
+            case HEAL_HP -> {
+                user.heal(effectValue);
+                log.addEntry(user.getName() + " uses " + getName()
+                        + " and restores " + effectValue + " HP!");
+            }
+            case RESTORE_EP -> {
+                user.gainEp(effectValue);
+                log.addEntry(user.getName() + " uses " + getName()
+                        + " and gains " + effectValue + " EP!");
+            }
+            case REVIVE -> {
+                if (user.isAlive()) {
+                    log.addEntry(user.getName() + " uses " + getName()
+                            + " but is already conscious.");
+                } else {
+                    int restore = user.getMaxHp() * effectValue / 100;
+                    user.heal(restore);
+                    log.addEntry(user.getName() + " is revived by " + getName()
+                            + " with " + restore + " HP!");
+                }
+            }
+            default -> throw new GameException("Unhandled single-use effect: "
+                    + effectType);
+        }
     }
 }

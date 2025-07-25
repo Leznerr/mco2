@@ -102,8 +102,6 @@ public final class BattleController {
             throw new GameException("Character is not part of the current battle.");
         }
 
-        submitMove(user, new ItemMove(item));
-    }
 
     /** Submits a defend action for the given character. */
     public void defend(Character user) throws GameException {
