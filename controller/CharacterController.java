@@ -44,9 +44,53 @@ public final class CharacterController {
         updateManagementViewCharacterList();
     }
 
-    private void openCharacterListView() {
+    /** Opens the character list view for this player. */
+    public void openCharacterListView() {
         CharacterListViewingView listView = new CharacterListViewingView(1);
         bindCharacterListViewingView(listView);
+    }
+
+    /** Opens the character edit view for this player. */
+    public void openCharacterEditView() {
+        CharacterEditView editView = new CharacterEditView(1);
+        // currently no editing logic; just show the view
+        editView.setActionListener(e -> {
+            if (CharacterEditView.RETURN.equals(e.getActionCommand())) {
+                editView.dispose();
+            }
+        });
+    }
+
+    /** Opens the character delete view for this player. */
+    public void openCharacterDeleteView() {
+        CharacterDeleteView delView = new CharacterDeleteView(1);
+        // simple deletion implementation
+        delView.setActionListener(e -> {
+            String cmd = e.getActionCommand();
+            if (CharacterDeleteView.RETURN.equals(cmd)) {
+                delView.dispose();
+            } else if (CharacterDeleteView.DELETE.equals(cmd)) {
+                String name = delView.getSelectedCharacter();
+                if (name != null && delView.confirmCharacterDeletion(name)) {
+                    if (player.removeCharacter(name)) {
+                        delView.showInfoMessage("Deleted " + name);
+                        updateManagementViewCharacterList();
+                    } else {
+                        delView.showErrorMessage("Character not found");
+                    }
+                }
+            }
+        });
+        refreshCharacterDeleteView(delView);
+    }
+
+    private void refreshCharacterDeleteView(CharacterDeleteView view) {
+        List<Character> characters = player.getCharacters();
+        String details = characters.isEmpty()
+                ? "No characters available."
+                : characters.stream().map(Character::toString).collect(Collectors.joining("\n\n"));
+        view.updateCharacterList(details);
+        view.setCharacterOptions(characters.stream().map(Character::getName).toArray(String[]::new));
     }
 
     private void updateManagementViewCharacterList() {

@@ -12,10 +12,12 @@ import model.core.Player;
 import model.util.DialogUtils;
 import model.util.GameException;
 import view.BattleView;
-import view.CharacterManagementView;
+import view.CharacterManagementMenuView;
+import view.PlayerCharacterManagementView;
 import view.HallOfFameManagementView;
 import view.MainMenuView;
 import view.PlayerRegistrationView;
+import controller.CharacterManagementMenuController;
 
 /**
  * Central navigator that swaps View cards inside ONE shared JFrame.
@@ -32,14 +34,16 @@ public final class SceneManager {
     private static final String CARD_MAIN_MENU  = "mainMenu";
     private static final String CARD_PLAYER_REG = "playerReg";
     private static final String CARD_HALL_OF_FAME = "hallOfFame";
-    private static final String CARD_CHARACTER_MANAGEMENT = "characterManagement";
+    private static final String CARD_CHARACTER_MENU = "characterMenu";
+    private static final String CARD_PLAYER_CHARACTER = "playerCharacter";
     private static final String CARD_BATTLE = "battle";
 
     /* ---------- Cached View Instances ---------- */
     private MainMenuView mainMenuView;
     private PlayerRegistrationView playerRegView;
     private HallOfFameManagementView hallOfFameView;
-    private CharacterManagementView characterManagementView;
+    private CharacterManagementMenuView characterMenuView;
+    private PlayerCharacterManagementView playerCharacterView;
     private BattleView battleView;
 
     private GameManagerController gameManagerController; // Keep the controller instance here
@@ -148,20 +152,30 @@ public final class SceneManager {
         cards.show(root, CARD_HALL_OF_FAME);
     }
 
-    /** Displays the character management screen for the specified player. */
-    public void showCharacterManagement(Player player) {
-        if (characterManagementView == null) {
-            characterManagementView = new CharacterManagementView(player);
-            try {
-                new CharacterController(player, characterManagementView);
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(stage, "Failed to initialize character management: " + e.getMessage(),
-                        "Error", JOptionPane.ERROR_MESSAGE);
-            }
-            root.add(characterManagementView.getContentPane(), CARD_CHARACTER_MANAGEMENT);
+    /** Shows the menu to pick which player's characters to manage. */
+    public void showCharacterManagementMenu(List<Player> players) {
+        if (characterMenuView == null) {
+            characterMenuView = new CharacterManagementMenuView();
+            new CharacterManagementMenuController(characterMenuView, players, this);
+            root.add(characterMenuView.getContentPane(), CARD_CHARACTER_MENU);
         }
+        cards.show(root, CARD_CHARACTER_MENU);
+    }
 
-        cards.show(root, CARD_CHARACTER_MANAGEMENT);
+    /** Shows character management options for a specific player. */
+    public void showPlayerCharacterManagement(Player player) {
+        playerCharacterView = new PlayerCharacterManagementView(playersIndex(player));
+        new PlayerCharacterManagementController(playerCharacterView, player, gameManagerController);
+        root.add(playerCharacterView.getContentPane(), CARD_PLAYER_CHARACTER);
+        cards.show(root, CARD_PLAYER_CHARACTER);
+    }
+
+    private int playersIndex(Player player) {
+        List<Player> list = gameManagerController.getPlayers();
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i) == player) return i + 1;
+        }
+        return 1;
     }
 
     /** Displays a battle between two characters. If the second character is AI
