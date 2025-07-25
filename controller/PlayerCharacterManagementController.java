@@ -68,8 +68,26 @@ public class PlayerCharacterManagementController {
 
     private void refreshCharacterList(CharacterDeleteView dv) {
         List<Character> chars = player.getCharacters();
-        String details = chars.isEmpty() ? "No characters available." :
-                chars.stream().map(Character::toString).collect(Collectors.joining("\n\n"));
+        String details;
+        if (chars.isEmpty()) {
+            details = "No characters available.";
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < chars.size(); i++) {
+                Character c = chars.get(i);
+                sb.append(String.format(
+                        "Char %d %s (%s & %s) - HP: %d, EP: %d",
+                        i + 1,
+                        c.getName(),
+                        c.getRaceType(),
+                        c.getClassType(),
+                        c.getCurrentHp(),
+                        c.getCurrentEp()
+                ));
+                if (i < chars.size() - 1) sb.append("\n\n");
+            }
+            details = sb.toString();
+        }
         dv.updateCharacterList(details);
         dv.setCharacterOptions(chars.stream().map(Character::getName).toArray(String[]::new));
     }
@@ -232,14 +250,21 @@ public class PlayerCharacterManagementController {
                 delView.dispose();
             } else if (CharacterDeleteView.DELETE.equals(cmd)) {
                 String name = delView.getSelectedCharacter();
-                if (name != null && delView.confirmCharacterDeletion(name)) {
-                    if (player.removeCharacter(name)) {
-                        delView.showInfoMessage("Deleted " + name);
-                        refreshCharacterList(delView);
-                        gameManagerController.handleSaveGameRequest();
-                    } else {
-                        delView.showErrorMessage("Character not found");
-                    }
+                if (name == null || name.isBlank()) {
+                    delView.showErrorMessage("No character selected.");
+                    return;
+                }
+
+                if (!delView.confirmCharacterDeletion(name)) {
+                    return;
+                }
+
+                if (player.removeCharacter(name)) {
+                    delView.showInfoMessage("Character " + name + " deleted.");
+                    refreshCharacterList(delView);
+                    gameManagerController.handleSaveGameRequest();
+                } else {
+                    delView.showErrorMessage("Character not found");
                 }
             }
         });

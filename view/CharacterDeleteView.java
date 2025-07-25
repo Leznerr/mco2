@@ -182,6 +182,12 @@ public class CharacterDeleteView extends JFrame {
         for (String name : characterNames) {
             charDropdown.addItem(name);
         }
+        btnDelete.setEnabled(characterNames.length > 0);
+    }
+
+    /** Enable or disable the delete button. */
+    public void setDeleteEnabled(boolean enabled) {
+        btnDelete.setEnabled(enabled);
     }
 
     public String getSelectedCharacter() {
