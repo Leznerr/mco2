@@ -109,8 +109,8 @@ public final class BattleController {
         // -- PLACEHOLDER: Apply effect logic here (should be part of SingleUseItem, or use effect strategy) --
         // Example (pseudo):
         // item.applyEffect(user, target, battle, battle.getCombatLog());
-        // For now, just log use:
-        battle.getCombatLog().log(user.getName() + " used item: " + item.getName());
+        // For now, just record the usage:
+        battle.getCombatLog().addEntry(user.getName() + " used item: " + item.getName());
 
         // Remove the item from inventory after use
         user.getInventory().removeItem(item);
