@@ -5,6 +5,7 @@ import model.core.HallOfFameEntry;
 import model.util.GameException;
 import java.io.*;
 import java.util.List;
+import java.util.ArrayList;
 
 public class SaveLoadService {
 
@@ -75,8 +76,10 @@ public class SaveLoadService {
             // Load the current game data
             GameData gameData = loadGame(); // This may throw GameException if something goes wrong
 
-            // Add the new player to the game data
-            gameData.getAllPlayers().add(player);
+            // Add the new player to the game data using a mutable copy
+            List<Player> players = new ArrayList<>(gameData.getAllPlayers());
+            players.add(player);
+            gameData.setAllPlayers(players);
 
             // Save the updated game data
             saveGame(gameData); // This may throw GameException if save fails
