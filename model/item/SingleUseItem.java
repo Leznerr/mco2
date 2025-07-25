@@ -29,7 +29,39 @@ import model.util.InputValidator;
  */
 public final class SingleUseItem extends MagicItem {
 
+    /** Specific effect this item triggers when consumed. */
+    private final SingleUseEffectType effectType;
 
+    /** Numeric magnitude of the effect (e.g., HP restored). */
+    private final int effectValue;
+
+    /**
+     * Constructs a single-use magic item.
+     *
+     * @param name        display name (non-blank)
+     * @param description tooltip or flavour text (non-blank)
+     * @param rarity      rarity label (non-blank)
+     * @param effectType  type of effect when used (non-null)
+     * @param effectValue numeric value of the effect (1..MAX_EFFECT_VALUE)
+     * @throws GameException if any argument fails validation
+     */
+    public SingleUseItem(String name, String description, String rarity,
+                         SingleUseEffectType effectType, int effectValue)
+            throws GameException {
+        super(name, description, ItemType.SINGLE_USE, rarity);
+
+        InputValidator.requireNonNull(effectType, "effect type");
+        InputValidator.requireRange(effectValue, 1,
+                Constants.MAX_EFFECT_VALUE, "effect value");
+
+        this.effectType = effectType;
+        this.effectValue = effectValue;
+    }
+
+    /** @return the effect type */
+    public SingleUseEffectType getEffectType() {
+        return effectType;
+    }
 
     /** @return the numeric effect value */
     public int getEffectValue() {
