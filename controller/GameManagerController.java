@@ -172,9 +172,11 @@ public void actionPerformed(ActionEvent e) {
         // Load existing game data (or create new if no data exists)
         GameData gameData = SaveLoadService.loadGame();
 
-        // Add the new players to the game data
-        gameData.getAllPlayers().add(player1);
-        gameData.getAllPlayers().add(player2);
+        // Add the new players to the game data using a mutable copy
+        List<Player> existing = new ArrayList<>(gameData.getAllPlayers());
+        existing.add(player1);
+        existing.add(player2);
+        gameData.setAllPlayers(existing);
 
         // Save the updated game data with the new players
         SaveLoadService.saveGame(gameData);  // Save the game data with the newly added players
