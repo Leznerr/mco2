@@ -6,6 +6,7 @@ import model.util.InputValidator;
 import persistence.GameData;
 import persistence.SaveLoadService;
 import view.*;
+import app.Main;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -98,7 +99,7 @@ public void actionPerformed(ActionEvent e) {
         case MainMenuView.ACTION_EXIT -> {
             handleSaveGameRequest();
             mainMenuView.dispose(); // Close the MainMenuView
-            System.exit(0); // Close the application
+            Main.shutdown(); // Centralized application shutdown
         }
         default -> {
             JOptionPane.showMessageDialog(mainMenuView, "Unknown action: " + command, "Unknown Action", JOptionPane.WARNING_MESSAGE);
