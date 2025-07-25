@@ -108,10 +108,8 @@ public void actionPerformed(ActionEvent e) {
             if (players.isEmpty()) {
                 JOptionPane.showMessageDialog(mainMenuView, "Please register players first.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                for (Player player : players) {
-                    sceneManager.showCharacterManagement(player); // Show Character Management View
-                }
-                mainMenuView.dispose(); // Close the MainMenuView
+                sceneManager.showCharacterManagementMenu(players);
+                mainMenuView.dispose();
             }
         }
         case MainMenuView.ACTION_HALL_OF_FAME -> {
