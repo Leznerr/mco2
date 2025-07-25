@@ -1,6 +1,7 @@
 package view;
 
 import model.core.Character;
+import model.battle.CombatLog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -169,6 +170,39 @@ public class BattleView extends JPanel {
                               + " | EP: " + character2.getCurrentEp() + "/" + character2.getMaxEp());
     }
 
+    // --- Battle Flow Display Methods ---
+
+    /**
+     * Clears the log and posts initial battle info.
+     */
+    public void displayBattleStart(Character c1, Character c2) {
+        clearBattleLog();
+        appendToBattleLog("\u2500\u2500 Battle Start \u2500\u2500");
+        appendToBattleLog(c1.getName() + " vs " + c2.getName());
+        updatePlayer1Stats();
+        updatePlayer2Stats();
+    }
+
+    /**
+     * Refreshes the log and stat panels after each turn.
+     */
+    public void displayTurnResults(model.battle.CombatLog log) {
+        battleLogArea.setText(String.join("\n", log.getLogEntries()));
+        updatePlayer1Stats();
+        updatePlayer2Stats();
+    }
+
+    /**
+     * Announces the winner and finalises the log.
+     */
+    public void displayBattleEnd(Character winner) {
+        appendToBattleLog(winner.getName() + " wins the battle!");
+        JOptionPane.showMessageDialog(this,
+                winner.getName() + " is victorious!",
+                "Battle Over",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
     // --- GUI Helper Methods ---
     private JLabel createLabel(String text, int x, int y, int width, int height) {
         JLabel lbl = new JLabel(text);
@@ -201,42 +235,13 @@ public class BattleView extends JPanel {
         battleLogArea.setText("");
     }
 
-    // --- Basic controller callbacks ---
-    /**
-     * Displays the start of a battle between two characters.
-     */
-    public void displayBattleStart(Character c1, Character c2) {
-        clearBattleLog();
-        appendToBattleLog("Battle begins! " + c1.getName() + " vs " + c2.getName() + "\n");
-        updatePlayer1Stats();
-        updatePlayer2Stats();
-    }
 
-    /**
-     * Appends the entire combat log for the current turn and refreshes stats.
-     */
-    public void displayTurnResults(model.battle.CombatLog log) {
         for (String entry : log.getLogEntries()) {
             appendToBattleLog(entry);
         }
         updatePlayer1Stats();
         updatePlayer2Stats();
-    }
 
-    /**
-     * Announces the winner at the end of the battle.
-     */
-    public void displayBattleEnd(Character winner) {
-        appendToBattleLog("Winner: " + winner.getName());
-    }
-
-    /**
-     * Enables or disables Player 2's ability controls.
-     * Used when the second character is AI-controlled.
-     */
-    public void setPlayer2ControlsEnabled(boolean enabled) {
-        abilitySelectorP2.setEnabled(enabled);
-        btnUseAbilityP2.setEnabled(enabled);
     }
 
     // --- Ability Selectors ---
@@ -248,4 +253,26 @@ public class BattleView extends JPanel {
     public void addUseAbilityP2Listener(ActionListener listener) { btnUseAbilityP2.addActionListener(listener); }
     public void addRematchListener(ActionListener listener) { btnRematch.addActionListener(listener); }
     public void addReturnListener(ActionListener listener) { btnReturn.addActionListener(listener); }
+
+    /* ----------------------------------------------------- Display Hooks */
+
+    /** Called by the controller at battle start to reset the log and stats. */
+    public void displayBattleStart(Character c1, Character c2) {
+        clearBattleLog();
+        appendToBattleLog("Battle begins: " + c1.getName() + " vs " + c2.getName());
+        updatePlayer1Stats();
+        updatePlayer2Stats();
+    }
+
+    /** Updates the battle log with the latest turn results. */
+    public void displayTurnResults(model.battle.CombatLog log) {
+        log.getLogEntries().forEach(this::appendToBattleLog);
+        updatePlayer1Stats();
+        updatePlayer2Stats();
+    }
+
+    /** Announces the winner at the end of the battle. */
+    public void displayBattleEnd(Character winner) {
+        appendToBattleLog(winner.getName() + " wins the battle!");
+    }
 }

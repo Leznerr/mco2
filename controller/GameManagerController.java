@@ -2,9 +2,7 @@ package controller;
 
 import model.core.Player;
 import model.core.Character;
-import controller.AIController;
-import model.util.SimpleBot;
-import model.util.RandomCharacterGenerator;
+
 import model.util.GameException;
 import model.util.InputValidator;
 import persistence.GameData;
@@ -15,6 +13,8 @@ import app.Main;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -70,6 +70,19 @@ public final class GameManagerController implements ActionListener {
     /** Wires this controller to the main menu buttons. */
     private void bindUI() {
         mainMenuView.setController(this);
+        mainMenuView.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int choice = JOptionPane.showConfirmDialog(
+                        mainMenuView,
+                        "Are you sure you want to quit?",
+                        "Confirm Exit",
+                        JOptionPane.YES_NO_OPTION);
+                if (choice == JOptionPane.YES_OPTION) {
+                    quitApplication();
+                }
+            }
+        });
     }
 
     /** Main button dispatcher for MainMenuView. */
@@ -113,9 +126,7 @@ public void actionPerformed(ActionEvent e) {
             }
         }
         case MainMenuView.ACTION_EXIT -> {
-            handleSaveGameRequest();
-            mainMenuView.dispose(); // Close the MainMenuView
-            Main.shutdown(); // Centralized application shutdown
+            quitApplication();
         }
         default -> {
             JOptionPane.showMessageDialog(mainMenuView, "Unknown action: " + command, "Unknown Action", JOptionPane.WARNING_MESSAGE);
@@ -213,6 +224,15 @@ public void actionPerformed(ActionEvent e) {
         SwingUtilities.invokeLater(() -> mainMenuView.setVisible(true));
     }
 
+    /**
+     * Handles all logic required when the application is requested to exit.
+     */
+    private void quitApplication() {
+        handleSaveGameRequest();
+        mainMenuView.dispose();
+        Main.shutdown();
+    }
+
     // === Game Data Save/Load Methods ===
 
     /**
@@ -259,5 +279,36 @@ public void actionPerformed(ActionEvent e) {
      */
     public List<Player> getPlayers() {
         return Collections.unmodifiableList(players);
+    }
+
+    /**
+     * Processes a player's win: increments wins, awards Hall of Fame credit,
+     * and grants a random magic item every {@link Constants#WINS_PER_REWARD}
+     * victories. The new item is added to the winning character's inventory
+     * and persisted via {@link SaveLoadService}.
+     *
+     * @param winner   the player who won
+     * @param character the character that secured the win
+     */
+    public void handlePlayerWin(Player winner, Character character) {
+        try {
+            InputValidator.requireNonNull(winner, "winner");
+            InputValidator.requireNonNull(character, "character");
+
+            winner.incrementWins();
+            hallOfFameController.addWinForPlayer(winner);
+
+            if (winner.getCumulativeWins() % Constants.WINS_PER_REWARD == 0) {
+                MagicItem reward = MagicItemFactory.createRandomReward();
+                character.getInventory().addItem(reward);
+            }
+
+            SaveLoadService.saveGame(new GameData(players,
+                                                 hallOfFameController.getHallOfFame()));
+        } catch (GameException e) {
+            JOptionPane.showMessageDialog(mainMenuView,
+                    "Failed to record win: " + e.getMessage(),
+                    "Win Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

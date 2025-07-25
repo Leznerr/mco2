@@ -3,6 +3,9 @@ package controller;
 import model.battle.Battle;
 import model.battle.CombatLog;
 import model.battle.Move;
+import model.battle.Defend;
+import model.battle.Recharge;
+import model.battle.ItemMove;
 import model.core.Character;
 import model.item.SingleUseItem;
 import model.util.GameException;
@@ -124,25 +127,16 @@ public final class BattleController {
         if (!belongsToBattle(user)) {
             throw new GameException("Character is not part of the current battle.");
         }
-        // Ensure the user has the item in inventory
-        if (!user.getInventory().getAllItems().contains(item)) {
-            throw new GameException("Item is not in user's inventory.");
-        }
-        // Apply item effect. You must implement this effect method according to your game logic.
-        // Example: item.applyEffect(user, battle, battle.getCombatLog());
-        // (You'll need to pass the appropriate target if applicable)
 
-        // -- PLACEHOLDER: Apply effect logic here (should be part of SingleUseItem, or use effect strategy) --
-        // Example (pseudo):
-        // item.applyEffect(user, target, battle, battle.getCombatLog());
-        // For now, just record the usage:
-        battle.getCombatLog().addEntry(user.getName() + " used item: " + item.getName());
 
-        // Remove the item from inventory after use
-        user.getInventory().removeItem(item);
+    /** Submits a defend action for the given character. */
+    public void defend(Character user) throws GameException {
+        submitMove(user, new Defend());
+    }
 
-        // Optionally, refresh view/turn state as needed
-        // view.displayTurnResults(battle.getCombatLog());
+    /** Submits a recharge action for the given character. */
+    public void recharge(Character user) throws GameException {
+        submitMove(user, new Recharge());
     }
 
     /* ================================================= INTERNAL FLOW */
