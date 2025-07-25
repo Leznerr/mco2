@@ -236,14 +236,6 @@ public class BattleView extends JPanel {
     }
 
 
-        for (String entry : log.getLogEntries()) {
-            appendToBattleLog(entry);
-        }
-        updatePlayer1Stats();
-        updatePlayer2Stats();
-
-    }
-
     // --- Ability Selectors ---
     public JComboBox<String> getAbilitySelectorP1() { return abilitySelectorP1; }
     public JComboBox<String> getAbilitySelectorP2() { return abilitySelectorP2; }
@@ -256,23 +248,4 @@ public class BattleView extends JPanel {
 
     /* ----------------------------------------------------- Display Hooks */
 
-    /** Called by the controller at battle start to reset the log and stats. */
-    public void displayBattleStart(Character c1, Character c2) {
-        clearBattleLog();
-        appendToBattleLog("Battle begins: " + c1.getName() + " vs " + c2.getName());
-        updatePlayer1Stats();
-        updatePlayer2Stats();
-    }
-
-    /** Updates the battle log with the latest turn results. */
-    public void displayTurnResults(model.battle.CombatLog log) {
-        log.getLogEntries().forEach(this::appendToBattleLog);
-        updatePlayer1Stats();
-        updatePlayer2Stats();
-    }
-
-    /** Announces the winner at the end of the battle. */
-    public void displayBattleEnd(Character winner) {
-        appendToBattleLog(winner.getName() + " wins the battle!");
-    }
 }
