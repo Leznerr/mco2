@@ -172,6 +172,9 @@ public void actionPerformed(ActionEvent e) {
                     }
                 }
             });
+
+            // Ensure the menu becomes visible when opened
+            view.setVisible(true);
         });
     }
 
@@ -182,6 +185,7 @@ public void actionPerformed(ActionEvent e) {
             CharacterManualCreationController controller =
                 new CharacterManualCreationController(manualView, playerName, this);
             manualView.setController(controller);
+            manualView.setVisible(true);
         });
     }
 
@@ -191,6 +195,7 @@ public void actionPerformed(ActionEvent e) {
             CharacterAutoCreationController controller =
                 new CharacterAutoCreationController(autoView, playerName, this);
             autoView.setController(controller);
+            autoView.setVisible(true);
         });
     }
 
