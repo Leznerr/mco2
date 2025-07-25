@@ -128,6 +128,15 @@ public final class BattleController {
             throw new GameException("Character is not part of the current battle.");
         }
 
+        // Verify item exists, apply its effect, and remove it from inventory
+        if (!user.getInventory().getAllItems().contains(item)) {
+            throw new GameException("Item not found in inventory.");
+        }
+
+        CombatLog log = battle.getCombatLog();
+        item.applyEffect(user, log);
+        user.getInventory().useSingleUseItem(item);
+    }
 
     /** Submits a defend action for the given character. */
     public void defend(Character user) throws GameException {
