@@ -2,9 +2,7 @@ package controller;
 
 import model.core.Player;
 import model.core.Character;
-import model.item.MagicItem;
-import model.service.MagicItemFactory;
-import model.util.Constants;
+
 import model.util.GameException;
 import model.util.InputValidator;
 import persistence.GameData;
@@ -112,8 +110,20 @@ public void actionPerformed(ActionEvent e) {
             mainMenuView.dispose(); // Close the MainMenuView
         }
         case MainMenuView.ACTION_START_BATTLE -> {
-            JOptionPane.showMessageDialog(mainMenuView, "Battle feature not implemented yet.", "Info", JOptionPane.INFORMATION_MESSAGE);
-            // Ideally, you should call sceneManager.showBattleView() here when ready
+            if (players.isEmpty() || players.get(0).getCharacters().isEmpty()) {
+                JOptionPane.showMessageDialog(mainMenuView, "Please create a player and at least one character first.", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                Player player = players.get(0);
+                Character human = player.getCharacters().get(0);
+                try {
+                    Character bot = RandomCharacterGenerator.generate("Bot");
+                    AIController ai = new AIController(new SimpleBot(new java.util.Random()));
+                    sceneManager.showPlayerVsBotBattle(human, bot, ai);
+                    mainMenuView.dispose();
+                } catch (GameException e1) {
+                    JOptionPane.showMessageDialog(mainMenuView, "Failed to start battle: " + e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
         }
         case MainMenuView.ACTION_EXIT -> {
             quitApplication();

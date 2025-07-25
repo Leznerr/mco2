@@ -235,23 +235,13 @@ public class BattleView extends JPanel {
         battleLogArea.setText("");
     }
 
-    // --- BattleController Callbacks ---
-    public void displayBattleStart(Character c1, Character c2) {
-        clearBattleLog();
-        appendToBattleLog("Battle begins: " + c1.getName() + " vs " + c2.getName());
-    }
 
-    public void displayTurnResults(CombatLog log) {
         for (String entry : log.getLogEntries()) {
             appendToBattleLog(entry);
         }
         updatePlayer1Stats();
         updatePlayer2Stats();
-        log.clearLog();
-    }
 
-    public void displayBattleEnd(Character winner) {
-        appendToBattleLog(winner.getName() + " wins the battle!");
     }
 
     // --- Ability Selectors ---

@@ -7,11 +7,16 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import model.core.Player;
+import model.core.Character;
 import view.CharacterManagementView;
 import view.HallOfFameManagementView;
 import view.MainMenuView;
 import view.PlayerRegistrationView;
 import view.BattleView;
+import model.util.GameException;
+import model.util.DialogUtils;
+import controller.BattleController;
+import controller.AIController;
 
 /**
  * Central navigator that swaps View cards inside ONE shared JFrame.
@@ -154,6 +159,35 @@ public final class SceneManager {
         }
 
         cards.show(root, CARD_CHARACTER_MANAGEMENT);
+    }
+
+    /** Displays a battle between two characters. If the second character is AI
+     * controlled, its controls are disabled and the provided controller
+     * orchestrates the fight. */
+    public void showPlayerVsBotBattle(Character human, Character bot, AIController aiController) {
+        battleView = new BattleView(human, bot);
+        battleView.setPlayer2ControlsEnabled(false);
+        try {
+            BattleController battleController = new BattleController(battleView);
+            battleView.addUseAbilityP1Listener(e -> {
+                int idx = battleView.getAbilitySelectorP1().getSelectedIndex();
+                if (idx >= 0) {
+                    try {
+                        battleController.submitMove(human, new model.battle.AbilityMove(human.getAbilities().get(idx)));
+                    } catch (GameException ex) {
+                        DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
+                    }
+                }
+            });
+            battleView.addReturnListener(e -> cards.show(root, CARD_MAIN_MENU));
+            root.add(battleView, CARD_BATTLE);
+            battleController.startBattleVsBot(human, bot, aiController);
+        } catch (GameException e) {
+            JOptionPane.showMessageDialog(stage, "Unable to start battle: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        cards.show(root, CARD_BATTLE);
     }
 
     /** Entry point for testing this class in isolation. */

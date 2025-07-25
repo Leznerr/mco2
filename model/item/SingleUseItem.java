@@ -29,16 +29,7 @@ import model.util.InputValidator;
  */
 public final class SingleUseItem extends MagicItem {
 
-    /** Effect behaviour of this item. */
-    private final SingleUseEffectType effectType;
 
-    /** Numeric value for the effect (HP/EP amount or percent for revive). */
-    private final int effectValue;
-
-    /** @return the effect category of this item */
-    public SingleUseEffectType getEffectType() {
-        return effectType;
-    }
 
     /** @return the numeric effect value */
     public int getEffectValue() {
