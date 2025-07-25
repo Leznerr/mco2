@@ -1,6 +1,10 @@
 package controller;
 
 import model.core.Player;
+import model.core.Character;
+import model.item.MagicItem;
+import model.service.MagicItemFactory;
+import model.util.Constants;
 import model.util.GameException;
 import model.util.InputValidator;
 import persistence.GameData;
@@ -243,5 +247,36 @@ public void actionPerformed(ActionEvent e) {
      */
     public List<Player> getPlayers() {
         return Collections.unmodifiableList(players);
+    }
+
+    /**
+     * Processes a player's win: increments wins, awards Hall of Fame credit,
+     * and grants a random magic item every {@link Constants#WINS_PER_REWARD}
+     * victories. The new item is added to the winning character's inventory
+     * and persisted via {@link SaveLoadService}.
+     *
+     * @param winner   the player who won
+     * @param character the character that secured the win
+     */
+    public void handlePlayerWin(Player winner, Character character) {
+        try {
+            InputValidator.requireNonNull(winner, "winner");
+            InputValidator.requireNonNull(character, "character");
+
+            winner.incrementWins();
+            hallOfFameController.addWinForPlayer(winner);
+
+            if (winner.getCumulativeWins() % Constants.WINS_PER_REWARD == 0) {
+                MagicItem reward = MagicItemFactory.createRandomReward();
+                character.getInventory().addItem(reward);
+            }
+
+            SaveLoadService.saveGame(new GameData(players,
+                                                 hallOfFameController.getHallOfFame()));
+        } catch (GameException e) {
+            JOptionPane.showMessageDialog(mainMenuView,
+                    "Failed to record win: " + e.getMessage(),
+                    "Win Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
