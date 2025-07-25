@@ -34,11 +34,7 @@ public final class SingleUseItem extends MagicItem {
      * @param rarity      rarity label (e.g., "Common", "Rare")
      * @throws GameException if validation fails
      */
-    public SingleUseItem(String name, String description, String rarity)
-            throws GameException {
-        super(name, description, ItemType.SINGLE_USE, rarity);
 
-    }
 
     /**
      * Creates a deep copy of this item.
