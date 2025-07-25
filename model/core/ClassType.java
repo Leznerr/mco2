@@ -23,7 +23,12 @@ public enum ClassType {
     ROGUE("High agility skirmisher that relies on speed and stealth.", 100, 50),
 
     /** Heavily armoured front-liner with strong physical defence. */
-    WARRIOR("Resilient melee fighter boasting superior HP and defence.", 100, 50);
+    WARRIOR("Resilient melee fighter boasting superior HP and defence.", 100, 50),
+
+    /**
+     * Devout knight combining martial prowess with protective holy magic.
+     */
+    PALADIN("Holy warrior wielding sacred power and sturdy defences.", 120, 60);
 
     private final String description;
     private final int baseHP;
