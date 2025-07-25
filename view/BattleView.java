@@ -58,7 +58,10 @@ public class BattleView extends JPanel {
      */
     private void initializeComponents() {
         JPanel backgroundPanel = new JPanel() {
-            private final Image bg = new ImageIcon("view/assets/BattleArenaBG.jpg").getImage();
+            // Background image for the battle screen. BattleArenaBG.jpg was
+            // referenced previously but no such asset exists. Use the generic
+            // battle background that is already bundled with the project.
+            private final Image bg = new ImageIcon("view/assets/CharSelectAndBattleBG.jpg").getImage();
 
             @Override
             protected void paintComponent(Graphics g) {
