@@ -201,6 +201,44 @@ public class BattleView extends JPanel {
         battleLogArea.setText("");
     }
 
+    // --- Basic controller callbacks ---
+    /**
+     * Displays the start of a battle between two characters.
+     */
+    public void displayBattleStart(Character c1, Character c2) {
+        clearBattleLog();
+        appendToBattleLog("Battle begins! " + c1.getName() + " vs " + c2.getName() + "\n");
+        updatePlayer1Stats();
+        updatePlayer2Stats();
+    }
+
+    /**
+     * Appends the entire combat log for the current turn and refreshes stats.
+     */
+    public void displayTurnResults(model.battle.CombatLog log) {
+        for (String entry : log.getLogEntries()) {
+            appendToBattleLog(entry);
+        }
+        updatePlayer1Stats();
+        updatePlayer2Stats();
+    }
+
+    /**
+     * Announces the winner at the end of the battle.
+     */
+    public void displayBattleEnd(Character winner) {
+        appendToBattleLog("Winner: " + winner.getName());
+    }
+
+    /**
+     * Enables or disables Player 2's ability controls.
+     * Used when the second character is AI-controlled.
+     */
+    public void setPlayer2ControlsEnabled(boolean enabled) {
+        abilitySelectorP2.setEnabled(enabled);
+        btnUseAbilityP2.setEnabled(enabled);
+    }
+
     // --- Ability Selectors ---
     public JComboBox<String> getAbilitySelectorP1() { return abilitySelectorP1; }
     public JComboBox<String> getAbilitySelectorP2() { return abilitySelectorP2; }

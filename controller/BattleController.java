@@ -8,6 +8,7 @@ import model.item.SingleUseItem;
 import model.util.GameException;
 import model.util.InputValidator;
 import view.BattleView;
+import controller.AIController;
 
 import java.util.*;
 
@@ -34,6 +35,11 @@ public final class BattleController {
     private Battle battle; // null ⇢ idle
     private final Map<Character, Move> selections = new HashMap<>(2);
 
+    // AI support
+    private AIController aiController;
+    private Character aiCharacter;
+    private Character humanOpponent;
+
     /* ===================================================== CONSTRUCTION */
 
     public BattleController(BattleView battleView) throws GameException {
@@ -56,7 +62,27 @@ public final class BattleController {
 
         battle = new Battle(c1, c2);
         selections.clear();
+        aiController = null;
+        aiCharacter = null;
+        humanOpponent = null;
         view.displayBattleStart(c1, c2);
+    }
+
+    /**
+     * Starts a battle where {@code bot} is controlled by an AI.
+     * The opposing human character must choose moves via the UI.
+     */
+    public void startBattleVsBot(Character human, Character bot, AIController ai) throws GameException {
+        InputValidator.requireNonNull(human, "human");
+        InputValidator.requireNonNull(bot, "bot");
+        InputValidator.requireNonNull(ai, "aiController");
+
+        startBattle(human, bot);
+        this.aiController = ai;
+        this.aiCharacter = bot;
+        this.humanOpponent = human;
+
+        queueAIMove(); // Bot selects its first move immediately
     }
 
     /**
@@ -135,12 +161,17 @@ public final class BattleController {
         view.displayTurnResults(log);
         selections.clear(); // prepare for next round
 
+        if (!battleEnded() && aiController != null) {
+            queueAIMove();
+        }
+
         if (battleEnded()) {
             Character winner = battle.getCharacter1().isAlive()
                     ? battle.getCharacter1()
                     : battle.getCharacter2();
             view.displayBattleEnd(winner);
             battle = null; // back to idle state
+            aiController = null;
         }
     }
 
@@ -165,6 +196,13 @@ public final class BattleController {
     }
 
     /* ================================================= SMALL UTILS */
+
+    private void queueAIMove() throws GameException {
+        if (aiController != null && aiCharacter != null && humanOpponent != null) {
+            Move aiMove = aiController.requestMove(aiCharacter, humanOpponent);
+            selections.put(aiCharacter, aiMove);
+        }
+    }
 
     private List<Turn> buildTurnOrder() {
         Character c1 = battle.getCharacter1();
