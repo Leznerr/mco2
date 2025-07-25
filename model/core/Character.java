@@ -216,8 +216,10 @@ public class Character {
      */
     public void setAbilities(List<Ability> newAbilities) {
         InputValidator.requireNonNull(newAbilities, "New abilities list");
-        InputValidator.requireSize(newAbilities, Constants.NUM_ABILITIES_PER_CHAR,
-            "A character must have exactly " + Constants.NUM_ABILITIES_PER_CHAR + " abilities.");
+        InputValidator.requireSize(newAbilities.size(),
+                Constants.NUM_ABILITIES_PER_CHAR,
+                "A character must have exactly "
+                        + Constants.NUM_ABILITIES_PER_CHAR + " abilities.");
         this.abilities.clear();
         this.abilities.addAll(newAbilities);
     }
