@@ -1,15 +1,23 @@
 package controller;
 
-import model.core.*;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import model.core.Ability;
 import model.core.Character;
+import model.core.ClassType;
+import model.core.Player;
+import model.core.RaceType;
 import model.service.ClassService;
 import model.service.RaceService;
 import model.util.GameException;
 import model.util.InputValidator;
-import view.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import view.CharacterDeleteView;
+import view.CharacterEditView;
+import view.CharacterListViewingView;
+import view.CharacterManagementView;
+import view.CharacterManualCreationView;
+import view.CharacterSpecViewingView;
 
 /**
  * Controller responsible for managing all character-related actions
@@ -37,12 +45,37 @@ public final class CharacterController {
     // ------------------ CharacterManagementView Integration -----------------------
 
    private void bindCharacterManagementView() {
-        managementView.addManagePlayer1Listener(e -> openCharacterListView());
-        managementView.addManagePlayer2Listener(e -> openCharacterListView());
-        managementView.addReturnToMenuListener(e -> managementView.dispose());
+       managementView.setActionListener(e -> {
+    switch (e.getActionCommand()) {
+        case CharacterManagementView.VIEW_CHARACTERS:
+            openCharacterListView();
+            break;
+        case CharacterManagementView.CREATE_CHARACTER:
+            openManualCreationView();
+            break;
+        case CharacterManagementView.EDIT_CHARACTER:
+            openCharacterEditView();
+            break;
+        case CharacterManagementView.DELETE_CHARACTER:
+            openCharacterDeleteView();
+            break;
+        case CharacterManagementView.RETURN:
+            managementView.dispose();
+            break;
+    }
+});
+
 
         updateManagementViewCharacterList();
     }
+
+    /** Opens the manual character creation view for this player. */
+public void openManualCreationView() {
+    CharacterManualCreationView manualView = new CharacterManualCreationView(player.getName());
+    bindCharacterManualCreationView(manualView);
+    manualView.setVisible(true);
+}
+
 
     /** Opens the character list view for this player. */
     public void openCharacterListView() {
