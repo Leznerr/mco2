@@ -127,7 +127,7 @@ public void actionPerformed(ActionEvent e) {
                 try {
                     Character bot = RandomCharacterGenerator.generate("Bot");
                     AIController ai = new AIController(new SimpleBot(new java.util.Random()));
-                    sceneManager.showPlayerVsBotBattle(human, bot, ai);
+                    sceneManager.showPlayerVsBotBattle(player, human, bot, ai);
                     mainMenuView.dispose();
                 } catch (GameException e1) {
                     JOptionPane.showMessageDialog(mainMenuView, "Failed to start battle: " + e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

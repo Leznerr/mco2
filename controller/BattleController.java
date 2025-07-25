@@ -8,7 +8,10 @@ import model.battle.Recharge;
 import model.battle.ItemMove;
 import model.core.Character;
 import model.core.Ability;
+import model.core.Player;
+import controller.GameManagerController;
 import model.item.SingleUseItem;
+import model.battle.LevelingSystem;
 import model.util.GameException;
 import model.util.InputValidator;
 import view.BattleView;
@@ -34,6 +37,9 @@ public final class BattleController {
 
     /* -------------------------------------------------------- IMMUTABLES */
     private final BattleView view;
+    private final GameManagerController gameManagerController;
+    private final Player player1;
+    private final Player player2;
 
     /* ----------------------------------------------------------- SESSION */
     private Battle battle; // null ⇢ idle
@@ -47,8 +53,18 @@ public final class BattleController {
     /* ===================================================== CONSTRUCTION */
 
     public BattleController(BattleView battleView) throws GameException {
+        this(battleView, null, null, null);
+    }
+
+    public BattleController(BattleView battleView,
+                            GameManagerController gameManagerController,
+                            Player player1,
+                            Player player2) throws GameException {
         InputValidator.requireNonNull(battleView, "battleView");
         this.view = battleView;
+        this.gameManagerController = gameManagerController;
+        this.player1 = player1;
+        this.player2 = player2;
     }
 
     /* ================================================= PUBLIC API */
@@ -138,6 +154,7 @@ public final class BattleController {
         CombatLog log = battle.getCombatLog();
         item.applyEffect(user, log);
         user.getInventory().useSingleUseItem(item);
+        updatePlayerPanels();
     }
 
     /** Submits a defend action for the given character. */
@@ -175,6 +192,22 @@ public final class BattleController {
             Character winner = battle.getCharacter1().isAlive()
                     ? battle.getCharacter1()
                     : battle.getCharacter2();
+            Character loser = (winner == battle.getCharacter1())
+                    ? battle.getCharacter2() : battle.getCharacter1();
+
+            // Award XP and handle win persistence if players are known
+            if (gameManagerController != null) {
+                Player winPlayer = (winner == battle.getCharacter1()) ? player1 : player2;
+                if (winPlayer != null) {
+                    int xp = LevelingSystem.calculateXpGained(winner, loser);
+                    winner.addXp(xp);
+                    log.addEntry(winner.getName() + " gains " + xp + " XP.");
+                    if (gameManagerController != null) {
+                        gameManagerController.handlePlayerWin(winPlayer, winner);
+                    }
+                }
+            }
+
             view.displayBattleEnd(winner);
             updatePlayerPanels();
             battle = null; // back to idle state
