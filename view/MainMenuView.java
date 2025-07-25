@@ -5,7 +5,6 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import controller.GameManagerController;
-import app.Main;
 
 /**
  * The main menu view for Fatal Fantasy: Tactics Game.
@@ -42,23 +41,6 @@ public class MainMenuView extends JFrame {
 
         setSize(800, 700);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                int choice = JOptionPane.showConfirmDialog(
-                    MainMenuView.this,
-                    "Are you sure you want to quit?",
-                    "Confirm Exit",
-                    JOptionPane.YES_NO_OPTION
-                );
-
-                if (choice == JOptionPane.YES_OPTION) {
-                    dispose();
-                    Main.shutdown();
-                }
-            }
-        });
 
         setLocationRelativeTo(null);
         setResizable(false);
