@@ -240,6 +240,17 @@ public class BattleView extends JPanel {
     public JComboBox<String> getAbilitySelectorP1() { return abilitySelectorP1; }
     public JComboBox<String> getAbilitySelectorP2() { return abilitySelectorP2; }
 
+    /**
+     * Enables or disables the ability selector and action button for Player 2.
+     * Useful when Player 2 is controlled by the AI.
+     *
+     * @param enabled {@code true} to allow interaction; {@code false} to disable
+     */
+    public void setPlayer2ControlsEnabled(boolean enabled) {
+        btnUseAbilityP2.setEnabled(enabled);
+        abilitySelectorP2.setEnabled(enabled);
+    }
+
     // --- Action Listener Registration (wired via controller) ---
     public void addUseAbilityP1Listener(ActionListener listener) { btnUseAbilityP1.addActionListener(listener); }
     public void addUseAbilityP2Listener(ActionListener listener) { btnUseAbilityP2.addActionListener(listener); }
