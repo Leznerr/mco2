@@ -220,11 +220,11 @@ public final class SceneManager {
     }
 
     /** Displays a battle between two characters. */
-    public void showPlayerVsBotBattle(Character human, Character bot, AIController aiController) {
+    public void showPlayerVsBotBattle(Player humanPlayer, Character human, Character bot, AIController aiController) {
         battleView = new BattleView(human, bot);
         battleView.setPlayer2ControlsEnabled(false);
         try {
-            BattleController battleController = new BattleController(battleView);
+            BattleController battleController = new BattleController(battleView, gameManagerController, humanPlayer, null);
             battleView.addUseAbilityP1Listener(e -> {
                 int idx = battleView.getAbilitySelectorP1().getSelectedIndex();
                 if (idx >= 0) {
