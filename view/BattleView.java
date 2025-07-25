@@ -170,6 +170,39 @@ public class BattleView extends JPanel {
                               + " | EP: " + character2.getCurrentEp() + "/" + character2.getMaxEp());
     }
 
+    // --- Battle Flow Display Methods ---
+
+    /**
+     * Clears the log and posts initial battle info.
+     */
+    public void displayBattleStart(Character c1, Character c2) {
+        clearBattleLog();
+        appendToBattleLog("\u2500\u2500 Battle Start \u2500\u2500");
+        appendToBattleLog(c1.getName() + " vs " + c2.getName());
+        updatePlayer1Stats();
+        updatePlayer2Stats();
+    }
+
+    /**
+     * Refreshes the log and stat panels after each turn.
+     */
+    public void displayTurnResults(model.battle.CombatLog log) {
+        battleLogArea.setText(String.join("\n", log.getLogEntries()));
+        updatePlayer1Stats();
+        updatePlayer2Stats();
+    }
+
+    /**
+     * Announces the winner and finalises the log.
+     */
+    public void displayBattleEnd(Character winner) {
+        appendToBattleLog(winner.getName() + " wins the battle!");
+        JOptionPane.showMessageDialog(this,
+                winner.getName() + " is victorious!",
+                "Battle Over",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
     // --- GUI Helper Methods ---
     private JLabel createLabel(String text, int x, int y, int width, int height) {
         JLabel lbl = new JLabel(text);
