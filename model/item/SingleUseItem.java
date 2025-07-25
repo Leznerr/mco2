@@ -38,9 +38,6 @@ public final class SingleUseItem extends MagicItem {
             throws GameException {
         super(name, description, ItemType.SINGLE_USE, rarity);
 
-        InputValidator.requireNonBlank(name,        "Item name");
-        InputValidator.requireNonBlank(description, "Item description");
-        InputValidator.requireNonBlank(rarity,      "Item rarity");
     }
 
     /**
