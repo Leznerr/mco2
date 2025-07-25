@@ -235,13 +235,15 @@ public final class SceneManager {
                     }
                 }
             });
-            battleView.addReturnListener(e -> cards.show(root, CARD_MAIN_MENU));
-            root.add(battleView, CARD_BATTLE);
+            battleView.addReturnListener(e -> {
+                battleView.dispose();
+                showMainMenu();
+            });
             battleController.startBattleVsBot(human, bot, aiController);
         } catch (GameException e) {
             JOptionPane.showMessageDialog(stage, "Unable to start battle: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            battleView.dispose();
         }
-        cards.show(root, CARD_BATTLE);
     }
 
     /** Entry point for testing this class in isolation. */
