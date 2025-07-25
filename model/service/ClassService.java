@@ -164,7 +164,7 @@ public final class ClassService {
      * @return List of random Ability instances
      */
     public List<Ability> getRandomAbilitiesForClass(ClassType classType, int count) {
-        List<Ability> all = getAvailableAbilities(classType);
+        List<Ability> all = new ArrayList<>(getAvailableAbilities(classType));
         Collections.shuffle(all); // Randomize the order
         return all.stream().limit(count).collect(Collectors.toList());
     }
