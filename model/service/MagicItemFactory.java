@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-import model.item.ItemType;
 import model.item.MagicItem;
 import model.item.PassiveItem;
 import model.item.SingleUseItem;
+import model.item.SingleUseEffectType;
 
 /**
  * <h2>MagicItemFactory</h2>
@@ -30,17 +30,20 @@ public final class MagicItemFactory {
      * ----------------------------------------------------------- */
 
     private static final List<MagicItem> COMMON_ITEMS = List.of(
-        new SingleUseItem("Minor Healing Potion", "Restore 25 HP.", "Common"),
+        new SingleUseItem("Minor Healing Potion", "Restore 25 HP.", "Common",
+                SingleUseEffectType.HEAL_HP, 25),
         new PassiveItem("Copper Ring", "Max EP +5.", "Common")
     );
 
     private static final List<MagicItem> UNCOMMON_ITEMS = List.of(
-        new SingleUseItem("Elixir of Focus", "Restore 15 EP.", "Uncommon"),
+        new SingleUseItem("Elixir of Focus", "Restore 15 EP.", "Uncommon",
+                SingleUseEffectType.RESTORE_EP, 15),
         new PassiveItem("Silver Amulet", "Max HP +15.", "Uncommon")
     );
 
     private static final List<MagicItem> RARE_ITEMS = List.of(
-        new SingleUseItem("Phoenix Tear", "Revive from KO with 50% HP.", "Rare"),
+        new SingleUseItem("Phoenix Tear", "Revive from KO with 50% HP.", "Rare",
+                SingleUseEffectType.REVIVE, 50),
         new PassiveItem("Golden Dragon Scale", "Defense +10%.", "Rare")
     );
 

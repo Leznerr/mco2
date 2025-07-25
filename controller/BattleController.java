@@ -102,15 +102,8 @@ public final class BattleController {
         if (!user.getInventory().getAllItems().contains(item)) {
             throw new GameException("Item is not in user's inventory.");
         }
-        // Apply item effect. You must implement this effect method according to your game logic.
-        // Example: item.applyEffect(user, battle, battle.getCombatLog());
-        // (You'll need to pass the appropriate target if applicable)
-
-        // -- PLACEHOLDER: Apply effect logic here (should be part of SingleUseItem, or use effect strategy) --
-        // Example (pseudo):
-        // item.applyEffect(user, target, battle, battle.getCombatLog());
-        // For now, just record the usage:
-        battle.getCombatLog().addEntry(user.getName() + " used item: " + item.getName());
+        // Apply the item's effect and log the outcome
+        item.applyEffect(user, battle.getCombatLog());
 
         // Remove the item from inventory after use
         user.getInventory().removeItem(item);
