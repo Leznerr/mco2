@@ -127,16 +127,33 @@ public final class InputValidator {
         }
     }
 
- public static void requireNonEmpty(String input, String fieldName) throws IllegalArgumentException {
+    /**
+     * Ensures a string is not {@code null} or empty after trimming.
+     *
+     * @param input     the text to validate
+     * @param fieldName logical name for error messages
+     * @throws GameException if {@code input} is {@code null} or blank
+     */
+    public static void requireNonEmpty(String input, String fieldName)
+            throws GameException {
         if (input == null || input.trim().isEmpty()) {
-            throw new IllegalArgumentException(fieldName + " cannot be empty.");
+            throw new GameException(fieldName + " cannot be empty.");
         }
     }
 
     // Method to ensure a name is unique in your list (you can modify this as needed)
-    public static void requireUniqueName(String input, List<Player> existingPlayers) throws IllegalArgumentException {
-        if (existingPlayers.stream().anyMatch(p -> p.getName().equalsIgnoreCase(input))) {
-            throw new IllegalArgumentException("The name " + input + " is already taken.");
+    /**
+     * Ensures a player name is unique within the provided list.
+     *
+     * @param input           proposed name
+     * @param existingPlayers list of players to check against
+     * @throws GameException if {@code input} already exists in the list
+     */
+    public static void requireUniqueName(String input, List<Player> existingPlayers)
+            throws GameException {
+        if (existingPlayers.stream()
+                .anyMatch(p -> p.getName().equalsIgnoreCase(input))) {
+            throw new GameException("The name " + input + " is already taken.");
         }
     }
 }
