@@ -145,12 +145,12 @@ public class BattleView extends JPanel {
 
         abilitySelectorP1.removeAllItems();
         character1.getAbilities().forEach(ability ->
-            abilitySelectorP1.addItem(ability.getName() + " (EP: " + ability.getCost() + ")")
+            abilitySelectorP1.addItem(ability.getName() + " (EP: " + ability.getEpCost() + ")")
         );
 
         abilitySelectorP2.removeAllItems();
         character2.getAbilities().forEach(ability ->
-            abilitySelectorP2.addItem(ability.getName() + " (EP: " + ability.getCost() + ")")
+            abilitySelectorP2.addItem(ability.getName() + " (EP: " + ability.getEpCost() + ")")
         );
     }
 
