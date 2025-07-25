@@ -39,6 +39,12 @@ public final class AbilityMove implements Move {
      */
     @Override
     public void execute(Character user, Character target, CombatLog log) throws GameException {
+        // Spend EP upfront; if not enough EP the move fails
+        int cost = ability.getEpCost();
+        if (cost > 0 && !user.spendEp(cost)) {
+            throw new GameException(user.getName() + " does not have enough EP to use " + ability.getName());
+        }
+
         log.addEntry(user.getName() + " uses " + ability.getName() + "!");
 
         // Modular and extensible effect processing
