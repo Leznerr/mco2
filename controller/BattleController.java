@@ -3,6 +3,9 @@ package controller;
 import model.battle.Battle;
 import model.battle.CombatLog;
 import model.battle.Move;
+import model.battle.Defend;
+import model.battle.Recharge;
+import model.battle.ItemMove;
 import model.core.Character;
 import model.item.SingleUseItem;
 import model.util.GameException;
@@ -98,18 +101,16 @@ public final class BattleController {
         if (!belongsToBattle(user)) {
             throw new GameException("Character is not part of the current battle.");
         }
-        // Ensure the user has the item in inventory
-        if (!user.getInventory().getAllItems().contains(item)) {
-            throw new GameException("Item is not in user's inventory.");
-        }
-        // Apply the item's effect and log the outcome
-        item.applyEffect(user, battle.getCombatLog());
 
-        // Remove the item from inventory after use
-        user.getInventory().removeItem(item);
 
-        // Optionally, refresh view/turn state as needed
-        // view.displayTurnResults(battle.getCombatLog());
+    /** Submits a defend action for the given character. */
+    public void defend(Character user) throws GameException {
+        submitMove(user, new Defend());
+    }
+
+    /** Submits a recharge action for the given character. */
+    public void recharge(Character user) throws GameException {
+        submitMove(user, new Recharge());
     }
 
     /* ================================================= INTERNAL FLOW */

@@ -45,30 +45,7 @@ public final class SingleUseItem extends MagicItem {
         return effectValue;
     }
 
-    /**
-     * Constructs a new single-use magic item with a concrete effect.
-     *
-     * @param name         the item’s display name (non-blank)
-     * @param description  tooltip text / effect blurb (non-blank)
-     * @param rarity       rarity label (e.g., "Common", "Rare")
-     * @param effectType   the kind of effect this item applies
-     * @param effectValue  numeric effect value (HP/EP amount or % for revive)
-     * @throws GameException if validation fails
-     */
-    public SingleUseItem(String name,
-                         String description,
-                         String rarity,
-                         SingleUseEffectType effectType,
-                         int effectValue) throws GameException {
 
-        super(name, description, ItemType.SINGLE_USE, rarity);
-
-        InputValidator.requireNonNull(effectType, "Item effect type");
-        InputValidator.requireRange(effectValue, 0,
-                Constants.MAX_EFFECT_VALUE, "Effect value");
-        this.effectType = effectType;
-        this.effectValue = effectValue;
-    }
 
     /**
      * Creates a deep copy of this item.

@@ -48,12 +48,18 @@ public final class ClassService {
         warrior.add(new Ability("Fortify", "Raise defence for 2 turns.", 4, AbilityEffectType.UTILITY, 0, null));
         abilities.put(ClassType.WARRIOR, Collections.unmodifiableList(warrior));
 
+        List<Ability> paladin = new ArrayList<>();
+        paladin.add(new Ability("Smite", "Deal 30 holy damage.", 7, AbilityEffectType.DAMAGE, 30, null));
+        paladin.add(new Ability("Divine Shield", "Become immune to damage this turn.", 8, AbilityEffectType.DEFENSE, 0, null));
+        abilities.put(ClassType.PALADIN, Collections.unmodifiableList(paladin));
+
         CLASS_ABILITIES = Collections.unmodifiableMap(abilities);
 
         EnumMap<ClassType, String> desc = new EnumMap<>(ClassType.class);
         desc.put(ClassType.MAGE, "Scholars of the arcane who rain elemental fury.");
         desc.put(ClassType.ROGUE, "Shadow-dancing skirmishers with deadly precision.");
         desc.put(ClassType.WARRIOR, "Front-line fighters whose steel and grit hold fast.");
+        desc.put(ClassType.PALADIN, "Holy warriors combining defence with divine magic.");
         CLASS_DESCRIPTIONS = Collections.unmodifiableMap(desc);
     }
 
