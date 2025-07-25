@@ -15,6 +15,8 @@ import app.Main;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -70,6 +72,19 @@ public final class GameManagerController implements ActionListener {
     /** Wires this controller to the main menu buttons. */
     private void bindUI() {
         mainMenuView.setController(this);
+        mainMenuView.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int choice = JOptionPane.showConfirmDialog(
+                        mainMenuView,
+                        "Are you sure you want to quit?",
+                        "Confirm Exit",
+                        JOptionPane.YES_NO_OPTION);
+                if (choice == JOptionPane.YES_OPTION) {
+                    quitApplication();
+                }
+            }
+        });
     }
 
     /** Main button dispatcher for MainMenuView. */
@@ -101,9 +116,7 @@ public void actionPerformed(ActionEvent e) {
             // Ideally, you should call sceneManager.showBattleView() here when ready
         }
         case MainMenuView.ACTION_EXIT -> {
-            handleSaveGameRequest();
-            mainMenuView.dispose(); // Close the MainMenuView
-            Main.shutdown(); // Centralized application shutdown
+            quitApplication();
         }
         default -> {
             JOptionPane.showMessageDialog(mainMenuView, "Unknown action: " + command, "Unknown Action", JOptionPane.WARNING_MESSAGE);
@@ -199,6 +212,15 @@ public void actionPerformed(ActionEvent e) {
 
     public void navigateBackToMainMenu() {
         SwingUtilities.invokeLater(() -> mainMenuView.setVisible(true));
+    }
+
+    /**
+     * Handles all logic required when the application is requested to exit.
+     */
+    private void quitApplication() {
+        handleSaveGameRequest();
+        mainMenuView.dispose();
+        Main.shutdown();
     }
 
     // === Game Data Save/Load Methods ===
