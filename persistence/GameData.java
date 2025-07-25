@@ -29,11 +29,10 @@ public class GameData implements Serializable {
     /* Fields (UML-specified)                                             */
     /* ------------------------------------------------------------------ */
 
-    // Mark transient to avoid serialization warnings when contained types
-    // are not themselves serializable. On deserialization these fields are
-    // reinitialised to empty lists.
-    private transient List<Player>          allPlayers;
-    private transient List<HallOfFameEntry> hallOfFame;
+    // Lists of all players and Hall of Fame entries.
+    // Serialized directly now that model classes implement Serializable.
+    private List<Player>          allPlayers;
+    private List<HallOfFameEntry> hallOfFame;
 
     /* ------------------------------------------------------------------ */
     /* Constructors                                                       */

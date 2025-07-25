@@ -6,6 +6,7 @@ import model.util.InputValidator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.io.Serializable;
 
 /**
  * Represents a character's inventory of magic items in <i>Fatal Fantasy: Tactics</i>.
@@ -22,7 +23,9 @@ import java.util.List;
  * <li><strong>MCO2 Core:</strong> Magic Item System (inventory, equipment, consumption).</li>
  * </ul>
  */
-public final class Inventory {
+public final class Inventory implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /** A unified list of all magic items the character possesses. */
     private final List<MagicItem> items;

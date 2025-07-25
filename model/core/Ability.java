@@ -4,12 +4,15 @@ import model.util.Constants;
 import model.util.GameException;
 import model.util.InputValidator;
 import model.util.StatusEffectType;
+import java.io.Serializable;
 
 /**
  * Represents a combat ability (attack, heal, or status effect).
  * Immutable and metadata-driven. Holds no executable logic.
  */
-public final class Ability {
+public final class Ability implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final String name;
     private final String description;

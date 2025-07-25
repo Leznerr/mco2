@@ -2,6 +2,7 @@ package model.item;
 
 import model.util.GameException;
 import model.util.InputValidator;
+import java.io.Serializable;
 
 /**
  * <h2>MagicItem</h2>
@@ -26,7 +27,9 @@ import model.util.InputValidator;
  * @see SingleUseItem
  * @see Inventory
  */
-public abstract class MagicItem {
+public abstract class MagicItem implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /** Human-friendly item title (non-blank). */
     private final String name;

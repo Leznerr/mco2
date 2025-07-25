@@ -9,7 +9,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public final class Player {
+import java.io.Serializable;
+
+public final class Player implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     private final String name;
     private final List<Character> characters;
     private int cumulativeWins;
