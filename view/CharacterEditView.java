@@ -167,6 +167,23 @@ public class CharacterEditView extends JFrame {
         for (String item : items) dropdownMagicItem.addItem(item);
     }
 
+    public void setSelectedAbility(int slot, String abilityName) {
+        JComboBox<String> target = switch (slot) {
+            case 1 -> dropdownAbility1;
+            case 2 -> dropdownAbility2;
+            case 3 -> dropdownAbility3;
+            default -> throw new IllegalArgumentException("Invalid slot: " + slot);
+        };
+        target.setSelectedItem(abilityName);
+    }
+
+    public void setSelectedMagicItem(String itemName) {
+        dropdownMagicItem.setSelectedItem(itemName);
+    }
+
+    public JComboBox<String> getCharacterDropdown() { return dropdownCharacter; }
+    public JComboBox<String> getMagicItemDropdown() { return dropdownMagicItem; }
+
     public void resetFields() {
         dropdownCharacter.setSelectedIndex(-1);
         dropdownAbility1.setSelectedIndex(-1);

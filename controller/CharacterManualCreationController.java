@@ -131,6 +131,9 @@ public final class CharacterManualCreationController {
             Player player = getPlayerByName(this.playerName);
             player.addCharacter(newCharacter);
 
+            // Persist the updated game data
+            gameManagerController.handleSaveGameRequest();
+
             view.showInfoMessage("Character \"" + name + "\" successfully created!");
             view.dispose();
 
