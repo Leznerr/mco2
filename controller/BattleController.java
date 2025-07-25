@@ -7,6 +7,7 @@ import model.battle.Defend;
 import model.battle.Recharge;
 import model.battle.ItemMove;
 import model.core.Character;
+import model.core.Ability;
 import model.item.SingleUseItem;
 import model.util.GameException;
 import model.util.InputValidator;
@@ -69,6 +70,7 @@ public final class BattleController {
         aiCharacter = null;
         humanOpponent = null;
         view.displayBattleStart(c1, c2);
+        updatePlayerPanels();
     }
 
     /**
@@ -162,6 +164,7 @@ public final class BattleController {
         }
 
         view.displayTurnResults(log);
+        updatePlayerPanels();
         selections.clear(); // prepare for next round
 
         if (!battleEnded() && aiController != null) {
@@ -173,6 +176,7 @@ public final class BattleController {
                     ? battle.getCharacter1()
                     : battle.getCharacter2();
             view.displayBattleEnd(winner);
+            updatePlayerPanels();
             battle = null; // back to idle state
             aiController = null;
         }
@@ -232,5 +236,46 @@ public final class BattleController {
         if (battle == null) {
             throw new GameException("No active battle – call startBattle() first.");
         }
+    }
+
+    /** Updates all player panels in the view to reflect current state. */
+    private void updatePlayerPanels() throws GameException {
+        ensureRunning();
+        Character c1 = battle.getCharacter1();
+        Character c2 = battle.getCharacter2();
+
+        view.setPlayerNameAndCharName(1,
+                c1.getName() + " - " + c1.getClassType() + "/" + c1.getRaceType());
+        view.setPlayerNameAndCharName(2,
+                c2.getName() + " - " + c2.getClassType() + "/" + c2.getRaceType());
+
+        view.setPlayerStatus(1, formatStatus(c1));
+        view.setPlayerStatus(2, formatStatus(c2));
+
+        view.setPlayerAbilitiesItems(1, buildAbilityList(c1));
+        view.setPlayerAbilitiesItems(2, buildAbilityList(c2));
+
+        view.updateAbilityDropdown(1, abilityNames(c1));
+        view.updateAbilityDropdown(2, abilityNames(c2));
+    }
+
+    private List<String> abilityNames(Character c) {
+        return c.getAbilities().stream().map(a -> a.getName()).toList();
+    }
+
+    private String buildAbilityList(Character c) {
+        StringBuilder sb = new StringBuilder();
+        for (var a : c.getAbilities()) {
+            sb.append(a.getName()).append(" (").append(a.getEpCost()).append(" EP)").append("\n");
+        }
+        if (c.getInventory().getEquippedItem() != null) {
+            sb.append("Equipped: ").append(c.getInventory().getEquippedItem().getName());
+        }
+        return sb.toString();
+    }
+
+    private String formatStatus(Character c) {
+        return String.format("HP %d/%d | EP %d/%d", c.getCurrentHp(), c.getMaxHp(),
+                c.getCurrentEp(), c.getMaxEp());
     }
 }
