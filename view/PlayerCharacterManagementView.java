@@ -78,6 +78,12 @@ public class PlayerCharacterManagementView extends JFrame {
     }
 
     public void setActionListener(ActionListener l) {
+        btnViewCharacters.setActionCommand(VIEW_CHARACTERS);
+        btnCreateCharacter.setActionCommand(CREATE_CHARACTER);
+        btnEditCharacter.setActionCommand(EDIT_CHARACTER);
+        btnDeleteCharacter.setActionCommand(DELETE_CHARACTER);
+        btnReturn.setActionCommand(RETURN);
+
         btnViewCharacters.addActionListener(l);
         btnCreateCharacter.addActionListener(l);
         btnEditCharacter.addActionListener(l);

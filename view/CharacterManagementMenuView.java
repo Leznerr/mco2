@@ -92,6 +92,10 @@ public class CharacterManagementMenuView extends JFrame {
     }
 
     public void setActionListener(ActionListener l) {
+        btnManagePlayer1.setActionCommand(MANAGE_PLAYER1);
+        btnManagePlayer2.setActionCommand(MANAGE_PLAYER2);
+        btnReturnToMenu.setActionCommand(RETURN_TO_MENU);
+
         btnManagePlayer1.addActionListener(l);
         btnManagePlayer2.addActionListener(l);
         btnReturnToMenu.addActionListener(l);
