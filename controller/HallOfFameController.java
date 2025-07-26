@@ -4,6 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.swing.JOptionPane;
+
+import controller.SceneManager;
 
 import model.core.Player;
 import model.core.Character;
@@ -23,12 +26,15 @@ import view.HallOfFameManagementView;
 public class HallOfFameController implements ActionListener {
 
     private final HallOfFameManagementView view;
+    private final SceneManager sceneManager;
     private List<HallOfFameEntry> playerEntries;
     private List<HallOfFameEntry> characterEntries;
 
-    public HallOfFameController(HallOfFameManagementView view) {
+    public HallOfFameController(HallOfFameManagementView view, SceneManager sceneManager) {
         InputValidator.requireNonNull(view, "view");
+        InputValidator.requireNonNull(sceneManager, "sceneManager");
         this.view = view;
+        this.sceneManager = sceneManager;
 
         try {
             HallOfFameData data = SaveLoadService.loadHallOfFame();
@@ -37,6 +43,8 @@ public class HallOfFameController implements ActionListener {
         } catch (GameException e) {
             this.playerEntries = new ArrayList<>();
             this.characterEntries = new ArrayList<>();
+            JOptionPane.showMessageDialog(view, "Unable to load Hall of Fame: " + e.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
 
         this.view.setController(this); // Connect view to this controller
@@ -195,7 +203,7 @@ public class HallOfFameController implements ActionListener {
         switch (command) {
             case HallOfFameManagementView.SHOW_TOP_PLAYERS -> showTopPlayers();
             case HallOfFameManagementView.SHOW_TOP_CHARACTERS -> showTopCharacters();
-            case HallOfFameManagementView.RETURN -> view.dispose();
+            case HallOfFameManagementView.RETURN -> sceneManager.showMainMenu();
             default -> view.showErrorMessage("Unknown action: " + command);
         }
     }

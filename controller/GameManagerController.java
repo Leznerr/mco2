@@ -112,10 +112,7 @@ public void actionPerformed(ActionEvent e) {
                 mainMenuView.dispose();
             }
         }
-        case MainMenuView.ACTION_HALL_OF_FAME -> {
-            sceneManager.showHallOfFameManagement(); // Show Hall of Fame View
-            mainMenuView.dispose(); // Close the MainMenuView
-        }
+        case MainMenuView.ACTION_HALL_OF_FAME -> showHallOfFameScreen();
         case MainMenuView.ACTION_START_BATTLE -> {
             if (players.isEmpty()) {
                 JOptionPane.showMessageDialog(mainMenuView, "Please register players first.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -294,6 +291,22 @@ public void actionPerformed(ActionEvent e) {
             }
         }
         return null;
+    }
+
+    /**
+     * Navigates to the Hall of Fame management screen.
+     */
+    public void showHallOfFameScreen() {
+        SwingUtilities.invokeLater(() -> {
+            try {
+                sceneManager.showHallOfFameManagement();
+                mainMenuView.dispose();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(mainMenuView,
+                        "Unable to open Hall of Fame: " + ex.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
 
