@@ -225,15 +225,19 @@ public final class BattleController {
             if (!t.actor.isAlive()) continue;
 
             if (t.actor.isStunned()) {
-                log.addEntry(t.actor.getName() + " is stunned and cannot act.");
+                log.addEntry(t.actor.getName() + " is stunned and skips their turn!");
             } else if (t.target.isAlive()) {
                 t.move.execute(t.actor, t.target, log);
+                if (!t.target.isAlive()) {
+                    log.addEntry(t.target.getName() + " has fallen!");
+                }
             }
 
             t.actor.processEndOfTurnEffects(log);
             if (battleEnded()) break;
         }
 
+        log.addEntry("--- End of Round " + battle.getRoundNumber() + " ---");
         view.displayTurnResults(log);
         updatePlayerPanels();
         selections.clear(); // prepare for next round
@@ -304,7 +308,8 @@ public final class BattleController {
     private void startRound() throws GameException {
         ensureRunning();
         CombatLog log = battle.getCombatLog();
-        log.addEntry("--- Round " + battle.getRoundNumber() + " Begins ---");
+        log.addEntry("--- Round " + battle.getRoundNumber() + " ---");
+        view.setRoundNumber(battle.getRoundNumber());
 
         processRoundStartFor(battle.getCharacter1(), log);
         processRoundStartFor(battle.getCharacter2(), log);
@@ -315,10 +320,14 @@ public final class BattleController {
 
     private void processRoundStartFor(Character c, CombatLog log) throws GameException {
         c.gainEp(Constants.ROUND_EP_REGEN);
+        log.addEntry(c.getName() + " regenerates " + Constants.ROUND_EP_REGEN + " EP.");
         if (c.getInventory().getEquippedItem() instanceof PassiveItem p) {
             applyPassiveItemEffect(c, p, log);
         }
         c.processStartOfTurnEffects(log);
+        if (!c.isAlive()) {
+            log.addEntry(c.getName() + " has fallen!");
+        }
     }
 
     private void applyPassiveItemEffect(Character c, PassiveItem item, CombatLog log) throws GameException {

@@ -117,7 +117,6 @@ public final class Battle {
             throw new GameException("Cannot advance rounds on a finished battle.");
         }
         roundNumber++;
-        combatLog.addEntry("── Round " + roundNumber + " ──");
     }
 
     /**

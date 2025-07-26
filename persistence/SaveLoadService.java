@@ -54,17 +54,20 @@ public class SaveLoadService {
     public static List<HallOfFameEntry> loadHallOfFame() throws GameException {
         try (ObjectInputStream hallOfFameStream = new ObjectInputStream(new FileInputStream(HALL_OF_FAME_FILE))) {
             Object obj = hallOfFameStream.readObject();
-            if (obj instanceof List<?>) {
-                List<?> rawList = (List<?>) obj;
-                // Ensure the list contains the right type
-                return (List<HallOfFameEntry>) rawList;
+            if (obj instanceof List<?> rawList) {
+                // Defensive copy into mutable list
+                List<HallOfFameEntry> entries = new ArrayList<>();
+                for (Object o : rawList) {
+                    entries.add((HallOfFameEntry) o);
+                }
+                return entries;
             } else {
                 throw new GameException("Invalid Hall of Fame data.");
             }
         } catch (FileNotFoundException e) {
             // If no Hall of Fame data is found, return an empty list
             System.out.println("No Hall of Fame found. Returning empty Hall of Fame.");
-            return List.of(); // Returning an empty list
+            return new ArrayList<>();
         } catch (IOException | ClassNotFoundException e) {
             // Handle any I/O errors or deserialization issues
             throw new GameException("Failed to load Hall of Fame data", e);

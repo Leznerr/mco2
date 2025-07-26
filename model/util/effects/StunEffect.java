@@ -29,13 +29,13 @@ import model.util.StatusEffectType;
 public final class StunEffect implements StatusEffect {
 
     /** Default number of turns stun lasts. */
-    private static final int DURATION_TURNS = 2;
+    private static final int DURATION_TURNS = 1;
 
     /** Remaining turns for which the target is stunned. */
     private int remainingTurns;
 
     /**
-     * Constructs a new {@code StunEffect} with 2-turn duration.
+     * Constructs a new {@code StunEffect} with 1-turn duration.
      */
     public StunEffect() {
         this.remainingTurns = DURATION_TURNS;
