@@ -15,13 +15,13 @@ public final class Player implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private final String name;
-    private final List<Character> characters;
+    /** Collection of the player's characters. Always initialized. Never null. */
+    private List<Character> characters = new ArrayList<>();
     private int cumulativeWins;
 
     public Player(String name) throws GameException {
         InputValidator.requireNonBlank(name, "Player name");
         this.name = name;
-        this.characters = new ArrayList<>();
         this.cumulativeWins = 0;
     }
 
@@ -65,5 +65,16 @@ public final class Player implements Serializable {
     public String toString() {
         return String.format("Player [name=%s, characters=%d, wins=%d]",
             name, characters.size(), cumulativeWins);
+    }
+
+    /**
+     * Ensures the characters list is initialised after deserialization.
+     */
+    private void readObject(java.io.ObjectInputStream in)
+            throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        if (characters == null) {
+            characters = new ArrayList<>();
+        }
     }
 }

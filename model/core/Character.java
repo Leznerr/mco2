@@ -32,9 +32,12 @@ public class Character implements Serializable {
     private final ClassType classType;
 
     // --- Core Mutable Attributes ---
-    private final List<Ability> abilities;
-    private final Inventory inventory;
-    private final transient List<StatusEffect> activeStatusEffects;
+    /** Character abilities. Always initialized. Never null. */
+    private final List<Ability> abilities = new ArrayList<>();
+    /** Inventory for magic items. Always initialized. Never null. */
+    private final Inventory inventory = new Inventory();
+    /** Status effects currently affecting the character. Always initialized. Never null. */
+    private transient List<StatusEffect> activeStatusEffects = new ArrayList<>();
     private MagicItem equippedItem;
 
     // --- Dynamic Stats ---
@@ -79,9 +82,11 @@ public class Character implements Serializable {
         this.name = name;
         this.race = race;
         this.classType = classType;
-        this.abilities = new ArrayList<>(abilities); // Defensive copy
-        this.inventory = new Inventory();
-        this.activeStatusEffects = new ArrayList<>();
+
+        this.abilities.clear();
+        this.abilities.addAll(abilities); // Defensive copy
+
+        this.activeStatusEffects.clear();
         this.equippedItem = null;
         this.isStunned = false;
 
@@ -332,5 +337,17 @@ public class Character implements Serializable {
             descriptions.append(ability.getDescription()).append("\n"); // Assuming Ability has a getDescription method
         }
         return descriptions.toString();
+    }
+
+    /**
+     * Ensures transient collections are properly initialised when this object
+     * is deserialised from a save file.
+     */
+    private void readObject(java.io.ObjectInputStream in)
+            throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        if (activeStatusEffects == null) {
+            activeStatusEffects = new ArrayList<>();
+        }
     }
 }
