@@ -173,9 +173,7 @@ public class PlayerCharacterManagementController {
         boolean isGnome = c.getRaceType() == model.core.RaceType.GNOME;
         ev.setAbility4Visible(isGnome);
         if (isGnome) {
-            String[] all = classService.getAllAbilities().stream()
-                    .map(Ability::getName).toArray(String[]::new);
-            ev.setAbilityOptions(4, all);
+            ev.setAbilityOptions(4, opts);
         }
 
         List<Ability> current = c.getAbilities();

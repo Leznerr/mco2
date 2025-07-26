@@ -194,9 +194,7 @@ public final class CharacterManualCreationController {
 
             String raceStr = view.getSelectedRace();
             if (raceStr != null && !raceStr.isBlank() && RaceType.valueOf(raceStr) == RaceType.GNOME) {
-                List<String> allAbilityNames = classService.getAllAbilities().stream()
-                        .map(Ability::getName).toList();
-                view.setAbilityOptions(4, allAbilityNames.toArray(new String[0]));
+                view.setAbilityOptions(4, options);
             }
         } catch (Exception e) {
             clearAbilityOptions();
