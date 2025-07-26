@@ -40,6 +40,11 @@ public class CharacterEditView extends JFrame {
     private final JComboBox<String> dropdownAbility2  = new JComboBox<>();
     private final JComboBox<String> dropdownAbility3  = new JComboBox<>();
     private final JComboBox<String> dropdownAbility4  = new JComboBox<>();
+
+    @SuppressWarnings("unchecked")
+    private final JComboBox<String>[] abilityDropdowns = new JComboBox[] {
+            dropdownAbility1, dropdownAbility2, dropdownAbility3, dropdownAbility4
+    };
     private final JComboBox<String> dropdownMagicItem = new JComboBox<>();
 
     private JPanel abilitiesPanel;
@@ -123,14 +128,14 @@ public class CharacterEditView extends JFrame {
         abilitiesPanel.setLayout(new BoxLayout(abilitiesPanel, BoxLayout.Y_AXIS));
 
         abilitiesPanel.add(Box.createVerticalStrut(20));
-        abilitiesPanel.add(createDropdownPanel("Select Ability 1:", dropdownAbility1));
+        abilitiesPanel.add(createDropdownPanel("Select Ability 1 (Depends on Class)", dropdownAbility1));
         abilitiesPanel.add(Box.createVerticalStrut(20));
-        abilitiesPanel.add(createDropdownPanel("Select Ability 2:", dropdownAbility2));
+        abilitiesPanel.add(createDropdownPanel("Select Ability 2 (Depends on Class)", dropdownAbility2));
         abilitiesPanel.add(Box.createVerticalStrut(20));
-        abilitiesPanel.add(createDropdownPanel("Select Ability 3:", dropdownAbility3));
+        abilitiesPanel.add(createDropdownPanel("Select Ability 3 (Depends on Class)", dropdownAbility3));
 
         ability4Spacer = Box.createVerticalStrut(20);
-        ability4Panel = createDropdownPanel("Select Ability 4:", dropdownAbility4);
+        ability4Panel = createDropdownPanel("Select Ability 4 (Depends on Class)", dropdownAbility4);
         ability4Panel.setVisible(false);
         ability4Spacer.setVisible(false);
 
@@ -197,15 +202,14 @@ public class CharacterEditView extends JFrame {
     }
 
     public void setAbilityOptions(int slot, String[] options) {
-        JComboBox<String> target = switch (slot) {
-            case 1 -> dropdownAbility1;
-            case 2 -> dropdownAbility2;
-            case 3 -> dropdownAbility3;
-            case 4 -> dropdownAbility4;
-            default -> throw new IllegalArgumentException("Invalid slot: " + slot);
-        };
+        if (slot < 1 || slot > abilityDropdowns.length) {
+            throw new IllegalArgumentException("Invalid slot: " + slot);
+        }
+        JComboBox<String> target = abilityDropdowns[slot - 1];
         target.removeAllItems();
-        for (String option : options) target.addItem(option);
+        for (String option : options) {
+            target.addItem(option);
+        }
     }
 
     public void setMagicItemOptions(String[] items) {
@@ -214,14 +218,10 @@ public class CharacterEditView extends JFrame {
     }
 
     public void setSelectedAbility(int slot, String abilityName) {
-        JComboBox<String> target = switch (slot) {
-            case 1 -> dropdownAbility1;
-            case 2 -> dropdownAbility2;
-            case 3 -> dropdownAbility3;
-            case 4 -> dropdownAbility4;
-            default -> throw new IllegalArgumentException("Invalid slot: " + slot);
-        };
-        target.setSelectedItem(abilityName);
+        if (slot < 1 || slot > abilityDropdowns.length) {
+            throw new IllegalArgumentException("Invalid slot: " + slot);
+        }
+        abilityDropdowns[slot - 1].setSelectedItem(abilityName);
     }
 
     public void setSelectedMagicItem(String itemName) {
@@ -233,10 +233,9 @@ public class CharacterEditView extends JFrame {
 
     public void resetFields() {
         dropdownCharacter.setSelectedIndex(-1);
-        dropdownAbility1.setSelectedIndex(-1);
-        dropdownAbility2.setSelectedIndex(-1);
-        dropdownAbility3.setSelectedIndex(-1);
-        dropdownAbility4.setSelectedIndex(-1);
+        for (JComboBox<String> dd : abilityDropdowns) {
+            dd.setSelectedIndex(-1);
+        }
         dropdownMagicItem.setSelectedIndex(-1);
     }
 
@@ -262,19 +261,19 @@ public class CharacterEditView extends JFrame {
     }
 
     public String[] getSelectedAbilities() {
-        if (ability4Panel.isVisible()) {
-            return new String[] {
-                (String) dropdownAbility1.getSelectedItem(),
-                (String) dropdownAbility2.getSelectedItem(),
-                (String) dropdownAbility3.getSelectedItem(),
-                (String) dropdownAbility4.getSelectedItem()
-            };
+        int count = ability4Panel.isVisible() ? 4 : 3;
+        String[] selected = new String[count];
+        for (int i = 0; i < count; i++) {
+            selected[i] = (String) abilityDropdowns[i].getSelectedItem();
         }
-        return new String[] {
-                (String) dropdownAbility1.getSelectedItem(),
-                (String) dropdownAbility2.getSelectedItem(),
-                (String) dropdownAbility3.getSelectedItem()
-        };
+        return selected;
+    }
+
+    public String getSelectedAbility(int slot) {
+        if (slot < 1 || slot > abilityDropdowns.length) {
+            throw new IllegalArgumentException("Invalid slot: " + slot);
+        }
+        return (String) abilityDropdowns[slot - 1].getSelectedItem();
     }
 
     public String getSelectedMagicItem() {
