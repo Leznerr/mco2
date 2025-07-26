@@ -76,10 +76,16 @@ public final class SceneManager {
         if (mainMenuView == null) {
             mainMenuView = new MainMenuView();
 
+            // Ensure Hall of Fame view exists before creating its controller
+            if (hallOfFameView == null) {
+                hallOfFameView = new HallOfFameManagementView();
+                root.add(hallOfFameView.getContentPane(), CARD_HALL_OF_FAME);
+            }
+
             // Initialize the controller only once
-            
             if (gameManagerController == null) {
-                gameManagerController = new GameManagerController(this, new HallOfFameController(hallOfFameView), mainMenuView);
+                HallOfFameController hofController = new HallOfFameController(hallOfFameView);
+                gameManagerController = new GameManagerController(this, hofController, mainMenuView);
             }
             mainMenuView.setActionListener(gameManagerController);
             root.add(mainMenuView.getContentPane(), CARD_MAIN_MENU);
