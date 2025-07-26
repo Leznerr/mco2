@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import persistence.GameData;
 import persistence.SaveLoadService;
 
-import javax.swing.JFrame;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.List;
@@ -31,11 +30,13 @@ public class GameManagerPersistenceTest {
         f.setAccessible(true);
         GameManagerController controller = (GameManagerController) f.get(sm);
 
-        // Dispose the frame to avoid GUI leftovers
+        // Dispose the stage if present to avoid GUI leftovers in headless mode
         Field stageField = SceneManager.class.getDeclaredField("stage");
         stageField.setAccessible(true);
-        JFrame stage = (JFrame) stageField.get(sm);
-        stage.dispose();
+        Object stage = stageField.get(sm);
+        if (stage instanceof java.awt.Window w) {
+            w.dispose();
+        }
 
         return controller;
     }
