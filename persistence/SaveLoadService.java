@@ -2,6 +2,7 @@ package persistence;
 
 import model.core.Player;
 import persistence.HallOfFameData;
+import model.core.HallOfFameEntry;
 import model.util.GameException;
 import model.util.Constants;
 import java.io.*;
@@ -67,20 +68,43 @@ public class SaveLoadService {
         }
     }
 
-    // Loads the Hall of Fame data
+    // Loads the Hall of Fame data with backward compatibility
     public static HallOfFameData loadHallOfFame() throws GameException {
-        try (ObjectInputStream hallOfFameStream = new ObjectInputStream(new FileInputStream(HALL_OF_FAME_FILE))) {
+        Path current = Path.of(HALL_OF_FAME_FILE);
+        Path legacy = Path.of("model/save/hall_of_fame.dat");
+        Path file = Files.exists(current) ? current : legacy;
+
+        if (!Files.exists(file)) {
+            System.out.println("No Hall of Fame found. Returning empty Hall of Fame.");
+            return new HallOfFameData();
+        }
+
+        try (ObjectInputStream hallOfFameStream = new ObjectInputStream(new FileInputStream(file.toFile()))) {
             Object obj = hallOfFameStream.readObject();
             if (obj instanceof HallOfFameData data) {
                 return data;
-            } else {
-                throw new GameException("Invalid Hall of Fame data.");
             }
-        } catch (FileNotFoundException e) {
-            System.out.println("No Hall of Fame found. Returning empty Hall of Fame.");
+
+            if (obj instanceof List<?> list) {
+                // Legacy format: single list of entries (players only)
+                List<HallOfFameEntry> entries = new ArrayList<>();
+                for (Object o : list) {
+                    if (o instanceof HallOfFameEntry e) {
+                        entries.add(e);
+                    }
+                }
+                HallOfFameData data = new HallOfFameData();
+                data.setPlayers(entries);
+                // Persist upgraded format for next run
+                saveHallOfFame(data);
+                return data;
+            }
+
+            // Unknown data - start fresh
             return new HallOfFameData();
         } catch (IOException | ClassNotFoundException e) {
-            throw new GameException("Failed to load Hall of Fame data", e);
+            // Corrupt or unreadable file - ignore and start fresh
+            return new HallOfFameData();
         }
     }
 
