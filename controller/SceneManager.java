@@ -275,6 +275,8 @@ public final class SceneManager {
                 battleView.dispose();
                 showMainMenu();
             });
+            root.add(battleView.getContentPane(), CARD_BATTLE);
+            cards.show(root, CARD_BATTLE);
             battleController.startBattleVsBot(human, bot, aiController);
         } catch (GameException e) {
             JOptionPane.showMessageDialog(stage, "Unable to start battle: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -312,6 +314,8 @@ public final class SceneManager {
                 battleView.dispose();
                 showMainMenu();
             });
+            root.add(battleView.getContentPane(), CARD_BATTLE);
+            cards.show(root, CARD_BATTLE);
             controller.startBattle(c1, c2);
         } catch (GameException e) {
             JOptionPane.showMessageDialog(stage, "Unable to start battle: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
