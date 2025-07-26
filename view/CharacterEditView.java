@@ -21,7 +21,10 @@ public class CharacterEditView extends JFrame {
     private final JComboBox<String> dropdownAbility1  = new JComboBox<>();
     private final JComboBox<String> dropdownAbility2  = new JComboBox<>();
     private final JComboBox<String> dropdownAbility3  = new JComboBox<>();
+    private final JComboBox<String> dropdownAbility4  = new JComboBox<>();
     private final JComboBox<String> dropdownMagicItem = new JComboBox<>();
+
+    private JPanel ability4Panel;
 
     private final JButton btnEdit   = new RoundedButton(EDIT);
     private final JButton btnReturn = new RoundedButton(RETURN);
@@ -99,6 +102,10 @@ public class CharacterEditView extends JFrame {
         centerPanel.add(createDropdownPanel("Select Ability 2:", dropdownAbility2));
         centerPanel.add(Box.createVerticalStrut(20));
         centerPanel.add(createDropdownPanel("Select Ability 3:", dropdownAbility3));
+        ability4Panel = createDropdownPanel("Select Ability 4:", dropdownAbility4);
+        ability4Panel.setVisible(false);
+        centerPanel.add(Box.createVerticalStrut(20));
+        centerPanel.add(ability4Panel);
         centerPanel.add(Box.createVerticalStrut(20));
         centerPanel.add(createDropdownPanel("Un/Equip Magic Item:", dropdownMagicItem));
         centerPanel.add(Box.createVerticalGlue());
@@ -143,6 +150,7 @@ public class CharacterEditView extends JFrame {
         dropdownAbility1.addActionListener(listener);
         dropdownAbility2.addActionListener(listener);
         dropdownAbility3.addActionListener(listener);
+        dropdownAbility4.addActionListener(listener);
         dropdownMagicItem.addActionListener(listener);
     }
 
@@ -172,6 +180,7 @@ public class CharacterEditView extends JFrame {
             case 1 -> dropdownAbility1;
             case 2 -> dropdownAbility2;
             case 3 -> dropdownAbility3;
+            case 4 -> dropdownAbility4;
             default -> throw new IllegalArgumentException("Invalid slot: " + slot);
         };
         target.setSelectedItem(abilityName);
@@ -189,6 +198,7 @@ public class CharacterEditView extends JFrame {
         dropdownAbility1.setSelectedIndex(-1);
         dropdownAbility2.setSelectedIndex(-1);
         dropdownAbility3.setSelectedIndex(-1);
+        dropdownAbility4.setSelectedIndex(-1);
         dropdownMagicItem.setSelectedIndex(-1);
     }
 
@@ -214,7 +224,15 @@ public class CharacterEditView extends JFrame {
     }
 
     public String[] getSelectedAbilities() {
-        return new String[]{
+        if (ability4Panel.isVisible()) {
+            return new String[] {
+                (String) dropdownAbility1.getSelectedItem(),
+                (String) dropdownAbility2.getSelectedItem(),
+                (String) dropdownAbility3.getSelectedItem(),
+                (String) dropdownAbility4.getSelectedItem()
+            };
+        }
+        return new String[] {
                 (String) dropdownAbility1.getSelectedItem(),
                 (String) dropdownAbility2.getSelectedItem(),
                 (String) dropdownAbility3.getSelectedItem()
@@ -223,5 +241,9 @@ public class CharacterEditView extends JFrame {
 
     public String getSelectedMagicItem() {
         return (String) dropdownMagicItem.getSelectedItem();
+    }
+
+    public void setAbility4Visible(boolean visible) {
+        ability4Panel.setVisible(visible);
     }
 }
