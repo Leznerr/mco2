@@ -58,6 +58,43 @@ public class Character implements Serializable {
     private boolean isStunned;
 
     /**
+     * Creates a deep copy of this character for use in battle. The returned
+     * instance shares no mutable state with the original. All dynamic battle
+     * statistics (HP, EP, status effects, stun flag) are reset to full health
+     * and energy with no active effects. Progression attributes such as level
+     * and XP are retained so calculations like XP rewards remain accurate.
+     *
+     * <p>The inventory contents are also deep-copied so that item consumption
+     * during battle does not affect the persistent character.</p>
+     *
+     * @return independent copy initialised for a fresh battle
+     */
+    public Character copyForBattle() {
+        try {
+            Character c = new Character(name, race, classType, new ArrayList<>(abilities));
+
+            // Copy inventory contents
+            for (MagicItem item : inventory.getAllItems()) {
+                c.getInventory().addItem(item.copy());
+            }
+            if (inventory.getEquippedItem() != null) {
+                MagicItem eqCopy = inventory.getEquippedItem().copy();
+                c.getInventory().equipItem(eqCopy);
+            }
+
+            // Replicate progression stats
+            c.setLevel(level);
+            c.setMaxStats(maxHp, maxEp); // also restores HP/EP
+            c.addXp(xp); // xp is needed for potential level calculations
+
+            return c;
+        } catch (GameException e) {
+            // Should not occur as original character is already validated
+            throw new RuntimeException("Failed to copy character", e);
+        }
+    }
+
+    /**
      * The designated constructor for creating a new, fully-validated Character.
      * All other constructors must chain to this one.
      *
