@@ -3,6 +3,8 @@ package view;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 import controller.CharacterManualCreationController;
@@ -33,8 +35,9 @@ public class CharacterManualCreationView extends JFrame {
     private final JButton btnCreate;
     private final JButton btnReturn;
 
-    private JPanel ability4Panel;
-    private Component ability4Spacer;
+    private JPanel abilitiesPanel;
+    private final List<JPanel> abilityPanels = new ArrayList<>();
+    private int abilityCount = 3;
 
     private CharacterManualCreationController controller;
 
@@ -110,17 +113,21 @@ public class CharacterManualCreationView extends JFrame {
         centerPanel.add(Box.createVerticalStrut(10));
         centerPanel.add(createDropdownPanel("Select Class:", dropdownClass));
         centerPanel.add(Box.createVerticalStrut(10));
-        centerPanel.add(createDropdownPanel("Select Ability 1", dropdownAbility1));
-        centerPanel.add(Box.createVerticalStrut(10));
-        centerPanel.add(createDropdownPanel("Select Ability 2", dropdownAbility2));
-        centerPanel.add(Box.createVerticalStrut(10));
-        centerPanel.add(createDropdownPanel("Select Ability 3", dropdownAbility3));
-        ability4Spacer = Box.createVerticalStrut(10);
-        ability4Panel = createDropdownPanel("Select Ability 4", dropdownAbility4);
-        ability4Panel.setVisible(false);
-        ability4Spacer.setVisible(false);
-        centerPanel.add(ability4Spacer);
-        centerPanel.add(ability4Panel);
+        abilitiesPanel = new JPanel();
+        abilitiesPanel.setOpaque(false);
+        abilitiesPanel.setLayout(new BoxLayout(abilitiesPanel, BoxLayout.Y_AXIS));
+
+        for (int i = 0; i < 4; i++) {
+            abilityPanels.add(createDropdownPanel("Select Ability " + (i + 1), switch (i) {
+                case 0 -> dropdownAbility1;
+                case 1 -> dropdownAbility2;
+                case 2 -> dropdownAbility3;
+                default -> dropdownAbility4;
+            }));
+        }
+
+        setAbilityCount(abilityCount);
+        centerPanel.add(abilitiesPanel);
         centerPanel.add(Box.createVerticalStrut(20));
 
         backgroundPanel.add(centerPanel, BorderLayout.CENTER);
@@ -142,17 +149,17 @@ public class CharacterManualCreationView extends JFrame {
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         OutlinedLabel label = new OutlinedLabel(labelText);
-        Dimension labelSize = new Dimension(200, label.getPreferredSize().height);
+        Dimension labelSize = new Dimension(170, label.getPreferredSize().height);
         label.setPreferredSize(labelSize);
         label.setMinimumSize(labelSize);
         label.setMaximumSize(labelSize);
-        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 8));
 
-        dropdown.setFont(new Font("Serif", Font.BOLD, 18));
-        Dimension ddSize = new Dimension(350, 40);
+        dropdown.setFont(new Font("Serif", Font.BOLD, 16));
+        Dimension ddSize = new Dimension(300, 36);
         dropdown.setPreferredSize(ddSize);
         dropdown.setMaximumSize(ddSize);
-        dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+        dropdown.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
         panel.add(label);
         panel.add(dropdown);
@@ -223,19 +230,14 @@ public class CharacterManualCreationView extends JFrame {
     public String getSelectedClass() { return (String) dropdownClass.getSelectedItem(); }
 
     public String[] getSelectedAbilities() {
-        if (ability4Panel.isVisible()) {
-            return new String[] {
-                (String) dropdownAbility1.getSelectedItem(),
-                (String) dropdownAbility2.getSelectedItem(),
-                (String) dropdownAbility3.getSelectedItem(),
-                (String) dropdownAbility4.getSelectedItem()
-            };
-        }
-        return new String[] {
-            (String) dropdownAbility1.getSelectedItem(),
-            (String) dropdownAbility2.getSelectedItem(),
-            (String) dropdownAbility3.getSelectedItem()
+        String[] selected = new String[abilityCount];
+        JComboBox<String>[] dropdowns = new JComboBox[] {
+                dropdownAbility1, dropdownAbility2, dropdownAbility3, dropdownAbility4
         };
+        for (int i = 0; i < abilityCount; i++) {
+            selected[i] = (String) dropdowns[i].getSelectedItem();
+        }
+        return selected;
     }
 
     // --- Feedback dialogs ---
@@ -266,12 +268,21 @@ public class CharacterManualCreationView extends JFrame {
     public JComboBox<String> getAbility4Dropdown() { return dropdownAbility4; }
 
     public void setAbility4Visible(boolean visible) {
-        ability4Panel.setVisible(visible);
-        if (ability4Spacer != null) ability4Spacer.setVisible(visible);
-        if (ability4Panel.getParent() != null) {
-            ability4Panel.getParent().revalidate();
-            ability4Panel.getParent().repaint();
+        setAbilityCount(visible ? 4 : 3);
+    }
+
+    public void setAbilityCount(int count) {
+        if (count < 3 || count > 4) {
+            throw new IllegalArgumentException("Ability count must be 3 or 4");
         }
+        abilityCount = count;
+        abilitiesPanel.removeAll();
+        for (int i = 0; i < abilityCount; i++) {
+            if (i > 0) abilitiesPanel.add(Box.createVerticalStrut(10));
+            abilitiesPanel.add(abilityPanels.get(i));
+        }
+        abilitiesPanel.revalidate();
+        abilitiesPanel.repaint();
     }
 
     // Controller setter (optional, for reference by controller)

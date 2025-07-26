@@ -21,6 +21,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * View class for editing an existing character in Fatal Fantasy: Tactics.
@@ -48,9 +50,9 @@ public class CharacterEditView extends JFrame {
     private final JComboBox<String> dropdownMagicItem = new JComboBox<>();
 
     private JPanel abilitiesPanel;
-    private JPanel ability4Panel;
-    private Component ability4Spacer;
     private Component abilitiesToItemSpacer;
+    private final List<JPanel> abilityPanels = new ArrayList<>();
+    private int abilityCount = 3;
 
     private final JButton btnEdit   = new RoundedButton(EDIT);
     private final JButton btnReturn = new RoundedButton(RETURN);
@@ -127,20 +129,11 @@ public class CharacterEditView extends JFrame {
         abilitiesPanel.setOpaque(false);
         abilitiesPanel.setLayout(new BoxLayout(abilitiesPanel, BoxLayout.Y_AXIS));
 
-        abilitiesPanel.add(Box.createVerticalStrut(20));
-        abilitiesPanel.add(createDropdownPanel("Select Ability 1", dropdownAbility1));
-        abilitiesPanel.add(Box.createVerticalStrut(10));
-        abilitiesPanel.add(createDropdownPanel("Select Ability 2", dropdownAbility2));
-        abilitiesPanel.add(Box.createVerticalStrut(10));
-        abilitiesPanel.add(createDropdownPanel("Select Ability 3", dropdownAbility3));
+        for (int i = 0; i < abilityDropdowns.length; i++) {
+            abilityPanels.add(createDropdownPanel("Select Ability " + (i + 1), abilityDropdowns[i]));
+        }
 
-        ability4Spacer = Box.createVerticalStrut(10);
-        ability4Panel = createDropdownPanel("Select Ability 4", dropdownAbility4);
-        ability4Panel.setVisible(false);
-        ability4Spacer.setVisible(false);
-
-        abilitiesPanel.add(ability4Spacer);
-        abilitiesPanel.add(ability4Panel);
+        setAbilityCount(abilityCount);
 
         centerPanel.add(abilitiesPanel);
 
@@ -168,17 +161,17 @@ public class CharacterEditView extends JFrame {
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         OutlinedLabel label = new OutlinedLabel(labelText);
-        Dimension labelSize = new Dimension(200, label.getPreferredSize().height);
+        Dimension labelSize = new Dimension(170, label.getPreferredSize().height);
         label.setPreferredSize(labelSize);
         label.setMinimumSize(labelSize);
         label.setMaximumSize(labelSize);
-        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 8));
 
-        dropdown.setFont(new Font("Serif", Font.BOLD, 18));
-        Dimension ddSize = new Dimension(350, 40);
+        dropdown.setFont(new Font("Serif", Font.BOLD, 16));
+        Dimension ddSize = new Dimension(300, 36);
         dropdown.setPreferredSize(ddSize);
         dropdown.setMaximumSize(ddSize);
-        dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+        dropdown.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
         panel.add(label);
         panel.add(dropdown);
@@ -261,9 +254,8 @@ public class CharacterEditView extends JFrame {
     }
 
     public String[] getSelectedAbilities() {
-        int count = ability4Panel.isVisible() ? 4 : 3;
-        String[] selected = new String[count];
-        for (int i = 0; i < count; i++) {
+        String[] selected = new String[abilityCount];
+        for (int i = 0; i < abilityCount; i++) {
             selected[i] = (String) abilityDropdowns[i].getSelectedItem();
         }
         return selected;
@@ -281,11 +273,21 @@ public class CharacterEditView extends JFrame {
     }
 
     public void setAbility4Visible(boolean visible) {
-        ability4Panel.setVisible(visible);
-        if (ability4Spacer != null) ability4Spacer.setVisible(visible);
-        if (abilitiesPanel != null) {
-            abilitiesPanel.revalidate();
-            abilitiesPanel.repaint();
+        setAbilityCount(visible ? 4 : 3);
+    }
+
+    public void setAbilityCount(int count) {
+        if (count < 3 || count > 4) {
+            throw new IllegalArgumentException("Ability count must be 3 or 4");
         }
+        abilityCount = count;
+        abilitiesPanel.removeAll();
+        abilitiesPanel.add(Box.createVerticalStrut(20));
+        for (int i = 0; i < abilityCount; i++) {
+            if (i > 0) abilitiesPanel.add(Box.createVerticalStrut(10));
+            abilitiesPanel.add(abilityPanels.get(i));
+        }
+        abilitiesPanel.revalidate();
+        abilitiesPanel.repaint();
     }
 }
