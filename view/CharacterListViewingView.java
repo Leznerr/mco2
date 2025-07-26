@@ -9,7 +9,7 @@ import javax.swing.*;
 /**
  * The character list view for Fatal Fantasy: Tactics Game.
  */
-public class CharacterListViewingView extends JFrame {
+public class CharacterListViewingView extends JPanel {
     private int playerID;
 
     // Button labels
@@ -26,34 +26,13 @@ public class CharacterListViewingView extends JFrame {
      * Constructs the Character Viewing UI of Fatal Fantasy: Tactics Game.
      */
     public CharacterListViewingView(int playerID) {
-        super("Fatal Fantasy: Tactics | Player " + playerID + " Characters Viewing");
 
         this.playerID = playerID;
 
         initUI();
         
-        setSize(800, 700);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                int choice = JOptionPane.showConfirmDialog(
-                    CharacterListViewingView.this,
-                    "Are you sure you want to quit?",
-                    "Confirm Exit",
-                    JOptionPane.YES_NO_OPTION
-                );
 
-                if (choice == JOptionPane.YES_OPTION) {
-                    dispose(); // closes the window
-                }
-            }
-        });
-
-        setLocationRelativeTo(null);
-        setResizable(false);
-        setVisible(true);
     }
 
 
@@ -142,7 +121,8 @@ public class CharacterListViewingView extends JFrame {
 
         backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        setContentPane(backgroundPanel);
+        setLayout(new BorderLayout());
+        add(backgroundPanel);
     }
 
 

@@ -78,21 +78,9 @@ public final class SceneManager {
         if (mainMenuView == null) {
             mainMenuView = new MainMenuView();
 
-            if (hallOfFameView == null) {
-                hallOfFameView = new HallOfFameManagementView();
-            }
-
-            if (hallOfFameController == null) {
-                hallOfFameController = new HallOfFameController(hallOfFameView, this);
-                hallOfFameView.setActionListener(hallOfFameController);
-                root.add(hallOfFameView.getContentPane(), CARD_HALL_OF_FAME);
-            }
-
-            if (gameManagerController == null) {
-                gameManagerController = new GameManagerController(this, hallOfFameController, mainMenuView);
             }
             mainMenuView.setActionListener(gameManagerController);
-            root.add(mainMenuView.getContentPane(), CARD_MAIN_MENU);
+            root.add(mainMenuView, CARD_MAIN_MENU);
         }
         cards.show(root, CARD_MAIN_MENU);
     }
@@ -109,7 +97,7 @@ public final class SceneManager {
                     case PlayerRegistrationView.RETURN_TO_MENU -> showMainMenu();
                 }
             });
-            root.add(playerRegView.getContentPane(), CARD_PLAYER_REG);
+            root.add(playerRegView, CARD_PLAYER_REG);
         }
         cards.show(root, CARD_PLAYER_REG);
     }
@@ -138,7 +126,7 @@ public final class SceneManager {
                     }
                 }
             });
-            root.add(newPlayersRegView.getContentPane(), CARD_NEW_PLAYER_REG);
+            root.add(newPlayersRegView, CARD_NEW_PLAYER_REG);
         }
         newPlayersRegView.resetFields();
         cards.show(root, CARD_NEW_PLAYER_REG);
@@ -168,7 +156,7 @@ public final class SceneManager {
                     }
                 }
             });
-            root.add(savedPlayersRegView.getContentPane(), CARD_SAVED_PLAYER_REG);
+            root.add(savedPlayersRegView, CARD_SAVED_PLAYER_REG);
         }
         try {
             GameData data = SaveLoadService.loadGame();
@@ -188,9 +176,7 @@ public final class SceneManager {
     public void showHallOfFameManagement() {
         if (hallOfFameView == null) {
             hallOfFameView = new HallOfFameManagementView();
-            hallOfFameController = new HallOfFameController(hallOfFameView, this);
-            hallOfFameView.setActionListener(hallOfFameController);
-            root.add(hallOfFameView.getContentPane(), CARD_HALL_OF_FAME);
+<<<
         }
         cards.show(root, CARD_HALL_OF_FAME);
     }
@@ -200,7 +186,7 @@ public final class SceneManager {
         if (characterMenuView == null) {
             characterMenuView = new CharacterManagementMenuView();
             new CharacterManagementMenuController(characterMenuView, players, this);
-            root.add(characterMenuView.getContentPane(), CARD_CHARACTER_MENU);
+            root.add(characterMenuView, CARD_CHARACTER_MENU);
         }
         cards.show(root, CARD_CHARACTER_MENU);
     }
@@ -209,7 +195,7 @@ public final class SceneManager {
     public void showPlayerCharacterManagement(Player player) {
         playerCharacterView = new PlayerCharacterManagementView(playersIndex(player));
         new PlayerCharacterManagementController(playerCharacterView, player, gameManagerController);
-        root.add(playerCharacterView.getContentPane(), CARD_PLAYER_CHARACTER);
+        root.add(playerCharacterView, CARD_PLAYER_CHARACTER);
         cards.show(root, CARD_PLAYER_CHARACTER);
     }
 
@@ -217,7 +203,7 @@ public final class SceneManager {
     public void showCharacterManagement(Player player) {
         playerCharacterView = new PlayerCharacterManagementView(playersIndex(player));
         new PlayerCharacterManagementController(playerCharacterView, player, gameManagerController);
-        root.add(playerCharacterView.getContentPane(), CARD_PLAYER_CHARACTER);
+        root.add(playerCharacterView, CARD_PLAYER_CHARACTER);
         cards.show(root, CARD_PLAYER_CHARACTER);
     }
 

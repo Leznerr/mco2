@@ -9,7 +9,7 @@ import javax.swing.*;
 /**
  * The players deletion view for Fatal Fantasy: Tactics Game.
  */
-public class PlayerDeleteView extends JFrame {
+public class PlayerDeleteView extends JPanel {
 
     // Button labels
     public static final String DELETE = "Delete";
@@ -26,32 +26,11 @@ public class PlayerDeleteView extends JFrame {
      * Constructs the Specific Player Deletion UI of Fatal Fantasy: Tactics Game.
      */
     public PlayerDeleteView() {
-        super("Fatal Fantasy: Tactics | Player Deletion");
 
         initUI();
         
-        setSize(800, 700);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                int choice = JOptionPane.showConfirmDialog(
-                    PlayerDeleteView.this,
-                    "Are you sure you want to quit?",
-                    "Confirm Exit",
-                    JOptionPane.YES_NO_OPTION
-                );
 
-                if (choice == JOptionPane.YES_OPTION) {
-                    dispose(); // closes the window
-                }
-            }
-        });
-
-        setLocationRelativeTo(null);
-        setResizable(false);
-        setVisible(true);
     }
 
 
@@ -163,7 +142,8 @@ public class PlayerDeleteView extends JFrame {
 
         backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        setContentPane(backgroundPanel);
+        setLayout(new BorderLayout());
+        add(backgroundPanel);
     }
 
 

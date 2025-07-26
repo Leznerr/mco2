@@ -9,7 +9,7 @@ import javax.swing.*;
 /**
  * The battle view for Fatal Fantasy: Tactics Game.
  */
-public class BattleView extends JFrame {
+public class BattleView extends JPanel {
     public static final int BATTLE_PVP = 1;
     public static final int BATTLE_PVB = 2;
 
@@ -34,34 +34,13 @@ public class BattleView extends JFrame {
      * Constructs the Battle UI of Fatal Fantasy: Tactics Game.
      */
     public BattleView(int mode) {
-        super(getTitleForPlayer(mode));
 
         this.mode = mode;
 
         initUI();
         
-        setSize(1200, 700);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                int choice = JOptionPane.showConfirmDialog(
-                    BattleView.this,
-                    "Are you sure you want to quit?",
-                    "Confirm Exit",
-                    JOptionPane.YES_NO_OPTION
-                );
 
-                if (choice == JOptionPane.YES_OPTION) {
-                    dispose(); // closes the window
-                }
-            }
-        });
-
-        setLocationRelativeTo(null);
-        setResizable(false);
-        setVisible(true);
     }
 
 
@@ -189,7 +168,8 @@ public class BattleView extends JFrame {
         backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
 
 
-        setContentPane(backgroundPanel);
+        setLayout(new BorderLayout());
+        add(backgroundPanel);
     }
 
     /**

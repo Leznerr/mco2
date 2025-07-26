@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
  * First screen for character management where the user selects
  * which player's roster to manage.
  */
-public class CharacterManagementMenuView extends JFrame {
+public class CharacterManagementMenuView extends JPanel {
 
     public static final String MANAGE_PLAYER1 = "Manage Player 1";
     public static final String MANAGE_PLAYER2 = "Manage Player 2";
@@ -19,12 +19,7 @@ public class CharacterManagementMenuView extends JFrame {
     private final JButton btnReturnToMenu = new RoundedButton(RETURN_TO_MENU);
 
     public CharacterManagementMenuView() {
-        super("Character Management");
         initUI();
-        setSize(800, 700);
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setResizable(false);
     }
 
     private void initUI() {
@@ -62,7 +57,8 @@ public class CharacterManagementMenuView extends JFrame {
         bgPanel.add(buttonPanel);
         bgPanel.add(Box.createVerticalGlue());
 
-        setContentPane(bgPanel);
+        setLayout(new BorderLayout());
+        add(bgPanel);
     }
 
     public void setActionListener(ActionListener l) {

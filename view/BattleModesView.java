@@ -9,7 +9,7 @@ import javax.swing.*;
 /**
  * The battle modes view for Fatal Fantasy: Tactics Game.
  */
-public class BattleModesView extends JFrame {
+public class BattleModesView extends JPanel {
     // Button labels
     public static final String PLAYER_VS_PLAYER = "Player vs Player";
     public static final String PLAYER_VS_BOT = "Player vs Bot";
@@ -25,32 +25,11 @@ public class BattleModesView extends JFrame {
      * Constructs the Battle Mode Selection UI of Fatal Fantasy: Tactics Game.
      */
     public BattleModesView() {
-        super("Fatal Fantasy: Tactics | Battle Mode Selection");
 
         initUI();
         
-        setSize(800, 700);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                int choice = JOptionPane.showConfirmDialog(
-                    BattleModesView.this,
-                    "Are you sure you want to quit?",
-                    "Confirm Exit",
-                    JOptionPane.YES_NO_OPTION
-                );
 
-                if (choice == JOptionPane.YES_OPTION) {
-                    dispose(); // closes the window
-                }
-            }
-        });
-
-        setLocationRelativeTo(null);
-        setResizable(false);
-        setVisible(true);
     }
 
 
@@ -118,7 +97,8 @@ public class BattleModesView extends JFrame {
         // Add vertical glue to push everything to the center
         backgroundPanel.add(Box.createVerticalGlue());
 
-        setContentPane(backgroundPanel);
+        setLayout(new BorderLayout());
+        add(backgroundPanel);
     }
 
 

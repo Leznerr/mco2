@@ -9,7 +9,7 @@ import javax.swing.*;
 /**
  * The top characters view for Fatal Fantasy: Tactics Game.
  */
-public class HallOfFameCharactersView extends JFrame {
+public class HallOfFameCharactersView extends JPanel {
     // Button labels
     public static final String RETURN = "Return";
 
@@ -22,32 +22,11 @@ public class HallOfFameCharactersView extends JFrame {
      * Constructs the Top Characters Viewing UI of Fatal Fantasy: Tactics Game.
      */
     public HallOfFameCharactersView() {
-        super("Fatal Fantasy: Tactics | Top Characters Viewing");
 
         initUI();
         
-        setSize(800, 700);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                int choice = JOptionPane.showConfirmDialog(
-                    HallOfFameCharactersView.this,
-                    "Are you sure you want to quit?",
-                    "Confirm Exit",
-                    JOptionPane.YES_NO_OPTION
-                );
 
-                if (choice == JOptionPane.YES_OPTION) {
-                    dispose(); // closes the window
-                }
-            }
-        });
-
-        setLocationRelativeTo(null);
-        setResizable(false);
-        setVisible(true);
     }
 
 
@@ -133,7 +112,8 @@ public class HallOfFameCharactersView extends JFrame {
 
         backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        setContentPane(backgroundPanel);
+        setLayout(new BorderLayout());
+        add(backgroundPanel);
     }
 
 
