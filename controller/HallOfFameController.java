@@ -9,6 +9,7 @@ import model.core.Player;
 import model.core.HallOfFameEntry;
 import model.util.GameException;
 import model.util.InputValidator;
+import controller.SceneManager;
 import persistence.SaveLoadService;
 import view.HallOfFameCharactersView;
 import view.HallOfFamePlayersView;
@@ -21,11 +22,14 @@ import view.HallOfFameManagementView;
 public class HallOfFameController implements ActionListener {
 
     private final HallOfFameManagementView view;
+    private final SceneManager sceneManager;
     private List<HallOfFameEntry> hallOfFameEntries;
 
-    public HallOfFameController(HallOfFameManagementView view) {
+    public HallOfFameController(HallOfFameManagementView view, SceneManager sceneManager) {
         InputValidator.requireNonNull(view, "view");
+        InputValidator.requireNonNull(sceneManager, "sceneManager");
         this.view = view;
+        this.sceneManager = sceneManager;
 
         try {
             this.hallOfFameEntries = SaveLoadService.loadHallOfFame();
@@ -40,14 +44,12 @@ public class HallOfFameController implements ActionListener {
     private void showTopPlayers() {
         HallOfFamePlayersView playersView = new HallOfFamePlayersView();
         bindHallOfFamePlayersView(playersView);
-        playersView.setVisible(true);
     }
 
     /** Opens the Top Characters subview and displays leaderboard data. */
     private void showTopCharacters() {
         HallOfFameCharactersView charactersView = new HallOfFameCharactersView();
         bindHallOfFameCharactersView(charactersView);
-        charactersView.setVisible(true);
     }
 
     /** Adds a win to the specified player in the Hall of Fame. */
@@ -101,7 +103,8 @@ public class HallOfFameController implements ActionListener {
 
         view.setActionListener(e -> {
             if (HallOfFameCharactersView.RETURN.equals(e.getActionCommand())) {
-                view.dispose();
+                sceneManager.closeWindow(view);
+                sceneManager.showHallOfFameManagement();
             }
         });
 
@@ -126,7 +129,8 @@ public class HallOfFameController implements ActionListener {
 
         view.setActionListener(e -> {
             if (HallOfFamePlayersView.RETURN.equals(e.getActionCommand())) {
-                view.dispose();
+                sceneManager.closeWindow(view);
+                sceneManager.showHallOfFameManagement();
             }
         });
 
@@ -152,7 +156,7 @@ public class HallOfFameController implements ActionListener {
         switch (command) {
             case HallOfFameManagementView.TOP_PLAYERS -> showTopPlayers();
             case HallOfFameManagementView.TOP_CHARACTERS -> showTopCharacters();
-            case HallOfFameManagementView.RETURN -> view.dispose();
+            case HallOfFameManagementView.RETURN -> sceneManager.showMainMenu();
             default -> view.showErrorMessage("Unknown action: " + command);
         }
     }

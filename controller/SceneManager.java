@@ -17,6 +17,7 @@ import persistence.SaveLoadService;
 import view.BattleView;
 import view.CharacterManagementMenuView;
 import view.HallOfFameManagementView;
+import controller.HallOfFameController;
 import view.MainMenuView;
 import view.NewPlayersRegistrationView;
 import view.PlayerCharacterManagementView;
@@ -51,6 +52,7 @@ public final class SceneManager {
     private BattleView battleView;
 
     private GameManagerController gameManagerController; // Keep the controller instance here
+    private HallOfFameController hallOfFameController;
 
     // ---------- Constructor ----------
     public SceneManager() {
@@ -76,16 +78,6 @@ public final class SceneManager {
         if (mainMenuView == null) {
             mainMenuView = new MainMenuView();
 
-            // Ensure Hall of Fame view exists before creating its controller
-            if (hallOfFameView == null) {
-                hallOfFameView = new HallOfFameManagementView();
-                root.add(hallOfFameView.getContentPane(), CARD_HALL_OF_FAME);
-            }
-
-            // Initialize the controller only once
-            if (gameManagerController == null) {
-                HallOfFameController hofController = new HallOfFameController(hallOfFameView);
-                gameManagerController = new GameManagerController(this, hofController, mainMenuView);
             }
             mainMenuView.setActionListener(gameManagerController);
             root.add(mainMenuView, CARD_MAIN_MENU);
@@ -184,9 +176,7 @@ public final class SceneManager {
     public void showHallOfFameManagement() {
         if (hallOfFameView == null) {
             hallOfFameView = new HallOfFameManagementView();
-            HallOfFameController controller = new HallOfFameController(hallOfFameView);
-            hallOfFameView.setActionListener(controller);
-            root.add(hallOfFameView, CARD_HALL_OF_FAME);
+<<<
         }
         cards.show(root, CARD_HALL_OF_FAME);
     }
@@ -261,6 +251,13 @@ public final class SceneManager {
     /** Entry point for testing this class in isolation. */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(SceneManager::new);
+    }
+
+    /** Closes any standalone window. */
+    public void closeWindow(java.awt.Window window) {
+        if (window != null) {
+            window.dispose();
+        }
     }
 
     /** Launches the main menu — for external triggering. */

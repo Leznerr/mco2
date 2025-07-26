@@ -104,19 +104,16 @@ public void actionPerformed(ActionEvent e) {
     switch (command) {
         case MainMenuView.REGISTER_PLAYERS -> {
             sceneManager.showPlayerRegistration(); // Shows Player Registration View
-            mainMenuView.dispose(); // Close the MainMenuView
         }
         case MainMenuView.MANAGE_CHARACTERS -> {
             if (players.isEmpty()) {
                 JOptionPane.showMessageDialog(mainMenuView, "Please register players first.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 sceneManager.showCharacterManagementMenu(players);
-                mainMenuView.dispose();
             }
         }
         case MainMenuView.HALL_OF_FAME -> {
             sceneManager.showHallOfFameManagement(); // Show Hall of Fame View
-            mainMenuView.dispose(); // Close the MainMenuView
         }
         case MainMenuView.START_BATTLE -> {
             if (players.isEmpty() || players.get(0).getCharacters().isEmpty()) {
@@ -128,7 +125,6 @@ public void actionPerformed(ActionEvent e) {
                     Character bot = RandomCharacterGenerator.generate("Bot");
                     AIController ai = new AIController(new SimpleBot(new java.util.Random()));
                     sceneManager.showPlayerVsBotBattle(player, human, bot, ai);
-                    mainMenuView.dispose();
                 } catch (GameException e1) {
                     JOptionPane.showMessageDialog(mainMenuView, "Failed to start battle: " + e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -161,21 +157,17 @@ public void actionPerformed(ActionEvent e) {
                 switch (command) {
                     case CharacterCreationManagementView.MANUAL_CREATION -> {
                         handleNavigateToManualCreation(playerName);
-                        view.dispose();
                     }
                     case CharacterCreationManagementView.AUTO_CREATION -> {
                         handleNavigateToAutoCreation(playerName);
-                        view.dispose();
                     }
                     case CharacterCreationManagementView.RETURN -> {
                         navigateBackToMainMenu();
-                        view.dispose();
                     }
                 }
             });
 
-            // Ensure the menu becomes visible when opened
-            view.setVisible(true);
+            // Menu is visible upon creation
         });
     }
 
@@ -185,7 +177,6 @@ public void actionPerformed(ActionEvent e) {
         SwingUtilities.invokeLater(() -> {
             CharacterManualCreationView manualView = new CharacterManualCreationView(playerId);
             new CharacterManualCreationController(manualView, playerName, this);
-            manualView.setVisible(true);
         });
     }
 
@@ -194,7 +185,6 @@ public void actionPerformed(ActionEvent e) {
         SwingUtilities.invokeLater(() -> {
             CharacterAutoCreationView autoView = new CharacterAutoCreationView(playerId);
             new CharacterAutoCreationController(autoView, playerName, this);
-            autoView.setVisible(true);
         });
     }
 
@@ -310,7 +300,6 @@ public void actionPerformed(ActionEvent e) {
      */
     private void quitApplication() {
         handleSaveGameRequest();
-        mainMenuView.dispose();
         Main.shutdown();
     }
 
