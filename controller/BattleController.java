@@ -140,11 +140,9 @@ public final class BattleController {
         InputValidator.requireNonNull(user, "user");
         InputValidator.requireNonNull(move, "move");
 
-        if (!belongsToBattle(user)) {
-            throw new GameException("Character is not part of the current battle.");
-        }
+        Character battleUser = resolveBattleCharacter(user);
 
-        selections.put(user, move);
+        selections.put(battleUser, move);
 
         if (selections.size() == 2) { // both combatants have chosen
             executeTurn();
@@ -160,35 +158,33 @@ public final class BattleController {
         InputValidator.requireNonNull(user, "user");
         InputValidator.requireNonBlank(choice, "choice");
 
-        if (!belongsToBattle(user)) {
-            throw new GameException("Character is not part of the current battle.");
-        }
+        Character battleUser = resolveBattleCharacter(user);
 
         // Item choice is prefixed with "Item: "
         if (choice.startsWith("Item: ")) {
             String name = choice.substring(6);
-            Optional<SingleUseItem> itemOpt = user.getInventory().getAllItems().stream()
+            Optional<SingleUseItem> itemOpt = battleUser.getInventory().getAllItems().stream()
                     .filter(i -> i instanceof SingleUseItem && i.getName().equals(name))
                     .map(i -> (SingleUseItem) i)
                     .findFirst();
             if (itemOpt.isPresent()) {
-                submitMove(user, new ItemMove(itemOpt.get()));
+                submitMove(battleUser, new ItemMove(itemOpt.get()));
                 return;
             }
         }
 
         // Otherwise treat as ability name
-        Optional<Ability> abilityOpt = user.getAbilities().stream()
+        Optional<Ability> abilityOpt = battleUser.getAbilities().stream()
                 .filter(a -> a.getName().equals(choice))
                 .findFirst();
         if (abilityOpt.isPresent()) {
             Ability a = abilityOpt.get();
-            if (a.getEpCost() > user.getCurrentEp()) {
-                battle.getCombatLog().addEntry(user.getName() + " lacks EP for " + a.getName());
+            if (a.getEpCost() > battleUser.getCurrentEp()) {
+                battle.getCombatLog().addEntry(battleUser.getName() + " lacks EP for " + a.getName());
                 view.displayTurnResults(battle.getCombatLog());
                 return;
             }
-            submitMove(user, new AbilityMove(a));
+            submitMove(battleUser, new AbilityMove(a));
         } else {
             battle.getCombatLog().addEntry("Unknown action: " + choice);
         }
@@ -208,18 +204,16 @@ public final class BattleController {
         InputValidator.requireNonNull(user, "user");
         InputValidator.requireNonNull(item, "item");
 
-        if (!belongsToBattle(user)) {
-            throw new GameException("Character is not part of the current battle.");
-        }
+        Character battleUser = resolveBattleCharacter(user);
 
         // Verify item exists, apply its effect, and remove it from inventory
-        if (!user.getInventory().getAllItems().contains(item)) {
+        if (!battleUser.getInventory().getAllItems().contains(item)) {
             throw new GameException("Item not found in inventory.");
         }
 
         CombatLog log = battle.getCombatLog();
-        item.applyEffect(user, log);
-        user.getInventory().useSingleUseItem(item);
+        item.applyEffect(battleUser, log);
+        battleUser.getInventory().useSingleUseItem(item);
         updatePlayerPanels();
     }
 
@@ -382,7 +376,19 @@ public final class BattleController {
     }
 
     private boolean belongsToBattle(Character c) {
-        return c == battle.getCharacter1() || c == battle.getCharacter2();
+        return c == battleC1 || c == battleC2 ||
+               c == originalC1 || c == originalC2;
+    }
+
+    /**
+     * Resolves a given character reference to the active battle copy.
+     * Allows the UI to pass either the persistent character or its battle clone.
+     */
+    private Character resolveBattleCharacter(Character ref) throws GameException {
+        ensureRunning();
+        if (ref == battleC1 || ref == originalC1) return battleC1;
+        if (ref == battleC2 || ref == originalC2) return battleC2;
+        throw new GameException("Character is not part of the current battle.");
     }
 
     private boolean battleEnded() {

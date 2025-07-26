@@ -269,6 +269,8 @@ public final class SceneManager {
                         battleController.handlePlayerChoice(human, choice);
                     } catch (GameException ex) {
                         DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
+                        battleView.setBattleControlsEnabled(false);
+                        battleView.setEndButtonsEnabled(true);
                     }
                 }
             });
@@ -281,6 +283,8 @@ public final class SceneManager {
                     battleController.startBattleVsBot(human, bot, aiController);
                 } catch (GameException ex) {
                     DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
+                    battleView.setBattleControlsEnabled(false);
+                    battleView.setEndButtonsEnabled(true);
                 }
             });
             root.add(battleView.getContentPane(), CARD_BATTLE);
@@ -306,6 +310,8 @@ public final class SceneManager {
                         controller.handlePlayerChoice(c1, choice);
                     } catch (GameException ex) {
                         DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
+                        battleView.setBattleControlsEnabled(false);
+                        battleView.setEndButtonsEnabled(true);
                     }
                 }
             });
@@ -316,6 +322,8 @@ public final class SceneManager {
                         controller.handlePlayerChoice(c2, choice);
                     } catch (GameException ex) {
                         DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
+                        battleView.setBattleControlsEnabled(false);
+                        battleView.setEndButtonsEnabled(true);
                     }
                 }
             });
@@ -328,6 +336,8 @@ public final class SceneManager {
                     controller.startBattle(c1, c2);
                 } catch (GameException ex) {
                     DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
+                    battleView.setBattleControlsEnabled(false);
+                    battleView.setEndButtonsEnabled(true);
                 }
             });
             root.add(battleView.getContentPane(), CARD_BATTLE);
