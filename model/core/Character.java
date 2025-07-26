@@ -144,8 +144,28 @@ public class Character implements Serializable {
      * @param damage The non-negative amount of damage to apply.
      */
     public void takeDamage(int damage) {
-        if (damage < 0) return; // Or throw exception for invalid input
-        this.currentHp = Math.max(0, this.currentHp - damage);
+        if (damage < 0) return;
+
+        int finalDamage = damage;
+
+        // Passive item mitigation
+        var eq = inventory.getEquippedItem();
+        if (eq != null && "Golden Dragon Scale".equals(eq.getName())) {
+            finalDamage = (int) Math.ceil(finalDamage * 0.9); // 10% reduction
+        }
+
+        if (hasStatusEffect(StatusEffectType.IMMUNITY)) {
+            finalDamage = 0;
+        } else {
+            if (hasStatusEffect(StatusEffectType.DEFENSE_UP)) {
+                finalDamage = (int) Math.ceil(finalDamage / 2.0);
+            }
+            if (hasStatusEffect(StatusEffectType.EVADING) && new java.util.Random().nextBoolean()) {
+                finalDamage = 0;
+            }
+        }
+
+        this.currentHp = Math.max(0, this.currentHp - finalDamage);
     }
 
     /**
