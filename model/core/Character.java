@@ -190,11 +190,7 @@ public class Character implements Serializable {
 
         int finalDamage = damage;
 
-        // Passive item mitigation
-        var eq = inventory.getEquippedItem();
-        if (eq != null && "Golden Dragon Scale".equals(eq.getName())) {
-            finalDamage = (int) Math.ceil(finalDamage * 0.9); // 10% reduction
-        }
+        // Passive item mitigation reserved for future items
 
         if (hasStatusEffect(StatusEffectType.IMMUNITY)) {
             finalDamage = 0;
@@ -217,6 +213,16 @@ public class Character implements Serializable {
     public void heal(int healingAmount) {
         if (healingAmount < 0) return;
         this.currentHp = Math.min(this.maxHp, this.currentHp + healingAmount);
+    }
+
+    /**
+     * Permanently increases max HP by the specified amount.
+     * Current HP is boosted by the same value.
+     */
+    public void increaseMaxHp(int amount) {
+        if (amount <= 0) return;
+        this.maxHp += amount;
+        this.currentHp += amount;
     }
 
     /**

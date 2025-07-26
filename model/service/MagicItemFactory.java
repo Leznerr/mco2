@@ -30,29 +30,30 @@ public final class MagicItemFactory {
      * ----------------------------------------------------------- */
 
     private static final List<MagicItem> COMMON_ITEMS = List.of(
-        new SingleUseItem("Minor Healing Potion", "Restore 25 HP.", "Common",
-                SingleUseEffectType.HEAL_HP, 25),
-        new PassiveItem("Copper Ring", "Max EP +5.", "Common")
+        new SingleUseItem("Potion of Minor Healing", "Heals 40 HP.", "Common",
+                SingleUseEffectType.HEAL_HP, 40),
+        new SingleUseItem("Scroll of Minor Energy", "Restores 20 EP.", "Common",
+                SingleUseEffectType.RESTORE_EP, 20),
+        new SingleUseItem("Defender's Aegis", "Negates all damage for one turn.", "Common",
+                SingleUseEffectType.GRANT_IMMUNITY, 1)
     );
 
     private static final List<MagicItem> UNCOMMON_ITEMS = List.of(
-        new SingleUseItem("Elixir of Focus", "Restore 15 EP.", "Uncommon",
-                SingleUseEffectType.RESTORE_EP, 15),
-        new PassiveItem("Silver Amulet", "Max HP +15.", "Uncommon")
+        new PassiveItem("Amulet of Vitality", "Max HP +20 while equipped.", "Uncommon"),
+        new PassiveItem("Ring of Focus", "+2 EP each turn.", "Uncommon")
     );
 
     private static final List<MagicItem> RARE_ITEMS = List.of(
-        new SingleUseItem("Phoenix Tear", "Revive from KO with 50% HP.", "Rare",
-                SingleUseEffectType.REVIVE, 50),
-        new PassiveItem("Golden Dragon Scale", "Defense +10%.", "Rare")
+        new PassiveItem("Orb of Resilience", "Heal +5 HP each turn.", "Rare"),
+        new PassiveItem("Ancient Tome of Power", "+5 EP each turn.", "Rare")
     );
 
     /* -------------------------------------------------------------
      * Rarity Weighting (Cumulative Ranges)
      * ----------------------------------------------------------- */
 
-    private static final int COMMON_UPPER   = 69; // 0–69
-    private static final int UNCOMMON_UPPER = 94; // 70–94
+    private static final int COMMON_UPPER   = 59; // 0–59
+    private static final int UNCOMMON_UPPER = 94; // 60–94
     // 95–99 → Rare
 
     private static final SecureRandom RNG = new SecureRandom();

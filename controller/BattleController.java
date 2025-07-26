@@ -359,18 +359,19 @@ public final class BattleController {
         log.addEntry("--- Round " + battle.getRoundNumber() + " ---");
         view.setRoundNumber(battle.getRoundNumber());
 
-        processRoundStartFor(battle.getCharacter1(), log);
-        processRoundStartFor(battle.getCharacter2(), log);
+        boolean first = battle.getRoundNumber() == 1;
+        processRoundStartFor(battle.getCharacter1(), log, first);
+        processRoundStartFor(battle.getCharacter2(), log, first);
 
         view.displayTurnResults(log);
         updatePlayerPanels();
     }
 
-    private void processRoundStartFor(Character c, CombatLog log) throws GameException {
+    private void processRoundStartFor(Character c, CombatLog log, boolean firstRound) throws GameException {
         c.gainEp(Constants.ROUND_EP_REGEN);
         log.addEntry(c.getName() + " regenerates " + Constants.ROUND_EP_REGEN + " EP.");
         if (c.getInventory().getEquippedItem() instanceof PassiveItem p) {
-            applyPassiveItemEffect(c, p, log);
+            applyPassiveItemEffect(c, p, log, firstRound);
         }
         c.processStartOfTurnEffects(log);
         if (!c.isAlive()) {
@@ -378,18 +379,27 @@ public final class BattleController {
         }
     }
 
-    private void applyPassiveItemEffect(Character c, PassiveItem item, CombatLog log) throws GameException {
+    private void applyPassiveItemEffect(Character c, PassiveItem item, CombatLog log, boolean firstRound) throws GameException {
         String name = item.getName();
         switch (name) {
-            case "Copper Ring" -> {
+            case "Amulet of Vitality" -> {
+                if (firstRound) {
+                    c.increaseMaxHp(20);
+                    log.addEntry(c.getName() + " feels empowered by " + name + ".");
+                }
+            }
+            case "Ring of Focus" -> {
+                c.gainEp(2);
+                log.addEntry(c.getName() + " gains 2 EP from " + name + ".");
+            }
+            case "Orb of Resilience" -> {
+                c.heal(5);
+                log.addEntry(c.getName() + " restores 5 HP from " + name + ".");
+            }
+            case "Ancient Tome of Power" -> {
                 c.gainEp(5);
                 log.addEntry(c.getName() + " gains 5 EP from " + name + ".");
             }
-            case "Silver Amulet" -> {
-                c.heal(5);
-                log.addEntry(c.getName() + " gains 5 HP from " + name + ".");
-            }
-            case "Golden Dragon Scale" -> log.addEntry(c.getName() + " is shielded by " + name + ".");
             default -> log.addEntry("Item effect for " + name + " not implemented.");
         }
     }
@@ -490,10 +500,23 @@ public final class BattleController {
             sb.append(a.getName()).append(" (").append(a.getEpCost()).append(" EP)").append("\n");
         }
         for (var item : c.getInventory().getAllItems()) {
-            sb.append("Item: ").append(item.getName()).append("\n");
+            sb.append("Item: ")
+              .append(item.getName())
+              .append(" - ")
+              .append(item.getDescription())
+              .append(" [")
+              .append(item.getItemType())
+              .append("]\n");
         }
         if (c.getInventory().getEquippedItem() != null) {
-            sb.append("Equipped: ").append(c.getInventory().getEquippedItem().getName());
+            var eq = c.getInventory().getEquippedItem();
+            sb.append("Equipped: ")
+              .append(eq.getName())
+              .append(" - ")
+              .append(eq.getDescription())
+              .append(" [")
+              .append(eq.getItemType())
+              .append("]");
         }
         return sb.toString();
     }
