@@ -12,10 +12,12 @@ import model.core.Player;
 import controller.GameManagerController;
 import model.item.SingleUseItem;
 import model.battle.LevelingSystem;
+import model.util.Constants;
 import model.util.GameException;
 import model.util.InputValidator;
 import view.BattleView;
 import controller.AIController;
+import java.util.stream.Collectors;
 
 import java.util.*;
 
@@ -129,6 +131,43 @@ public final class BattleController {
     }
 
     /**
+     * Resolves a player choice string from the UI into an actionable move.
+     * The choice may refer to an ability or a usable magic item.
+     */
+    public void handlePlayerChoice(Character user, String choice) throws GameException {
+        ensureRunning();
+        InputValidator.requireNonNull(user, "user");
+        InputValidator.requireNonBlank(choice, "choice");
+
+        if (!belongsToBattle(user)) {
+            throw new GameException("Character is not part of the current battle.");
+        }
+
+        // Item choice is prefixed with "Item: "
+        if (choice.startsWith("Item: ")) {
+            String name = choice.substring(6);
+            Optional<SingleUseItem> itemOpt = user.getInventory().getAllItems().stream()
+                    .filter(i -> i instanceof SingleUseItem && i.getName().equals(name))
+                    .map(i -> (SingleUseItem) i)
+                    .findFirst();
+            if (itemOpt.isPresent()) {
+                submitMove(user, new ItemMove(itemOpt.get()));
+                return;
+            }
+        }
+
+        // Otherwise treat as ability name
+        Optional<Ability> abilityOpt = user.getAbilities().stream()
+                .filter(a -> a.getName().equals(choice))
+                .findFirst();
+        if (abilityOpt.isPresent()) {
+            submitMove(user, new AbilityMove(abilityOpt.get()));
+        } else {
+            battle.getCombatLog().addEntry("Unknown action: " + choice);
+        }
+    }
+
+    /**
      * Handles a request to use a single-use item in battle.
      * Applies the item's effect in the battle context, updates logs,
      * and removes the item from the user's inventory.
@@ -175,10 +214,22 @@ public final class BattleController {
         /* order by priority – higher first (ties resolved arbitrarily) */
         List<Turn> order = buildTurnOrder();
         for (Turn t : order) {
-            if (t.actor.isAlive() && t.target.isAlive()) {
+            if (!t.actor.isAlive()) continue;
+
+            t.actor.processStartOfTurnEffects(log);
+            if (!t.actor.isAlive()) continue;
+
+            if (t.actor.isStunned()) {
+                log.addEntry(t.actor.getName() + " is stunned and cannot act.");
+            } else if (t.target.isAlive()) {
                 t.move.execute(t.actor, t.target, log);
             }
+
+            t.actor.processEndOfTurnEffects(log);
         }
+
+        battle.getCharacter1().gainEp(Constants.ROUND_EP_REGEN);
+        battle.getCharacter2().gainEp(Constants.ROUND_EP_REGEN);
 
         view.displayTurnResults(log);
         updatePlayerPanels();
@@ -212,6 +263,9 @@ public final class BattleController {
             updatePlayerPanels();
             battle = null; // back to idle state
             aiController = null;
+        }
+        else {
+            battle.nextRound();
         }
     }
 
@@ -293,13 +347,23 @@ public final class BattleController {
     }
 
     private List<String> abilityNames(Character c) {
-        return c.getAbilities().stream().map(a -> a.getName()).toList();
+        List<String> names = new ArrayList<>();
+        for (Ability a : c.getAbilities()) {
+            names.add(a.getName());
+        }
+        c.getInventory().getAllItems().stream()
+                .filter(i -> i instanceof SingleUseItem)
+                .forEach(i -> names.add("Item: " + i.getName()));
+        return names;
     }
 
     private String buildAbilityList(Character c) {
         StringBuilder sb = new StringBuilder();
         for (var a : c.getAbilities()) {
             sb.append(a.getName()).append(" (").append(a.getEpCost()).append(" EP)").append("\n");
+        }
+        for (var item : c.getInventory().getAllItems()) {
+            sb.append("Item: ").append(item.getName()).append("\n");
         }
         if (c.getInventory().getEquippedItem() != null) {
             sb.append("Equipped: ").append(c.getInventory().getEquippedItem().getName());
@@ -308,7 +372,14 @@ public final class BattleController {
     }
 
     private String formatStatus(Character c) {
-        return String.format("HP %d/%d | EP %d/%d", c.getCurrentHp(), c.getMaxHp(),
+        String base = String.format("HP %d/%d | EP %d/%d", c.getCurrentHp(), c.getMaxHp(),
                 c.getCurrentEp(), c.getMaxEp());
+        if (!c.getActiveStatusEffects().isEmpty()) {
+            String statuses = c.getActiveStatusEffects().stream()
+                    .map(se -> se.getType().name())
+                    .collect(Collectors.joining(","));
+            return base + " | " + statuses;
+        }
+        return base;
     }
 }

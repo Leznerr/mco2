@@ -77,7 +77,10 @@ public final class AbilityMove implements Move {
                     log.addEntry(user.getName() + " recovers " + ability.getEffectValue() + " HP.");
                 }
             }
-            default -> throw new GameException("Unhandled ability effect: " + ability.getAbilityEffectType());
+            default -> {
+                // Gracefully handle any unknown effect types
+                log.addEntry("Ability type " + ability.getAbilityEffectType() + " not implemented.");
+            }
         }
     }
 

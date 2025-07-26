@@ -263,10 +263,10 @@ public final class SceneManager {
         try {
             BattleController battleController = new BattleController(battleView, gameManagerController, humanPlayer, null);
             battleView.addUseAbilityP1Listener(e -> {
-                int idx = battleView.getAbilitySelectorP1().getSelectedIndex();
-                if (idx >= 0) {
+                String choice = (String) battleView.getAbilitySelectorP1().getSelectedItem();
+                if (choice != null) {
                     try {
-                        battleController.submitMove(human, new model.battle.AbilityMove(human.getAbilities().get(idx)));
+                        battleController.handlePlayerChoice(human, choice);
                     } catch (GameException ex) {
                         DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
                     }
@@ -293,20 +293,20 @@ public final class SceneManager {
         try {
             BattleController controller = new BattleController(battleView, gameManagerController, p1, p2);
             battleView.addUseAbilityP1Listener(e -> {
-                int idx = battleView.getAbilitySelectorP1().getSelectedIndex();
-                if (idx >= 0) {
+                String choice = (String) battleView.getAbilitySelectorP1().getSelectedItem();
+                if (choice != null) {
                     try {
-                        controller.submitMove(c1, new model.battle.AbilityMove(c1.getAbilities().get(idx)));
+                        controller.handlePlayerChoice(c1, choice);
                     } catch (GameException ex) {
                         DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
                     }
                 }
             });
             battleView.addUseAbilityP2Listener(e -> {
-                int idx = battleView.getAbilitySelectorP2().getSelectedIndex();
-                if (idx >= 0) {
+                String choice = (String) battleView.getAbilitySelectorP2().getSelectedItem();
+                if (choice != null) {
                     try {
-                        controller.submitMove(c2, new model.battle.AbilityMove(c2.getAbilities().get(idx)));
+                        controller.handlePlayerChoice(c2, choice);
                     } catch (GameException ex) {
                         DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
                     }

@@ -1,6 +1,7 @@
 package model.core;
 
 import model.battle.LevelingSystem;
+import model.battle.CombatLog;
 import model.item.Inventory;
 import model.item.MagicItem;
 import model.util.Constants;
@@ -250,9 +251,45 @@ public class Character implements Serializable {
     public List<StatusEffect> getActiveStatusEffects() {
         return Collections.unmodifiableList(activeStatusEffects);
     }
-    
+
     public boolean isStunned() { return this.isStunned; }
     public void setStunned(boolean stunned) { this.isStunned = stunned; }
+
+    /**
+     * Processes all active status effects at the start of this character's turn.
+     * Effects are updated and removed when their duration expires.
+     */
+    public void processStartOfTurnEffects(CombatLog log) throws GameException {
+        InputValidator.requireNonNull(log, "combat log");
+        var iterator = activeStatusEffects.iterator();
+        while (iterator.hasNext()) {
+            StatusEffect effect = iterator.next();
+            effect.onTurnStart(this);
+            if (effect.getDuration() <= 0) {
+                effect.remove(this);
+                iterator.remove();
+                log.addEntry(this.name + " is no longer " + effect.getType() + ".");
+            }
+        }
+    }
+
+    /**
+     * Processes all active status effects at the end of this character's turn.
+     * Effects are updated and removed when their duration expires.
+     */
+    public void processEndOfTurnEffects(CombatLog log) throws GameException {
+        InputValidator.requireNonNull(log, "combat log");
+        var iterator = activeStatusEffects.iterator();
+        while (iterator.hasNext()) {
+            StatusEffect effect = iterator.next();
+            effect.onTurnEnd(this);
+            if (effect.getDuration() <= 0) {
+                effect.remove(this);
+                iterator.remove();
+                log.addEntry(this.name + " is no longer " + effect.getType() + ".");
+            }
+        }
+    }
 
     // --- Overridden Methods ---
 

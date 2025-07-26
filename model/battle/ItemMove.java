@@ -43,7 +43,7 @@ public final class ItemMove implements Move {
         }
 
         log.addEntry(user.getName() + " uses " + item.getName() + ".");
-        user.getInventory().removeItem(item);
-        // Actual item effects would be handled elsewhere
+        item.applyEffect(user, log);
+        user.getInventory().useSingleUseItem(item);
     }
 }
