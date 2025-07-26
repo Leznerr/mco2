@@ -97,7 +97,14 @@ public class BattleView extends JFrame {
      * Convenience constructor using two characters. Defaults to PvP mode.
      */
     public BattleView(Character c1, Character c2) {
-        this(BATTLE_PVP);
+        this(BATTLE_PVP, c1, c2);
+    }
+
+    /**
+     * Constructs a battle view for the given mode and characters.
+     */
+    public BattleView(int mode, Character c1, Character c2) {
+        this(mode);
         this.char1 = c1;
         this.char2 = c2;
     }
