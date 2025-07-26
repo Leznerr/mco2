@@ -184,7 +184,7 @@ public final class SceneManager {
     public void showPlayerDelete() {
         if (playerDeleteView == null) {
             playerDeleteView = new PlayerDeleteView();
-            playerDeleteController = new PlayerDeleteController(playerDeleteView, gameManagerController);
+            playerDeleteController = new PlayerDeleteController(playerDeleteView, gameManagerController, this);
             root.add(playerDeleteView.getContentPane(), CARD_DELETE_PLAYER);
         } else {
             playerDeleteController.refresh();

@@ -18,10 +18,12 @@ public class PlayerDeleteController implements ActionListener {
 
     private final PlayerDeleteView view;
     private final GameManagerController gameManager;
+    private final SceneManager sceneManager;
 
-    public PlayerDeleteController(PlayerDeleteView view, GameManagerController gameManager) {
+    public PlayerDeleteController(PlayerDeleteView view, GameManagerController gameManager, SceneManager sceneManager) {
         this.view = view;
         this.gameManager = gameManager;
+        this.sceneManager = sceneManager;
         this.view.setActionListener(this);
         refresh();
     }
@@ -44,7 +46,7 @@ public class PlayerDeleteController implements ActionListener {
         String cmd = e.getActionCommand();
         if (PlayerDeleteView.RETURN.equals(cmd)) {
             view.dispose();
-            gameManager.navigateBackToMainMenu();
+            sceneManager.showPlayerRegistration();
         } else if (PlayerDeleteView.DELETE.equals(cmd)) {
             String name = view.getSelectedPlayer();
             if (name == null) {
