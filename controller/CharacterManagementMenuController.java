@@ -42,6 +42,11 @@ public class CharacterManagementMenuController {
         }
     }
 
+    /** Refresh the player button labels based on the current player list. */
+    public void refresh() {
+        updateLabels();
+    }
+
     private void updateLabels() {
         if (players.isEmpty()) {
             JOptionPane.showMessageDialog(view,

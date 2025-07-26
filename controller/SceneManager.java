@@ -24,6 +24,7 @@ import view.PlayerRegistrationView;
 import view.PlayerDeleteView;
 import view.SavedPlayersRegistrationView;
 import controller.PlayerDeleteController;
+import controller.CharacterManagementMenuController;
 
 public final class SceneManager {
 
@@ -50,6 +51,7 @@ public final class SceneManager {
     private SavedPlayersRegistrationView savedPlayersRegView;
     private HallOfFameManagementView hallOfFameView;
     private CharacterManagementMenuView characterMenuView;
+    private CharacterManagementMenuController characterMenuController;
     private PlayerCharacterManagementView playerCharacterView;
     private BattleView battleView;
     private PlayerDeleteView playerDeleteView;
@@ -207,8 +209,10 @@ public final class SceneManager {
     public void showCharacterManagementMenu(List<Player> players) {
         if (characterMenuView == null) {
             characterMenuView = new CharacterManagementMenuView();
-            new CharacterManagementMenuController(characterMenuView, players, this);
+            characterMenuController = new CharacterManagementMenuController(characterMenuView, players, this);
             root.add(characterMenuView.getContentPane(), CARD_CHARACTER_MENU);
+        } else if (characterMenuController != null) {
+            characterMenuController.refresh();
         }
         cards.show(root, CARD_CHARACTER_MENU);
     }
