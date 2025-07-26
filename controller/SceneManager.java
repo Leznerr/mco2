@@ -17,6 +17,7 @@ import persistence.SaveLoadService;
 import view.BattleView;
 import view.CharacterManagementMenuView;
 import view.HallOfFameManagementView;
+import controller.HallOfFameController;
 import view.MainMenuView;
 import view.NewPlayersRegistrationView;
 import view.PlayerCharacterManagementView;
@@ -51,6 +52,7 @@ public final class SceneManager {
     private BattleView battleView;
 
     private GameManagerController gameManagerController; // Keep the controller instance here
+    private HallOfFameController hallOfFameController;
 
     // ---------- Constructor ----------
     public SceneManager() {
@@ -76,10 +78,18 @@ public final class SceneManager {
         if (mainMenuView == null) {
             mainMenuView = new MainMenuView();
 
-            // Initialize the controller only once
-            
+            if (hallOfFameView == null) {
+                hallOfFameView = new HallOfFameManagementView();
+            }
+
+            if (hallOfFameController == null) {
+                hallOfFameController = new HallOfFameController(hallOfFameView, this);
+                hallOfFameView.setActionListener(hallOfFameController);
+                root.add(hallOfFameView.getContentPane(), CARD_HALL_OF_FAME);
+            }
+
             if (gameManagerController == null) {
-                gameManagerController = new GameManagerController(this, new HallOfFameController(hallOfFameView), mainMenuView);
+                gameManagerController = new GameManagerController(this, hallOfFameController, mainMenuView);
             }
             mainMenuView.setActionListener(gameManagerController);
             root.add(mainMenuView.getContentPane(), CARD_MAIN_MENU);
@@ -178,8 +188,8 @@ public final class SceneManager {
     public void showHallOfFameManagement() {
         if (hallOfFameView == null) {
             hallOfFameView = new HallOfFameManagementView();
-            HallOfFameController controller = new HallOfFameController(hallOfFameView);
-            hallOfFameView.setActionListener(controller);
+            hallOfFameController = new HallOfFameController(hallOfFameView, this);
+            hallOfFameView.setActionListener(hallOfFameController);
             root.add(hallOfFameView.getContentPane(), CARD_HALL_OF_FAME);
         }
         cards.show(root, CARD_HALL_OF_FAME);
@@ -255,6 +265,13 @@ public final class SceneManager {
     /** Entry point for testing this class in isolation. */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(SceneManager::new);
+    }
+
+    /** Closes any standalone window. */
+    public void closeWindow(java.awt.Window window) {
+        if (window != null) {
+            window.dispose();
+        }
     }
 
     /** Launches the main menu — for external triggering. */
