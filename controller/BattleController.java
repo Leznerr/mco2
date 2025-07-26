@@ -6,7 +6,6 @@ import model.battle.Move;
 import model.battle.Defend;
 import model.battle.Recharge;
 import model.battle.ItemMove;
-import model.battle.AbilityMove;
 import model.core.Character;
 import model.core.Ability;
 import model.core.Player;
@@ -49,13 +48,6 @@ public final class BattleController {
     private Battle battle; // null ⇢ idle
     private final Map<Character, Move> selections = new HashMap<>(2);
 
-    // Keep references to the persistent characters used to launch the battle
-    private Character originalC1;
-    private Character originalC2;
-    // Copies used during the active battle session
-    private Character battleC1;
-    private Character battleC2;
-
     // AI support
     private AIController aiController;
     private Character aiCharacter;
@@ -91,22 +83,12 @@ public final class BattleController {
             throw new GameException("Both characters must be alive to start a battle.");
         }
 
-        // Preserve references to the persistent characters
-        originalC1 = c1;
-        originalC2 = c2;
-
-        // Create fresh copies for battle so HP/EP changes don't persist
-        battleC1 = c1.copyForBattle();
-        battleC2 = c2.copyForBattle();
-
-        battle = new Battle(battleC1, battleC2);
+        battle = new Battle(c1, c2);
         selections.clear();
         aiController = null;
         aiCharacter = null;
         humanOpponent = null;
-        view.displayBattleStart(battleC1, battleC2);
-        view.setBattleControlsEnabled(true);
-        view.setEndButtonsEnabled(false);
+        view.displayBattleStart(c1, c2);
         updatePlayerPanels();
         startRound();
     }
@@ -122,9 +104,8 @@ public final class BattleController {
 
         startBattle(human, bot);
         this.aiController = ai;
-        // battleC1/battleC2 now reference the copies created in startBattle
-        this.aiCharacter = battleC2;
-        this.humanOpponent = battleC1;
+        this.aiCharacter = bot;
+        this.humanOpponent = human;
 
         queueAIMove(); // Bot selects its first move immediately
     }
@@ -268,23 +249,20 @@ public final class BattleController {
             Character loser = (winner == battle.getCharacter1())
                     ? battle.getCharacter2() : battle.getCharacter1();
 
-            Character persistentWinner = (winner == battleC1) ? originalC1 : originalC2;
-            Character persistentLoser  = (winner == battleC1) ? originalC2 : originalC1;
-
             // Award XP and handle win persistence if players are known
             if (gameManagerController != null) {
-                Player winPlayer = (winner == battleC1) ? player1 : player2;
+                Player winPlayer = (winner == battle.getCharacter1()) ? player1 : player2;
                 if (winPlayer != null) {
-                    int xp = LevelingSystem.calculateXpGained(persistentWinner, persistentLoser);
-                    persistentWinner.addXp(xp);
-                    log.addEntry(persistentWinner.getName() + " gains " + xp + " XP.");
-                    gameManagerController.handlePlayerWin(winPlayer, persistentWinner);
+                    int xp = LevelingSystem.calculateXpGained(winner, loser);
+                    winner.addXp(xp);
+                    log.addEntry(winner.getName() + " gains " + xp + " XP.");
+                    if (gameManagerController != null) {
+                        gameManagerController.handlePlayerWin(winPlayer, winner);
+                    }
                 }
             }
 
-            view.displayBattleEnd(persistentWinner);
-            log.addEntry("Battle complete. Choose Rematch to play again or Return to main menu.");
-            view.displayTurnResults(log);
+            view.displayBattleEnd(winner);
             updatePlayerPanels();
             battle = null; // back to idle state
             aiController = null;

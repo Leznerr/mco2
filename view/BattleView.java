@@ -213,8 +213,6 @@ public class BattleView extends JFrame {
 
         btnRematch = new RoundedButton(REMATCH);
         btnReturn = new RoundedButton(RETURN);
-        btnRematch.setEnabled(false);
-        btnReturn.setEnabled(false);
 
         buttonPanel.add(btnRematch);
         buttonPanel.add(btnReturn);
@@ -708,10 +706,6 @@ public class BattleView extends JFrame {
         }
     }
 
-    public void addRematchListener(ActionListener l) {
-        btnRematch.addActionListener(l);
-    }
-
     public void addReturnListener(ActionListener l) {
         btnReturn.addActionListener(l);
     }
@@ -721,22 +715,6 @@ public class BattleView extends JFrame {
         if (btnP2Use != null) {
             btnP2Use.setEnabled(enabled);
         }
-    }
-
-    /** Enables or disables all ability controls for both players. */
-    public void setBattleControlsEnabled(boolean enabled) {
-        cmbP1Abilities.setEnabled(enabled);
-        cmbP2Abilities.setEnabled(enabled);
-        cmbP0Abilities.setEnabled(enabled);
-        if (btnP1Use != null) btnP1Use.setEnabled(enabled);
-        if (btnP2Use != null) btnP2Use.setEnabled(enabled);
-        if (btnP0Use != null) btnP0Use.setEnabled(enabled);
-    }
-
-    /** Enables or disables the rematch and return buttons. */
-    public void setEndButtonsEnabled(boolean enabled) {
-        btnRematch.setEnabled(enabled);
-        btnReturn.setEnabled(enabled);
     }
 
     // --- Minimal callbacks expected by BattleController ---
@@ -753,8 +731,6 @@ public class BattleView extends JFrame {
 
     public void displayBattleEnd(Character winner) {
         setBattleOutcome(winner.getName() + " wins!");
-        setBattleControlsEnabled(false);
-        setEndButtonsEnabled(true);
     }
 
 }

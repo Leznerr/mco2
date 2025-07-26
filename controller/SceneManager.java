@@ -276,13 +276,6 @@ public final class SceneManager {
                 battleView.dispose();
                 showMainMenu();
             });
-            battleView.addRematchListener(e -> {
-                try {
-                    battleController.startBattleVsBot(human, bot, aiController);
-                } catch (GameException ex) {
-                    DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
-                }
-            });
             root.add(battleView.getContentPane(), CARD_BATTLE);
             stage.setSize(1200, 700);
             cards.show(root, CARD_BATTLE);
@@ -322,13 +315,6 @@ public final class SceneManager {
             battleView.addReturnListener(e -> {
                 battleView.dispose();
                 showMainMenu();
-            });
-            battleView.addRematchListener(e -> {
-                try {
-                    controller.startBattle(c1, c2);
-                } catch (GameException ex) {
-                    DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
-                }
             });
             root.add(battleView.getContentPane(), CARD_BATTLE);
             stage.setSize(1200, 700);
