@@ -162,9 +162,12 @@ public final class BattleController {
         }
 
         selections.put(user, move);
-
         if (selections.size() == 2) { // both combatants have chosen
             executeTurn();
+        } else {
+            // Provide feedback that the game is waiting for the other player's move
+            battle.getCombatLog().addEntry("Awaiting the other player's action...");
+            view.displayTurnResults(battle.getCombatLog());
         }
     }
 
@@ -208,6 +211,7 @@ public final class BattleController {
             submitMove(user, new AbilityMove(a));
         } else {
             battle.getCombatLog().addEntry("Unknown action: " + choice);
+            view.displayTurnResults(battle.getCombatLog());
         }
     }
 
