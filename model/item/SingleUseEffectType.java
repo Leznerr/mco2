@@ -9,5 +9,7 @@ public enum SingleUseEffectType {
     /** Restores EP to the user. */
     RESTORE_EP,
     /** Revives the user from KO with a percentage of max HP. */
-    REVIVE
+    REVIVE,
+    /** Grants temporary immunity from all damage. */
+    GRANT_IMMUNITY
 }

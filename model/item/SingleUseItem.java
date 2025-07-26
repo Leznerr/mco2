@@ -114,6 +114,13 @@ public final class SingleUseItem extends MagicItem {
                             + " with " + restore + " HP!");
                 }
             }
+            case GRANT_IMMUNITY -> {
+                user.addStatusEffect(
+                        model.util.StatusEffectFactory.create(
+                                model.util.StatusEffectType.IMMUNITY));
+                log.addEntry(user.getName() + " uses " + getName()
+                        + " and becomes immune to damage!");
+            }
             default -> throw new GameException("Unhandled single-use effect: "
                     + effectType);
         }
