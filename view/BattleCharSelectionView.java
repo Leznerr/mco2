@@ -54,7 +54,6 @@ public class BattleCharSelectionView extends JFrame {
 
         setLocationRelativeTo(null);
         setResizable(false);
-        setVisible(true);
     }
 
 

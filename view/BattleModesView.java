@@ -50,7 +50,6 @@ public class BattleModesView extends JFrame {
 
         setLocationRelativeTo(null);
         setResizable(false);
-        setVisible(true);
     }
 
 

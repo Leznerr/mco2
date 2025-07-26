@@ -143,7 +143,6 @@ public class CharacterManagementView extends JFrame {
         backgroundPanel.add(Box.createVerticalGlue());
 
         setContentPane(backgroundPanel);
-        setVisible(true);
     }
 
     /**

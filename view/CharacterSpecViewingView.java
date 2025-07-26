@@ -53,7 +53,6 @@ public class CharacterSpecViewingView extends JFrame {
 
         setLocationRelativeTo(null);
         setResizable(false);
-        setVisible(true);
     }
 
 

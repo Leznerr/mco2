@@ -48,7 +48,6 @@ public class HallOfFameCharactersView extends JFrame {
 
         setLocationRelativeTo(null);
         setResizable(false);
-        setVisible(true);
     }
 
 

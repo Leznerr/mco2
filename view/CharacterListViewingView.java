@@ -54,7 +54,6 @@ public class CharacterListViewingView extends JFrame {
 
         setLocationRelativeTo(null);
         setResizable(false);
-        setVisible(true);
     }
 
 
