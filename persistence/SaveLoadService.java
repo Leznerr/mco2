@@ -5,6 +5,8 @@ import model.core.HallOfFameEntry;
 import model.util.GameException;
 import model.util.Constants;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -16,9 +18,17 @@ public class SaveLoadService {
 
     // Saves the game data to a file
     public static void saveGame(GameData gameData) throws GameException {
-        try (ObjectOutputStream gameDataStream = new ObjectOutputStream(new FileOutputStream(GAME_DATA_FILE))) {
-            gameDataStream.writeObject(gameData); // Save the entire GameData object
-            System.out.println("Game data has been saved successfully.");
+        Path file = Path.of(GAME_DATA_FILE);
+        try {
+            Path parent = file.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
+
+            try (ObjectOutputStream gameDataStream = new ObjectOutputStream(new FileOutputStream(file.toFile()))) {
+                gameDataStream.writeObject(gameData); // Save the entire GameData object
+                System.out.println("Game data has been saved successfully.");
+            }
         } catch (IOException e) {
             // Log the error and wrap it in a custom exception for further handling
             throw new GameException("Failed to save game data", e);
@@ -41,9 +51,17 @@ public class SaveLoadService {
 
     // Saves Hall of Fame data
     public static void saveHallOfFame(List<HallOfFameEntry> hallOfFameEntries) throws GameException {
-        try (ObjectOutputStream hallOfFameStream = new ObjectOutputStream(new FileOutputStream(HALL_OF_FAME_FILE))) {
-            hallOfFameStream.writeObject(hallOfFameEntries); // Save the Hall of Fame entries
-            System.out.println("Hall of Fame has been saved successfully.");
+        Path file = Path.of(HALL_OF_FAME_FILE);
+        try {
+            Path parent = file.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
+
+            try (ObjectOutputStream hallOfFameStream = new ObjectOutputStream(new FileOutputStream(file.toFile()))) {
+                hallOfFameStream.writeObject(hallOfFameEntries); // Save entries
+                System.out.println("Hall of Fame has been saved successfully.");
+            }
         } catch (IOException e) {
             // Log the error and wrap it in a custom exception
             throw new GameException("Failed to save Hall of Fame data", e);

@@ -32,3 +32,10 @@ src/test/java  - JUnit test suite
 ```
 
 The game code was refactored from an earlier CLI version and all features are accessed through the GUI.
+
+## Persistence
+
+All persistent data is stored in simple serialized files relative to the working
+directory. Player and character information is written to `ff_tactics_save.dat`
+while Hall of Fame standings are kept in `save/hall_of_fame.dat`. The save
+directory is created automatically on first run.
