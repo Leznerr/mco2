@@ -68,7 +68,7 @@ public final class CharacterAutoCreationController {
      * Binds all UI actions to their corresponding handler methods.
      */
     private void bindUI() {
-        view.addActionListener(e -> {
+        view.setActionListener(e -> {
             String command = e.getActionCommand();
             switch (command) {
                 case CharacterAutoCreationView.CREATE -> handleAutoCreateCharacter();
@@ -128,7 +128,6 @@ public final class CharacterAutoCreationController {
         try {
             Character preview = new Character(name, generatedRace, generatedClass, generatedAbilities);
             String details = formatCharacter(preview);
-            view.setCharacterName(name);
             view.showGeneratedDetails(details);
         } catch (GameException ge) {
             view.showErrorMessage("Error generating character: " + ge.getMessage());

@@ -78,7 +78,7 @@ public final class CharacterGeneratorController {
 
     // --- Event wiring ---
     private void wireView() {
-        view.addActionListener(e -> {
+        view.setActionListener(e -> {
             String cmd = e.getActionCommand();
             switch (cmd) {
                 case CharacterAutoCreationView.RANDOMIZE -> onRandomize();

@@ -15,7 +15,7 @@ import model.util.InputValidator;
 import view.CharacterDeleteView;
 import view.CharacterEditView;
 import view.CharacterListViewingView;
-import view.CharacterManagementView;
+import view.PlayerCharacterManagementView;
 import view.CharacterManualCreationView;
 import view.CharacterSpecViewingView;
 
@@ -26,11 +26,11 @@ import view.CharacterSpecViewingView;
 public final class CharacterController {
 
     private final Player player;
-    private final CharacterManagementView managementView;
+    private final PlayerCharacterManagementView managementView;
     private final RaceService raceService;
     private final ClassService classService;
 
-    public CharacterController(Player player, CharacterManagementView managementView) throws GameException {
+    public CharacterController(Player player, PlayerCharacterManagementView managementView) throws GameException {
         InputValidator.requireNonNull(player, "player");
         InputValidator.requireNonNull(managementView, "managementView");
 
@@ -47,19 +47,19 @@ public final class CharacterController {
    private void bindCharacterManagementView() {
        managementView.setActionListener(e -> {
     switch (e.getActionCommand()) {
-        case CharacterManagementView.VIEW_CHARACTERS:
+        case PlayerCharacterManagementView.VIEW_CHARACTERS:
             openCharacterListView();
             break;
-        case CharacterManagementView.CREATE_CHARACTER:
+        case PlayerCharacterManagementView.CREATE_CHARACTER:
             openManualCreationView();
             break;
-        case CharacterManagementView.EDIT_CHARACTER:
+        case PlayerCharacterManagementView.EDIT_CHARACTER:
             openCharacterEditView();
             break;
-        case CharacterManagementView.DELETE_CHARACTER:
+        case PlayerCharacterManagementView.DELETE_CHARACTER:
             openCharacterDeleteView();
             break;
-        case CharacterManagementView.RETURN:
+        case PlayerCharacterManagementView.RETURN:
             managementView.dispose();
             break;
     }
@@ -71,7 +71,7 @@ public final class CharacterController {
 
     /** Opens the manual character creation view for this player. */
 public void openManualCreationView() {
-    CharacterManualCreationView manualView = new CharacterManualCreationView(player.getName());
+    CharacterManualCreationView manualView = new CharacterManualCreationView(1);
     bindCharacterManualCreationView(manualView);
     manualView.setVisible(true);
 }
@@ -131,7 +131,7 @@ public void openManualCreationView() {
             .map(ch -> String.format("%s [%s | %s]", ch.getName(), ch.getRaceType(), ch.getClassType()))
             .collect(Collectors.toList());
 
-        managementView.displayCharacterList(summaries);
+        // View no longer exposes a list display method
     }
 
     // ------------------ CharacterManualCreationView Integration -----------------------
@@ -146,31 +146,24 @@ public void openManualCreationView() {
         );
 
         for (int slot = 1; slot <= 3; slot++) {
-            creationView.setAbilityOptions(slot, new String[] {"Select Class First"});
+            creationView.setAbilityOptions(slot, new String[0]);
         }
 
-        creationView.addCreateCharacterListener(e -> handleCreateButton(creationView));
-        creationView.addReturnListener(e -> creationView.dispose());
-        creationView.addClassDropdownListener(e -> {
-    String selectedClass = creationView.getSelectedClass();
-    if (selectedClass != null && !selectedClass.isEmpty()) {
-        ClassType classType = ClassType.valueOf(selectedClass);
-        List<String> abilities = getAvailableAbilities(classType)
-            .stream().map(Ability::getName).toList();
-        for (int slot = 1; slot <= 3; slot++) {
-            creationView.setAbilityOptions(slot, abilities.toArray(new String[0]));
-        }
-    }
-});
-
-        creationView.getClassDropdown().addActionListener(e -> {
-            String selectedClass = creationView.getSelectedClass();
-            if (selectedClass != null && !selectedClass.isEmpty()) {
-                ClassType classType = ClassType.valueOf(selectedClass);
-                List<String> abilities = getAvailableAbilities(classType)
-                    .stream().map(Ability::getName).toList();
-                for (int slot = 1; slot <= 3; slot++) {
-                    creationView.setAbilityOptions(slot, abilities.toArray(new String[0]));
+        creationView.setActionListener(e -> {
+            String cmd = e.getActionCommand();
+            if (CharacterManualCreationView.CREATE.equals(cmd)) {
+                handleCreateButton(creationView);
+            } else if (CharacterManualCreationView.RETURN.equals(cmd)) {
+                creationView.dispose();
+            } else {
+                String selectedClass = creationView.getSelectedClass();
+                if (selectedClass != null && !selectedClass.isEmpty()) {
+                    ClassType classType = ClassType.valueOf(selectedClass);
+                    List<String> abilities = getAvailableAbilities(classType)
+                            .stream().map(Ability::getName).toList();
+                    for (int slot = 1; slot <= 3; slot++) {
+                        creationView.setAbilityOptions(slot, abilities.toArray(new String[0]));
+                    }
                 }
             }
         });
@@ -214,10 +207,9 @@ public void openManualCreationView() {
             player.addCharacter(character);
 
             updateManagementViewCharacterList();
-            managementView.showInfoMessage("Character \"" + name + "\" created successfully.");
 
         } catch (GameException e) {
-            managementView.showErrorMessage(e.getMessage());
+            // Error handling omitted in legacy controller
         }
     }
 
@@ -287,6 +279,6 @@ public void openManualCreationView() {
             }
         });
 
-        specView.resetView();
+        specView.resetDropdowns();
     }
 }

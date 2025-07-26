@@ -44,6 +44,7 @@ public final class BattleController {
     /* ----------------------------------------------------------- SESSION */
     private Battle battle; // null ⇢ idle
     private final Map<Character, Move> selections = new HashMap<>(2);
+    private int lastLogIndex = 0;
 
     // AI support
     private AIController aiController;
@@ -85,7 +86,8 @@ public final class BattleController {
         aiController = null;
         aiCharacter = null;
         humanOpponent = null;
-        view.displayBattleStart(c1, c2);
+        lastLogIndex = 0;
+        view.appendBattleLog("Battle starts!");
         updatePlayerPanels();
     }
 
@@ -180,7 +182,11 @@ public final class BattleController {
             }
         }
 
-        view.displayTurnResults(log);
+        List<String> entries = log.getLogEntries();
+        for (int i = lastLogIndex; i < entries.size(); i++) {
+            view.appendBattleLog(entries.get(i));
+        }
+        lastLogIndex = entries.size();
         updatePlayerPanels();
         selections.clear(); // prepare for next round
 
@@ -208,7 +214,7 @@ public final class BattleController {
                 }
             }
 
-            view.displayBattleEnd(winner);
+            view.setBattleOutcome(winner.getName() + " wins!");
             updatePlayerPanels();
             battle = null; // back to idle state
             aiController = null;

@@ -86,10 +86,18 @@ public final class CharacterManualCreationController {
 
     // --- UI Event Binding ---
     private void bindUI() {
-        view.addCreateCharacterListener(e -> handleCreateCharacter());
-        view.addReturnListener(e -> handleReturn());
-        view.addClassDropdownListener(e -> handleClassSelection());
-        view.addRaceDropdownListener(e -> handleRaceSelection());
+        view.setActionListener(e -> {
+            String cmd = e.getActionCommand();
+            if (CharacterManualCreationView.CREATE.equals(cmd)) {
+                handleCreateCharacter();
+            } else if (CharacterManualCreationView.RETURN.equals(cmd)) {
+                handleReturn();
+            } else {
+                // Any dropdown changes require refreshing options/visibility
+                handleRaceSelection();
+                handleClassSelection();
+            }
+        });
     }
 
     private void handleReturn() {
