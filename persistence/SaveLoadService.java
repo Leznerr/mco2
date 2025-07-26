@@ -1,7 +1,7 @@
 package persistence;
 
 import model.core.Player;
-import model.core.HallOfFameEntry;
+import persistence.HallOfFameData;
 import model.util.GameException;
 import model.util.Constants;
 import java.io.*;
@@ -50,7 +50,7 @@ public class SaveLoadService {
     }
 
     // Saves Hall of Fame data
-    public static void saveHallOfFame(List<HallOfFameEntry> hallOfFameEntries) throws GameException {
+    public static void saveHallOfFame(HallOfFameData data) throws GameException {
         Path file = Path.of(HALL_OF_FAME_FILE);
         try {
             Path parent = file.getParent();
@@ -59,35 +59,27 @@ public class SaveLoadService {
             }
 
             try (ObjectOutputStream hallOfFameStream = new ObjectOutputStream(new FileOutputStream(file.toFile()))) {
-                hallOfFameStream.writeObject(hallOfFameEntries); // Save entries
+                hallOfFameStream.writeObject(data);
                 System.out.println("Hall of Fame has been saved successfully.");
             }
         } catch (IOException e) {
-            // Log the error and wrap it in a custom exception
             throw new GameException("Failed to save Hall of Fame data", e);
         }
     }
 
     // Loads the Hall of Fame data
-    public static List<HallOfFameEntry> loadHallOfFame() throws GameException {
+    public static HallOfFameData loadHallOfFame() throws GameException {
         try (ObjectInputStream hallOfFameStream = new ObjectInputStream(new FileInputStream(HALL_OF_FAME_FILE))) {
             Object obj = hallOfFameStream.readObject();
-            if (obj instanceof List<?> rawList) {
-                // Defensive copy into mutable list
-                List<HallOfFameEntry> entries = new ArrayList<>();
-                for (Object o : rawList) {
-                    entries.add((HallOfFameEntry) o);
-                }
-                return entries;
+            if (obj instanceof HallOfFameData data) {
+                return data;
             } else {
                 throw new GameException("Invalid Hall of Fame data.");
             }
         } catch (FileNotFoundException e) {
-            // If no Hall of Fame data is found, return an empty list
             System.out.println("No Hall of Fame found. Returning empty Hall of Fame.");
-            return new ArrayList<>();
+            return new HallOfFameData();
         } catch (IOException | ClassNotFoundException e) {
-            // Handle any I/O errors or deserialization issues
             throw new GameException("Failed to load Hall of Fame data", e);
         }
     }

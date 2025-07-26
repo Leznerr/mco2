@@ -399,6 +399,7 @@ public void actionPerformed(ActionEvent e) {
 
             winner.incrementWins();
             hallOfFameController.addWinForPlayer(winner);
+            hallOfFameController.addWinForCharacter(character);
 
             if (winner.getCumulativeWins() % Constants.WINS_PER_REWARD == 0) {
                 MagicItem reward = MagicItemFactory.createRandomReward();

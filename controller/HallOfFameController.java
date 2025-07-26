@@ -6,10 +6,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import model.core.Player;
+import model.core.Character;
 import model.core.HallOfFameEntry;
 import model.util.GameException;
 import model.util.InputValidator;
 import persistence.SaveLoadService;
+import persistence.HallOfFameData;
 import view.HallOfFameCharactersView;
 import view.HallOfFamePlayersView;
 import view.HallOfFameManagementView;
@@ -21,16 +23,20 @@ import view.HallOfFameManagementView;
 public class HallOfFameController implements ActionListener {
 
     private final HallOfFameManagementView view;
-    private List<HallOfFameEntry> hallOfFameEntries;
+    private List<HallOfFameEntry> playerEntries;
+    private List<HallOfFameEntry> characterEntries;
 
     public HallOfFameController(HallOfFameManagementView view) {
         InputValidator.requireNonNull(view, "view");
         this.view = view;
 
         try {
-            this.hallOfFameEntries = SaveLoadService.loadHallOfFame();
+            HallOfFameData data = SaveLoadService.loadHallOfFame();
+            this.playerEntries = new ArrayList<>(data.getPlayers());
+            this.characterEntries = new ArrayList<>(data.getCharacters());
         } catch (GameException e) {
-            this.hallOfFameEntries = new ArrayList<>();
+            this.playerEntries = new ArrayList<>();
+            this.characterEntries = new ArrayList<>();
         }
 
         this.view.setController(this); // Connect view to this controller
@@ -54,15 +60,35 @@ public class HallOfFameController implements ActionListener {
     public void addWinForPlayer(Player player) throws GameException {
         InputValidator.requireNonNull(player, "player");
 
-        HallOfFameEntry existing = hallOfFameEntries.stream()
-            .filter(e -> e.getPlayerName().equals(player.getName()))
+        HallOfFameEntry existing = playerEntries.stream()
+            .filter(e -> e.getName().equals(player.getName()))
             .findFirst()
             .orElse(null);
 
         if (existing != null) {
             existing.incrementWins();
         } else {
-            hallOfFameEntries.add(new HallOfFameEntry(player.getName(), 1));
+            playerEntries.add(new HallOfFameEntry(player.getName(), 1, 0, System.currentTimeMillis()));
+        }
+
+        persistHallOfFame();
+    }
+
+    /** Adds a win for a character in the Hall of Fame. */
+    public void addWinForCharacter(Character character) throws GameException {
+        InputValidator.requireNonNull(character, "character");
+
+        HallOfFameEntry existing = characterEntries.stream()
+            .filter(e -> e.getName().equals(character.getName()))
+            .findFirst()
+            .orElse(null);
+
+        if (existing != null) {
+            existing.incrementWins();
+            existing.setXp(character.getXp());
+        } else {
+            characterEntries.add(new HallOfFameEntry(
+                    character.getName(), 1, character.getXp(), System.currentTimeMillis()));
         }
 
         persistHallOfFame();
@@ -72,27 +98,44 @@ public class HallOfFameController implements ActionListener {
     public List<HallOfFameEntry> getTopPlayersByWins(int count) throws GameException {
         InputValidator.requirePositiveOrZero(count, "count");
 
-        return hallOfFameEntries.stream()
-            .sorted(Comparator.comparingInt(HallOfFameEntry::getWins).reversed())
+        return playerEntries.stream()
+            .sorted(Comparator.comparingInt(HallOfFameEntry::getWins)
+                    .thenComparingInt(HallOfFameEntry::getXp).reversed())
             .limit(count)
             .collect(Collectors.toUnmodifiableList());
     }
 
-    /** Returns a defensive copy of all Hall of Fame entries. */
+    /** Returns a ranked, immutable list of top characters by wins. */
+    public List<HallOfFameEntry> getTopCharactersByWins(int count) throws GameException {
+        InputValidator.requirePositiveOrZero(count, "count");
+
+        return characterEntries.stream()
+            .sorted(Comparator.comparingInt(HallOfFameEntry::getWins)
+                    .thenComparingInt(HallOfFameEntry::getXp).reversed())
+            .limit(count)
+            .collect(Collectors.toUnmodifiableList());
+    }
+
+    /** Returns a defensive copy of player Hall of Fame entries. */
     public List<HallOfFameEntry> getHallOfFame() {
-        return new ArrayList<>(hallOfFameEntries);
+        return new ArrayList<>(playerEntries);
+    }
+
+    /** Returns a defensive copy of character Hall of Fame entries. */
+    public List<HallOfFameEntry> getHallOfFameCharacters() {
+        return new ArrayList<>(characterEntries);
     }
 
     /** Replaces the entire Hall of Fame list with new entries and persists them. */
     public void setHallOfFame(List<HallOfFameEntry> entries) throws GameException {
         InputValidator.requireNonNull(entries, "entries");
-        this.hallOfFameEntries = new ArrayList<>(entries);
+        this.playerEntries = new ArrayList<>(entries);
         persistHallOfFame();
     }
 
     /** Writes the Hall of Fame entries to disk. */
     private void persistHallOfFame() throws GameException {
-        SaveLoadService.saveHallOfFame(hallOfFameEntries);
+        SaveLoadService.saveHallOfFame(new HallOfFameData(playerEntries, characterEntries));
     }
 
     /** Binds return logic and data loading for the Top Characters view. */
@@ -106,11 +149,11 @@ public class HallOfFameController implements ActionListener {
         });
 
         try {
-            List<HallOfFameEntry> topPlayers = getTopPlayersByWins(10);
-            if (topPlayers.isEmpty()) {
-                view.updateTopCharactersList("No top players yet.");
+            List<HallOfFameEntry> topCharacters = getTopCharactersByWins(10);
+            if (topCharacters.isEmpty()) {
+                view.updateTopCharactersList("No top characters yet.");
             } else {
-                String content = topPlayers.stream()
+                String content = topCharacters.stream()
                         .map(HallOfFameEntry::toString)
                         .collect(Collectors.joining("\n\n"));
                 view.updateTopCharactersList(content);
