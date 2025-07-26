@@ -392,6 +392,11 @@ public void actionPerformed(ActionEvent e) {
             InputValidator.requireNonNull(winner, "winner");
             InputValidator.requireNonNull(character, "character");
 
+            // Skip Hall of Fame updates for AI-controlled bots
+            if ("Bot".equalsIgnoreCase(winner.getName())) {
+                return;
+            }
+
             winner.incrementWins();
             hallOfFameController.addWinForPlayer(winner);
 

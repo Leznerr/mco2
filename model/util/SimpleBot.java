@@ -1,10 +1,15 @@
 package model.util;
 
 import model.battle.AbilityMove;
+import model.battle.ItemMove;
 import model.battle.Move;
+import model.battle.Recharge;
 import model.core.Ability;
 import model.core.Character;
+import model.item.MagicItem;
+import model.item.SingleUseItem;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -51,12 +56,25 @@ public final class SimpleBot implements AIMoveStrategy {
         InputValidator.requireNonNull(botCharacter, "botCharacter");
         InputValidator.requireNonNull(opponentCharacter, "opponentCharacter");
 
-        List<Ability> abilities = botCharacter.getAbilities();
-        if (abilities.isEmpty()) {
-            throw new GameException("Bot has no available abilities to use.");
+        List<Move> options = new ArrayList<>();
+
+        for (Ability a : botCharacter.getAbilities()) {
+            if (a.getEpCost() <= botCharacter.getCurrentEp()) {
+                options.add(new AbilityMove(a));
+            }
         }
 
-        int index = random.nextInt(abilities.size());
-        return new AbilityMove(abilities.get(index));
+        for (MagicItem item : botCharacter.getInventory().getAllItems()) {
+            if (item instanceof SingleUseItem su) {
+                options.add(new ItemMove(su));
+            }
+        }
+
+        if (options.isEmpty()) {
+            return new Recharge();
+        }
+
+        int index = random.nextInt(options.size());
+        return options.get(index);
     }
 }

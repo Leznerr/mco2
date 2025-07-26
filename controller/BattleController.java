@@ -305,6 +305,9 @@ public final class BattleController {
                 }
             }
 
+            syncInventory(originalC1, battleC1);
+            syncInventory(originalC2, battleC2);
+
             view.displayBattleEnd(persistentWinner);
             log.addEntry("Battle complete. Choose Rematch to play again or Return to main menu.");
             view.displayTurnResults(log);
@@ -410,6 +413,37 @@ public final class BattleController {
 
     private boolean battleEnded() {
         return !battle.getCharacter1().isAlive() || !battle.getCharacter2().isAlive();
+    }
+
+    /**
+     * Synchronises single-use item consumption from the battle copy back to the
+     * persistent character instance.
+     */
+    private void syncInventory(Character persistent, Character battleCopy) {
+        if (persistent == null || battleCopy == null) return;
+
+        Map<String, Long> remaining = battleCopy.getInventory().getAllItems().stream()
+                .filter(i -> i instanceof SingleUseItem)
+                .collect(Collectors.groupingBy(MagicItem::getName, Collectors.counting()));
+
+        List<MagicItem> originalItems = new ArrayList<>(persistent.getInventory().getAllItems());
+        Map<String, Long> counts = new HashMap<>();
+        for (MagicItem item : originalItems) {
+            if (item instanceof SingleUseItem) {
+                counts.put(item.getName(), counts.getOrDefault(item.getName(), 0L) + 1);
+            }
+        }
+
+        for (MagicItem item : originalItems) {
+            if (item instanceof SingleUseItem) {
+                long have = counts.getOrDefault(item.getName(), 0L);
+                long keep = remaining.getOrDefault(item.getName(), 0L);
+                if (have > keep) {
+                    persistent.getInventory().removeItem(item);
+                    counts.put(item.getName(), have - 1);
+                }
+            }
+        }
     }
 
     private void ensureRunning() throws GameException {
