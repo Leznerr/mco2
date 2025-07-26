@@ -199,6 +199,15 @@ public class CharacterSpecViewingView extends JFrame {
         }
     }
 
+    /**
+     * Enables or disables the dropdown used for character selection.
+     *
+     * @param enabled true to enable selection, false to disable
+     */
+    public void setCharacterSelectionEnabled(boolean enabled) {
+        charDropdown.setEnabled(enabled);
+    }
+
 
     public String getSelectedCharacter() {
         return (String) charDropdown.getSelectedItem();

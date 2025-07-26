@@ -98,8 +98,16 @@ public class PlayerCharacterManagementController {
 
     private void openCharacterSpecView() {
         CharacterSpecViewingView specView = new CharacterSpecViewingView(view.getPlayerID());
-        specView.setCharacterOptions(player.getCharacters().stream()
-                .map(Character::getName).toArray(String[]::new));
+        specView.resetView();
+        java.util.List<Character> chars = player.getCharacters();
+        String[] names = chars.stream().map(Character::getName).toArray(String[]::new);
+        specView.setCharacterOptions(names);
+        if (names.length == 0) {
+            specView.updateCharacterDetails("No characters available.");
+            specView.setCharacterSelectionEnabled(false);
+        } else {
+            specView.setCharacterSelectionEnabled(true);
+        }
         specView.setActionListener(e -> {
             String cmd = e.getActionCommand();
             if (CharacterSpecViewingView.RETURN.equals(cmd)) {
@@ -116,7 +124,6 @@ public class PlayerCharacterManagementController {
                 specView.updateCharacterDetails(details);
             }
         });
-        specView.resetView();
         specView.setVisible(true);
     }
 
