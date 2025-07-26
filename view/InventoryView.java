@@ -51,7 +51,6 @@ public class InventoryView extends JFrame{
 
         setLocationRelativeTo(null);
         setResizable(false);
-        setVisible(true);
     }
 
 

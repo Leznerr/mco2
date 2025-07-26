@@ -88,7 +88,6 @@ public class BattleView extends JFrame {
 
         setLocationRelativeTo(null);
         setResizable(false);
-        setVisible(true);
     }
 
     /**

@@ -50,7 +50,6 @@ public class NewPlayersRegistrationView extends JFrame {
 
         setLocationRelativeTo(null);
         setResizable(false);
-        setVisible(true);
     }
 
 
