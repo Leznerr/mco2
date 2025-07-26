@@ -17,7 +17,7 @@ import java.util.List;
  * user selections. All validation and persistence are handled
  * in the controller layer.
  */
-public class TradeView extends JFrame {
+public class TradeView extends JPanel {
 
     public static final String TRADE = "TRADE";
     public static final String CANCEL = "CANCEL";
@@ -37,7 +37,6 @@ public class TradeView extends JFrame {
     private final JButton btnCancel;
 
     public TradeView(Player p1, Player p2) {
-        super("Trade Items");
         this.player1 = p1;
         this.player2 = p2;
 
@@ -57,16 +56,10 @@ public class TradeView extends JFrame {
         btnCancel = new RoundedButton("Cancel");
 
         initUI();
-        configureWindow();
         bindComboListeners();
         refreshLists();
     }
 
-    private void configureWindow() {
-        setSize(600, 400);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-    }
 
     private void initUI() {
         JPanel main = new JPanel(new BorderLayout());
@@ -91,7 +84,8 @@ public class TradeView extends JFrame {
         main.add(lists, BorderLayout.CENTER);
         main.add(buttons, BorderLayout.SOUTH);
 
-        setContentPane(main);
+        setLayout(new BorderLayout());
+        add(main);
     }
 
     private void bindComboListeners() {

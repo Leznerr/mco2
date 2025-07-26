@@ -9,7 +9,7 @@ import javax.swing.*;
 /**
  * The character creation management menu view for Fatal Fantasy: Tactics Game.
  */
-public class CharacterCreationManagementView extends JFrame {
+public class CharacterCreationManagementView extends JPanel {
     private int playerID;
 
     // Button labels
@@ -27,34 +27,13 @@ public class CharacterCreationManagementView extends JFrame {
      * Constructs the Character Creation Management UI of Fatal Fantasy: Tactics Game.
      */
     public CharacterCreationManagementView(int playerID) {
-        super("Fatal Fantasy: Tactics | Player " + playerID + " Character Creation Modes");
 
         this.playerID = playerID;
 
         initUI();
         
-        setSize(800, 700);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                int choice = JOptionPane.showConfirmDialog(
-                    CharacterCreationManagementView.this,
-                    "Are you sure you want to quit?",
-                    "Confirm Exit",
-                    JOptionPane.YES_NO_OPTION
-                );
 
-                if (choice == JOptionPane.YES_OPTION) {
-                    dispose(); // closes the window
-                }
-            }
-        });
-
-        setLocationRelativeTo(null);
-        setResizable(false);
-        setVisible(true);
     }
 
 
@@ -123,7 +102,8 @@ public class CharacterCreationManagementView extends JFrame {
         // Add vertical glue to push everything to the center
         backgroundPanel.add(Box.createVerticalGlue());
 
-        setContentPane(backgroundPanel);
+        setLayout(new BorderLayout());
+        add(backgroundPanel);
     }
 
 

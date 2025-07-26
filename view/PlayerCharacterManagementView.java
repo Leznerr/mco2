@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
  * Per-player character management menu. Lets the user view, create,
  * edit or delete characters for a specific player.
  */
-public class PlayerCharacterManagementView extends JFrame {
+public class PlayerCharacterManagementView extends JPanel {
 
     public static final String VIEW_CHARACTERS = "View Characters";
     public static final String CREATE_CHARACTER = "Create Character";
@@ -25,13 +25,8 @@ public class PlayerCharacterManagementView extends JFrame {
     private final int playerID;
 
     public PlayerCharacterManagementView(int playerID) {
-        super("Manage Characters - Player " + playerID);
         this.playerID = playerID;
         initUI();
-        setSize(800, 700);
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setResizable(false);
     }
 
     private void initUI() {
@@ -74,7 +69,8 @@ public class PlayerCharacterManagementView extends JFrame {
         bgPanel.add(buttonPanel);
         bgPanel.add(Box.createVerticalGlue());
 
-        setContentPane(bgPanel);
+        setLayout(new BorderLayout());
+        add(bgPanel);
     }
 
     public void setActionListener(ActionListener l) {

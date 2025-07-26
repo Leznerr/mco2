@@ -9,7 +9,7 @@ import javax.swing.*;
 /**
  * The new players registration view for Fatal Fantasy: Tactics Game.
  */
-public class NewPlayersRegistrationView extends JFrame {
+public class NewPlayersRegistrationView extends JPanel {
     // Button labels
     public static final String REGISTER = "Register";
     public static final String RETURN = "Return";
@@ -25,32 +25,11 @@ public class NewPlayersRegistrationView extends JFrame {
      * Constructs the NewPlayersRegistrationView UI of Fatal Fantasy: Tactics Game.
      */
     public NewPlayersRegistrationView() {
-        super("Fatal Fantasy: Tactics | New Players Registration");
 
         initUI();
         
-        setSize(800, 700);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                int choice = JOptionPane.showConfirmDialog(
-                    NewPlayersRegistrationView.this,
-                    "Are you sure you want to quit?",
-                    "Confirm Exit",
-                    JOptionPane.YES_NO_OPTION
-                );
 
-                if (choice == JOptionPane.YES_OPTION) {
-                    dispose(); // closes the window
-                }
-            }
-        });
-
-        setLocationRelativeTo(null);
-        setResizable(false);
-        setVisible(true);
     }
 
 
@@ -120,7 +99,8 @@ public class NewPlayersRegistrationView extends JFrame {
 
         backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        setContentPane(backgroundPanel);
+        setLayout(new BorderLayout());
+        add(backgroundPanel);
     }
 
 
