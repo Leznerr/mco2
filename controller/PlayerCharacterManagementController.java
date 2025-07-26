@@ -166,9 +166,9 @@ public class PlayerCharacterManagementController {
             abilityNames = List.of();
         }
         String[] opts = abilityNames.toArray(new String[0]);
-        ev.setAbilityOptions(1, opts);
-        ev.setAbilityOptions(2, opts);
-        ev.setAbilityOptions(3, opts);
+        for (int i = 1; i <= 3; i++) {
+            ev.setAbilityOptions(i, opts);
+        }
 
         boolean isGnome = c.getRaceType() == model.core.RaceType.GNOME;
         ev.setAbility4Visible(isGnome);
@@ -179,10 +179,8 @@ public class PlayerCharacterManagementController {
         }
 
         List<Ability> current = c.getAbilities();
-        if (current.size() >= 3) {
-            ev.setSelectedAbility(1, current.get(0).getName());
-            ev.setSelectedAbility(2, current.get(1).getName());
-            ev.setSelectedAbility(3, current.get(2).getName());
+        for (int i = 0; i < Math.min(current.size(), 3); i++) {
+            ev.setSelectedAbility(i + 1, current.get(i).getName());
         }
         if (isGnome && current.size() >= 4) {
             ev.setSelectedAbility(4, current.get(3).getName());
