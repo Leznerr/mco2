@@ -139,14 +139,16 @@ public class CharacterManualCreationView extends JFrame {
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         OutlinedLabel label = new OutlinedLabel(labelText);
-        int fixedLabelWidth = 140;
+        int fixedLabelWidth = 170; // widened to prevent cutoff of text
         Dimension labelSize = new Dimension(fixedLabelWidth, label.getPreferredSize().height);
         label.setPreferredSize(labelSize);
         label.setMinimumSize(labelSize);
         label.setMaximumSize(labelSize);
 
         dropdown.setFont(new Font("Serif", Font.BOLD, 18));
-        dropdown.setMaximumSize(new Dimension(250, 35));
+        Dimension ddSize = new Dimension(280, 35);
+        dropdown.setPreferredSize(ddSize);
+        dropdown.setMaximumSize(ddSize);
         dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 
         panel.add(label);

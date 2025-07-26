@@ -167,7 +167,12 @@ public void actionPerformed(ActionEvent e) {
                         view.dispose();
                     }
                     case CharacterCreationManagementView.RETURN -> {
-                        navigateBackToMainMenu();
+                        Player player = findByName(players, playerName);
+                        if (player != null) {
+                            handleNavigateToCharacterManagement(player);
+                        } else {
+                            navigateBackToMainMenu();
+                        }
                         view.dispose();
                     }
                 }
