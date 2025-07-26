@@ -27,8 +27,8 @@ public final class Inventory implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /** A unified list of all magic items the character possesses. */
-    private final List<MagicItem> items;
+    /** A unified list of all magic items the character possesses. Always initialized. Never null. */
+    private List<MagicItem> items = new ArrayList<>();
 
     /** A reference to the currently equipped magic item, which must also be in the items list. */
     private MagicItem equippedItem;
@@ -37,7 +37,6 @@ public final class Inventory implements Serializable {
      * Constructs an empty inventory.
      */
     public Inventory() {
-        this.items = new ArrayList<>();
         this.equippedItem = null;
     }
 
@@ -118,4 +117,15 @@ public final class Inventory implements Serializable {
     // The controller or battle system should process the effect externally
 }
 
-}
+    /**
+     * Ensures the items list is not null when deserialised.
+     */
+    private void readObject(java.io.ObjectInputStream in)
+            throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        if (items == null) {
+            items = new ArrayList<>();
+        }
+    }
+
+} 

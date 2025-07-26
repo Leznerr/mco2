@@ -16,8 +16,8 @@ import model.util.InputValidator;
  */
 public final class CombatLog {
 
-    /** Internal backing list; never exposed directly. */
-    private final List<String> logEntries = new ArrayList<>();
+    /** Internal backing list; always initialised. Never null. */
+    private List<String> logEntries = new ArrayList<>();
 
     /** Creates an empty log. */
     public CombatLog() { /* nothing to initialise */ }
@@ -48,5 +48,16 @@ public final class CombatLog {
      */
     public synchronized void clearLog() {
         logEntries.clear();
+    }
+
+    /**
+     * Ensures log entries list is initialised when deserialised.
+     */
+    private void readObject(java.io.ObjectInputStream in)
+            throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        if (logEntries == null) {
+            logEntries = new ArrayList<>();
+        }
     }
 }
