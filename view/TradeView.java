@@ -75,12 +75,12 @@ public class TradeView extends JFrame {
         lists.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JPanel left = new JPanel(new BorderLayout());
-        left.add(charBox1, BorderLayout.NORTH);
+        left.add(createDropdownPanel("", charBox1), BorderLayout.NORTH);
         left.add(new JScrollPane(list1), BorderLayout.CENTER);
         lists.add(left);
 
         JPanel right = new JPanel(new BorderLayout());
-        right.add(charBox2, BorderLayout.NORTH);
+        right.add(createDropdownPanel("", charBox2), BorderLayout.NORTH);
         right.add(new JScrollPane(list2), BorderLayout.CENTER);
         lists.add(right);
 
@@ -154,6 +154,30 @@ public class TradeView extends JFrame {
 
     public void showError(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private JPanel createDropdownPanel(String labelText, JComboBox<?> dropdown) {
+        JPanel panel = new JPanel();
+        panel.setOpaque(false);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        OutlinedLabel label = new OutlinedLabel(labelText);
+        Dimension labelSize = new Dimension(200, label.getPreferredSize().height);
+        label.setPreferredSize(labelSize);
+        label.setMinimumSize(labelSize);
+        label.setMaximumSize(labelSize);
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+
+        dropdown.setFont(new Font("Serif", Font.BOLD, 18));
+        Dimension ddSize = new Dimension(350, 40);
+        dropdown.setPreferredSize(ddSize);
+        dropdown.setMaximumSize(ddSize);
+        dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+
+        panel.add(label);
+        panel.add(dropdown);
+        return panel;
     }
 }
 

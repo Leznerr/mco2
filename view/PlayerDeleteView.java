@@ -127,25 +127,8 @@ public class PlayerDeleteView extends JFrame {
 
         backgroundPanel.add(centerPanel, BorderLayout.CENTER);
 
-        // Horizontal panel for label and dropdown
-        JPanel dropdownPanel = new JPanel();
-        dropdownPanel.setOpaque(false);
-        dropdownPanel.setLayout(new BoxLayout(dropdownPanel, BoxLayout.X_AXIS));
-        dropdownPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JLabel selectLabel = new JLabel("Select a Player:");
-        selectLabel.setFont(new Font("Serif", Font.BOLD, 18));
-        selectLabel.setForeground(Color.WHITE);
-        selectLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
-        dropdownPanel.add(selectLabel);
-
         playerDropdown = new JComboBox<>();
-        playerDropdown.setFont(new Font("Serif", Font.BOLD, 18));
-        playerDropdown.setMaximumSize(new Dimension(250, 35));
-        playerDropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3)); 
-        dropdownPanel.add(playerDropdown);
-
-        centerPanel.add(dropdownPanel);
+        centerPanel.add(createDropdownPanel("Select a Player:", playerDropdown));
 
         centerPanel.add(Box.createVerticalGlue());
 
@@ -230,6 +213,30 @@ public class PlayerDeleteView extends JFrame {
 
     public String getSelectedPlayer() {
         return (String) playerDropdown.getSelectedItem();
+    }
+
+    private JPanel createDropdownPanel(String labelText, JComboBox<String> dropdown) {
+        JPanel panel = new JPanel();
+        panel.setOpaque(false);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        OutlinedLabel label = new OutlinedLabel(labelText);
+        Dimension labelSize = new Dimension(200, label.getPreferredSize().height);
+        label.setPreferredSize(labelSize);
+        label.setMinimumSize(labelSize);
+        label.setMaximumSize(labelSize);
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+
+        dropdown.setFont(new Font("Serif", Font.BOLD, 18));
+        Dimension ddSize = new Dimension(350, 40);
+        dropdown.setPreferredSize(ddSize);
+        dropdown.setMaximumSize(ddSize);
+        dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+
+        panel.add(label);
+        panel.add(dropdown);
+        return panel;
     }
 
 }
