@@ -51,7 +51,7 @@ public class PlayerDeleteView extends JFrame {
 
         setLocationRelativeTo(null);
         setResizable(false);
-        setVisible(true);
+        // Visibility is controlled by SceneManager
     }
 
 
