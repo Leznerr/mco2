@@ -364,6 +364,26 @@ public void actionPerformed(ActionEvent e) {
     }
 
     /**
+     * Returns a snapshot of current game data used for persistence.
+     */
+    public GameData getGameData() throws GameException {
+        return new GameData(players, hallOfFameController.getHallOfFame());
+    }
+
+    /**
+     * Deletes a player identified by name from the current game state.
+     *
+     * @param name the player name to remove
+     * @throws GameException if the player does not exist
+     */
+    public void deletePlayerByName(String name) throws GameException {
+        boolean removed = players.removeIf(p -> p.getName().equals(name));
+        if (!removed) {
+            throw new GameException("Player not found: " + name);
+        }
+    }
+
+    /**
      * Processes a player's win: increments wins, awards Hall of Fame credit,
      * and grants a random magic item every {@link Constants#WINS_PER_REWARD}
      * victories. The new item is added to the winning character's inventory

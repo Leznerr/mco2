@@ -21,7 +21,9 @@ import view.MainMenuView;
 import view.NewPlayersRegistrationView;
 import view.PlayerCharacterManagementView;
 import view.PlayerRegistrationView;
+import view.PlayerDeleteView;
 import view.SavedPlayersRegistrationView;
+import controller.PlayerDeleteController;
 
 public final class SceneManager {
 
@@ -39,6 +41,7 @@ public final class SceneManager {
     private static final String CARD_CHARACTER_MENU = "characterMenu";
     private static final String CARD_PLAYER_CHARACTER = "playerCharacter";
     private static final String CARD_BATTLE = "battle";
+    private static final String CARD_DELETE_PLAYER = "deletePlayer";
 
     // ---------- Cached View Instances ----------
     private MainMenuView mainMenuView;
@@ -49,6 +52,8 @@ public final class SceneManager {
     private CharacterManagementMenuView characterMenuView;
     private PlayerCharacterManagementView playerCharacterView;
     private BattleView battleView;
+    private PlayerDeleteView playerDeleteView;
+    private PlayerDeleteController playerDeleteController;
 
     private GameManagerController gameManagerController; // Keep the controller instance here
 
@@ -96,6 +101,7 @@ public final class SceneManager {
                 switch (cmd) {
                     case PlayerRegistrationView.NEW_PLAYERS -> showNewPlayersRegistration();
                     case PlayerRegistrationView.SAVED_PLAYERS -> showSavedPlayersRegistration();
+                    case PlayerRegistrationView.DELETE_PLAYER -> showPlayerDelete();
                     case PlayerRegistrationView.RETURN_TO_MENU -> showMainMenu();
                 }
             });
@@ -172,6 +178,18 @@ public final class SceneManager {
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
         cards.show(root, CARD_SAVED_PLAYER_REG);
+    }
+
+    /** Displays the Player Deletion screen. */
+    public void showPlayerDelete() {
+        if (playerDeleteView == null) {
+            playerDeleteView = new PlayerDeleteView();
+            playerDeleteController = new PlayerDeleteController(playerDeleteView, gameManagerController);
+            root.add(playerDeleteView.getContentPane(), CARD_DELETE_PLAYER);
+        } else {
+            playerDeleteController.refresh();
+        }
+        cards.show(root, CARD_DELETE_PLAYER);
     }
 
     /** Displays the Hall of Fame screen. */
