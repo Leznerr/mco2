@@ -128,14 +128,14 @@ public class CharacterEditView extends JFrame {
         abilitiesPanel.setLayout(new BoxLayout(abilitiesPanel, BoxLayout.Y_AXIS));
 
         abilitiesPanel.add(Box.createVerticalStrut(20));
-        abilitiesPanel.add(createDropdownPanel("Select Ability 1 (Depends on Class)", dropdownAbility1));
-        abilitiesPanel.add(Box.createVerticalStrut(20));
-        abilitiesPanel.add(createDropdownPanel("Select Ability 2 (Depends on Class)", dropdownAbility2));
-        abilitiesPanel.add(Box.createVerticalStrut(20));
-        abilitiesPanel.add(createDropdownPanel("Select Ability 3 (Depends on Class)", dropdownAbility3));
+        abilitiesPanel.add(createDropdownPanel("Select Ability 1", dropdownAbility1));
+        abilitiesPanel.add(Box.createVerticalStrut(10));
+        abilitiesPanel.add(createDropdownPanel("Select Ability 2", dropdownAbility2));
+        abilitiesPanel.add(Box.createVerticalStrut(10));
+        abilitiesPanel.add(createDropdownPanel("Select Ability 3", dropdownAbility3));
 
-        ability4Spacer = Box.createVerticalStrut(20);
-        ability4Panel = createDropdownPanel("Select Ability 4 (Depends on Class)", dropdownAbility4);
+        ability4Spacer = Box.createVerticalStrut(10);
+        ability4Panel = createDropdownPanel("Select Ability 4", dropdownAbility4);
         ability4Panel.setVisible(false);
         ability4Spacer.setVisible(false);
 
@@ -168,17 +168,17 @@ public class CharacterEditView extends JFrame {
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         OutlinedLabel label = new OutlinedLabel(labelText);
-        Dimension labelSize = new Dimension(200, label.getPreferredSize().height);
+        Dimension labelSize = new Dimension(170, label.getPreferredSize().height);
         label.setPreferredSize(labelSize);
         label.setMinimumSize(labelSize);
         label.setMaximumSize(labelSize);
-        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 8));
 
-        dropdown.setFont(new Font("Serif", Font.BOLD, 18));
-        Dimension ddSize = new Dimension(350, 40);
+        dropdown.setFont(new Font("Serif", Font.BOLD, 16));
+        Dimension ddSize = new Dimension(300, 36);
         dropdown.setPreferredSize(ddSize);
         dropdown.setMaximumSize(ddSize);
-        dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+        dropdown.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
         panel.add(label);
         panel.add(dropdown);

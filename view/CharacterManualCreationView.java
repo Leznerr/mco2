@@ -34,6 +34,7 @@ public class CharacterManualCreationView extends JFrame {
     private final JButton btnReturn;
 
     private JPanel ability4Panel;
+    private Component ability4Spacer;
 
     private CharacterManualCreationController controller;
 
@@ -105,18 +106,20 @@ public class CharacterManualCreationView extends JFrame {
         centerPanel.add(Box.createVerticalStrut(40));
 
         // Dropdown panels
-        centerPanel.add(createDropdownPanel("Select Race:      ", dropdownRace));
+        centerPanel.add(createDropdownPanel("Select Race:", dropdownRace));
         centerPanel.add(Box.createVerticalStrut(10));
-        centerPanel.add(createDropdownPanel("Select Class:     ", dropdownClass));
+        centerPanel.add(createDropdownPanel("Select Class:", dropdownClass));
         centerPanel.add(Box.createVerticalStrut(10));
-        centerPanel.add(createDropdownPanel("Select Ability 1:", dropdownAbility1));
+        centerPanel.add(createDropdownPanel("Select Ability 1", dropdownAbility1));
         centerPanel.add(Box.createVerticalStrut(10));
-        centerPanel.add(createDropdownPanel("Select Ability 2:", dropdownAbility2));
+        centerPanel.add(createDropdownPanel("Select Ability 2", dropdownAbility2));
         centerPanel.add(Box.createVerticalStrut(10));
-        centerPanel.add(createDropdownPanel("Select Ability 3:", dropdownAbility3));
-        ability4Panel = createDropdownPanel("Select Ability 4:", dropdownAbility4);
+        centerPanel.add(createDropdownPanel("Select Ability 3", dropdownAbility3));
+        ability4Spacer = Box.createVerticalStrut(10);
+        ability4Panel = createDropdownPanel("Select Ability 4", dropdownAbility4);
         ability4Panel.setVisible(false);
-        centerPanel.add(Box.createVerticalStrut(10));
+        ability4Spacer.setVisible(false);
+        centerPanel.add(ability4Spacer);
         centerPanel.add(ability4Panel);
         centerPanel.add(Box.createVerticalStrut(20));
 
@@ -139,17 +142,17 @@ public class CharacterManualCreationView extends JFrame {
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         OutlinedLabel label = new OutlinedLabel(labelText);
-        int fixedLabelWidth = 170; // widened to prevent cutoff of text
-        Dimension labelSize = new Dimension(fixedLabelWidth, label.getPreferredSize().height);
+        Dimension labelSize = new Dimension(170, label.getPreferredSize().height);
         label.setPreferredSize(labelSize);
         label.setMinimumSize(labelSize);
         label.setMaximumSize(labelSize);
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 8));
 
-        dropdown.setFont(new Font("Serif", Font.BOLD, 18));
-        Dimension ddSize = new Dimension(280, 35);
+        dropdown.setFont(new Font("Serif", Font.BOLD, 16));
+        Dimension ddSize = new Dimension(300, 36);
         dropdown.setPreferredSize(ddSize);
         dropdown.setMaximumSize(ddSize);
-        dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+        dropdown.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
         panel.add(label);
         panel.add(dropdown);
@@ -264,6 +267,11 @@ public class CharacterManualCreationView extends JFrame {
 
     public void setAbility4Visible(boolean visible) {
         ability4Panel.setVisible(visible);
+        if (ability4Spacer != null) ability4Spacer.setVisible(visible);
+        if (ability4Panel.getParent() != null) {
+            ability4Panel.getParent().revalidate();
+            ability4Panel.getParent().repaint();
+        }
     }
 
     // Controller setter (optional, for reference by controller)
