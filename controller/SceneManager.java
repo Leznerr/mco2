@@ -28,6 +28,7 @@ import controller.PlayerDeleteController;
 import controller.CharacterManagementMenuController;
 import controller.BattleModesController;
 import controller.BattleController;
+import controller.HallOfFameController;
 import controller.AIController;
 
 public final class SceneManager {
@@ -62,6 +63,7 @@ public final class SceneManager {
     private PlayerDeleteView playerDeleteView;
     private PlayerDeleteController playerDeleteController;
     private view.BattleModesView battleModesView;
+    private HallOfFameController hallOfFameController;
 
     private GameManagerController gameManagerController; // Keep the controller instance here
 
@@ -88,11 +90,14 @@ public final class SceneManager {
     public void showMainMenu() {
         if (mainMenuView == null) {
             mainMenuView = new MainMenuView();
-
             // Initialize the controller only once
             hallOfFameView = new HallOfFameManagementView();
+            hallOfFameController = new HallOfFameController(hallOfFameView, this);
+            hallOfFameView.setActionListener(hallOfFameController);
+            root.add(hallOfFameView.getContentPane(), CARD_HALL_OF_FAME);
+
             if (gameManagerController == null) {
-                gameManagerController = new GameManagerController(this, new HallOfFameController(hallOfFameView), mainMenuView);
+                gameManagerController = new GameManagerController(this, hallOfFameController, mainMenuView);
             }
             mainMenuView.setActionListener(gameManagerController);
             root.add(mainMenuView.getContentPane(), CARD_MAIN_MENU);
@@ -205,8 +210,12 @@ public final class SceneManager {
     public void showHallOfFameManagement() {
         if (hallOfFameView == null) {
             hallOfFameView = new HallOfFameManagementView();
-            HallOfFameController controller = new HallOfFameController(hallOfFameView);
-            hallOfFameView.setActionListener(controller);
+        }
+        if (hallOfFameController == null) {
+            hallOfFameController = new HallOfFameController(hallOfFameView, this);
+            hallOfFameView.setActionListener(hallOfFameController);
+        }
+        if (hallOfFameView.getContentPane().getParent() == null) {
             root.add(hallOfFameView.getContentPane(), CARD_HALL_OF_FAME);
         }
         cards.show(root, CARD_HALL_OF_FAME);
