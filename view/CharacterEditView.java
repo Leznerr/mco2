@@ -25,6 +25,7 @@ public class CharacterEditView extends JFrame {
     private final JComboBox<String> dropdownMagicItem = new JComboBox<>();
 
     private JPanel ability4Panel;
+    private Component ability4Spacer;
 
     private final JButton btnEdit   = new RoundedButton(EDIT);
     private final JButton btnReturn = new RoundedButton(RETURN);
@@ -104,10 +105,11 @@ public class CharacterEditView extends JFrame {
         centerPanel.add(createDropdownPanel("Select Ability 3:", dropdownAbility3));
         ability4Panel = createDropdownPanel("Select Ability 4:", dropdownAbility4);
         ability4Panel.setVisible(false);
-        centerPanel.add(Box.createVerticalStrut(20));
+        ability4Spacer = Box.createVerticalStrut(20);
+        centerPanel.add(ability4Spacer);
         centerPanel.add(ability4Panel);
         centerPanel.add(Box.createVerticalStrut(20));
-        centerPanel.add(createDropdownPanel("Un/Equip Magic Item:", dropdownMagicItem));
+        centerPanel.add(createDropdownPanel("Un/Equip Magic Item (includes N/A):", dropdownMagicItem));
         centerPanel.add(Box.createVerticalGlue());
 
         backgroundPanel.add(centerPanel, BorderLayout.CENTER);
@@ -135,7 +137,9 @@ public class CharacterEditView extends JFrame {
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
 
         dropdown.setFont(new Font("Serif", Font.BOLD, 18));
-        dropdown.setMaximumSize(new Dimension(250, 35));
+        Dimension ddSize = new Dimension(350, 40);
+        dropdown.setPreferredSize(ddSize);
+        dropdown.setMaximumSize(ddSize);
         dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 
         panel.add(label);
@@ -164,6 +168,7 @@ public class CharacterEditView extends JFrame {
             case 1 -> dropdownAbility1;
             case 2 -> dropdownAbility2;
             case 3 -> dropdownAbility3;
+            case 4 -> dropdownAbility4;
             default -> throw new IllegalArgumentException("Invalid slot: " + slot);
         };
         target.removeAllItems();
@@ -245,5 +250,8 @@ public class CharacterEditView extends JFrame {
 
     public void setAbility4Visible(boolean visible) {
         ability4Panel.setVisible(visible);
+        if (ability4Spacer != null) ability4Spacer.setVisible(visible);
+        revalidate();
+        repaint();
     }
 }
