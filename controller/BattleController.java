@@ -61,6 +61,23 @@ public final class BattleController {
     private Character aiCharacter;
     private Character humanOpponent;
 
+    /* -------------------------------------------------------- ACCESSORS */
+
+    /**
+     * Returns the battle copy corresponding to the provided persistent character.
+     *
+     * @param original the persistent character used to start the battle
+     * @return the active battle copy or {@code null} if the character is unknown
+     */
+    public Character getBattleCopy(Character original) {
+        if (original == originalC1) {
+            return battleC1;
+        } else if (original == originalC2) {
+            return battleC2;
+        }
+        return null;
+    }
+
     /* ===================================================== CONSTRUCTION */
 
     public BattleController(BattleView battleView) throws GameException {
