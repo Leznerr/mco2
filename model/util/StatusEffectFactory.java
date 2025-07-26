@@ -2,6 +2,8 @@ package model.util;
 
 import model.util.effects.PoisonEffect;
 import model.util.effects.StunEffect;
+import model.util.effects.EvadeEffect;
+import model.util.effects.ImmunityEffect;
 
 /**
  * Factory class responsible for creating concrete {@link StatusEffect}
@@ -43,6 +45,8 @@ public final class StatusEffectFactory {
         return switch (type) {
             case POISONED -> new PoisonEffect();
             case STUNNED -> new StunEffect();
+            case EVADING -> new EvadeEffect();
+            case IMMUNITY -> new ImmunityEffect();
             // Extend here as new StatusEffectTypes are added
             default -> throw new GameException("Unsupported StatusEffectType: " + type);
         };
