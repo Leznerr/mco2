@@ -77,7 +77,7 @@ public final class SceneManager {
             mainMenuView = new MainMenuView();
 
             // Initialize the controller only once
-            hallOfFameView = new HallOfFameManagementView();
+            
             if (gameManagerController == null) {
                 gameManagerController = new GameManagerController(this, new HallOfFameController(hallOfFameView), mainMenuView);
             }
