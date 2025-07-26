@@ -266,9 +266,14 @@ public final class SceneManager {
                 String choice = (String) battleView.getAbilitySelectorP1().getSelectedItem();
                 if (choice != null) {
                     try {
-                        battleController.handlePlayerChoice(human, choice);
+                        Character user = battleController.getBattleCopy(human);
+                        if (user != null) {
+                            battleController.handlePlayerChoice(user, choice);
+                        }
                     } catch (GameException ex) {
                         DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
+                        battleView.setBattleControlsEnabled(false);
+                        battleView.setEndButtonsEnabled(true);
                     }
                 }
             });
@@ -303,9 +308,14 @@ public final class SceneManager {
                 String choice = (String) battleView.getAbilitySelectorP1().getSelectedItem();
                 if (choice != null) {
                     try {
-                        controller.handlePlayerChoice(c1, choice);
+                        Character user = controller.getBattleCopy(c1);
+                        if (user != null) {
+                            controller.handlePlayerChoice(user, choice);
+                        }
                     } catch (GameException ex) {
                         DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
+                        battleView.setBattleControlsEnabled(false);
+                        battleView.setEndButtonsEnabled(true);
                     }
                 }
             });
@@ -313,9 +323,14 @@ public final class SceneManager {
                 String choice = (String) battleView.getAbilitySelectorP2().getSelectedItem();
                 if (choice != null) {
                     try {
-                        controller.handlePlayerChoice(c2, choice);
+                        Character user = controller.getBattleCopy(c2);
+                        if (user != null) {
+                            controller.handlePlayerChoice(user, choice);
+                        }
                     } catch (GameException ex) {
                         DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
+                        battleView.setBattleControlsEnabled(false);
+                        battleView.setEndButtonsEnabled(true);
                     }
                 }
             });
