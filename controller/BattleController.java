@@ -1,27 +1,31 @@
 package controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import model.battle.AbilityMove;
 import model.battle.Battle;
 import model.battle.CombatLog;
-import model.battle.Move;
 import model.battle.Defend;
-import model.battle.Recharge;
 import model.battle.ItemMove;
-import model.battle.AbilityMove;
-import model.core.Character;
-import model.core.Ability;
-import model.core.Player;
-import controller.GameManagerController;
-import model.item.SingleUseItem;
-import model.item.PassiveItem;
 import model.battle.LevelingSystem;
+import model.battle.Move;
+import model.battle.Recharge;
+import model.core.Ability;
+import model.core.Character;
+import model.core.Player;
+import model.item.MagicItem;
+import model.item.PassiveItem;
+import model.item.SingleUseItem;
 import model.util.Constants;
 import model.util.GameException;
 import model.util.InputValidator;
 import view.BattleView;
-import controller.AIController;
-import java.util.stream.Collectors;
-
-import java.util.*;
 
 /**
  * Central orchestrator for a two-character, turn-based battle.
@@ -359,19 +363,18 @@ public final class BattleController {
         log.addEntry("--- Round " + battle.getRoundNumber() + " ---");
         view.setRoundNumber(battle.getRoundNumber());
 
-        boolean first = battle.getRoundNumber() == 1;
-        processRoundStartFor(battle.getCharacter1(), log, first);
-        processRoundStartFor(battle.getCharacter2(), log, first);
+        processRoundStartFor(battle.getCharacter1(), log);
+        processRoundStartFor(battle.getCharacter2(), log);
 
         view.displayTurnResults(log);
         updatePlayerPanels();
     }
 
-    private void processRoundStartFor(Character c, CombatLog log, boolean firstRound) throws GameException {
+    private void processRoundStartFor(Character c, CombatLog log) throws GameException {
         c.gainEp(Constants.ROUND_EP_REGEN);
         log.addEntry(c.getName() + " regenerates " + Constants.ROUND_EP_REGEN + " EP.");
         if (c.getInventory().getEquippedItem() instanceof PassiveItem p) {
-            applyPassiveItemEffect(c, p, log, firstRound);
+            applyPassiveItemEffect(c, p, log);
         }
         c.processStartOfTurnEffects(log);
         if (!c.isAlive()) {
@@ -379,27 +382,18 @@ public final class BattleController {
         }
     }
 
-    private void applyPassiveItemEffect(Character c, PassiveItem item, CombatLog log, boolean firstRound) throws GameException {
+    private void applyPassiveItemEffect(Character c, PassiveItem item, CombatLog log) throws GameException {
         String name = item.getName();
         switch (name) {
-            case "Amulet of Vitality" -> {
-                if (firstRound) {
-                    c.increaseMaxHp(20);
-                    log.addEntry(c.getName() + " feels empowered by " + name + ".");
-                }
-            }
-            case "Ring of Focus" -> {
-                c.gainEp(2);
-                log.addEntry(c.getName() + " gains 2 EP from " + name + ".");
-            }
-            case "Orb of Resilience" -> {
-                c.heal(5);
-                log.addEntry(c.getName() + " restores 5 HP from " + name + ".");
-            }
-            case "Ancient Tome of Power" -> {
+            case "Copper Ring" -> {
                 c.gainEp(5);
                 log.addEntry(c.getName() + " gains 5 EP from " + name + ".");
             }
+            case "Silver Amulet" -> {
+                c.heal(5);
+                log.addEntry(c.getName() + " gains 5 HP from " + name + ".");
+            }
+            case "Golden Dragon Scale" -> log.addEntry(c.getName() + " is shielded by " + name + ".");
             default -> log.addEntry("Item effect for " + name + " not implemented.");
         }
     }
@@ -500,23 +494,10 @@ public final class BattleController {
             sb.append(a.getName()).append(" (").append(a.getEpCost()).append(" EP)").append("\n");
         }
         for (var item : c.getInventory().getAllItems()) {
-            sb.append("Item: ")
-              .append(item.getName())
-              .append(" - ")
-              .append(item.getDescription())
-              .append(" [")
-              .append(item.getItemType())
-              .append("]\n");
+            sb.append("Item: ").append(item.getName()).append("\n");
         }
         if (c.getInventory().getEquippedItem() != null) {
-            var eq = c.getInventory().getEquippedItem();
-            sb.append("Equipped: ")
-              .append(eq.getName())
-              .append(" - ")
-              .append(eq.getDescription())
-              .append(" [")
-              .append(eq.getItemType())
-              .append("]");
+            sb.append("Equipped: ").append(c.getInventory().getEquippedItem().getName());
         }
         return sb.toString();
     }
