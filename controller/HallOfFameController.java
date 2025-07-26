@@ -4,6 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import javax.swing.JOptionPane;
 
 import controller.SceneManager;
@@ -159,12 +162,18 @@ public class HallOfFameController implements ActionListener {
         try {
             List<HallOfFameEntry> topCharacters = getTopCharactersByWins(10);
             if (topCharacters.isEmpty()) {
-                view.updateTopCharactersList("No top characters yet.");
+                view.updateTopCharactersList("No records yet!");
             } else {
-                String content = topCharacters.stream()
-                        .map(HallOfFameEntry::toString)
-                        .collect(Collectors.joining("\n\n"));
-                view.updateTopCharactersList(content);
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < topCharacters.size(); i++) {
+                    HallOfFameEntry e = topCharacters.get(i);
+                    String date = LocalDateTime.ofInstant(Instant.ofEpochMilli(e.getLastUpdated()),
+                            ZoneId.systemDefault()).toLocalDate().toString();
+                    sb.append(String.format("%d. %s - Wins: %d, XP: %d, Last Win: %s",
+                            i + 1, e.getName(), e.getWins(), e.getXp(), date));
+                    if (i < topCharacters.size() - 1) sb.append("\n\n");
+                }
+                view.updateTopCharactersList(sb.toString());
             }
         } catch (GameException e) {
             view.updateTopCharactersList("Unable to load Hall of Fame.");
@@ -184,12 +193,18 @@ public class HallOfFameController implements ActionListener {
         try {
             List<HallOfFameEntry> topPlayers = getTopPlayersByWins(10);
             if (topPlayers.isEmpty()) {
-                view.updateTopPlayersList("No top players yet.");
+                view.updateTopPlayersList("No records yet!");
             } else {
-                String content = topPlayers.stream()
-                        .map(HallOfFameEntry::toString)
-                        .collect(Collectors.joining("\n\n"));
-                view.updateTopPlayersList(content);
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < topPlayers.size(); i++) {
+                    HallOfFameEntry e = topPlayers.get(i);
+                    String date = LocalDateTime.ofInstant(Instant.ofEpochMilli(e.getLastUpdated()),
+                            ZoneId.systemDefault()).toLocalDate().toString();
+                    sb.append(String.format("%d. %s - Wins: %d, XP: %d, Last Win: %s",
+                            i + 1, e.getName(), e.getWins(), e.getXp(), date));
+                    if (i < topPlayers.size() - 1) sb.append("\n\n");
+                }
+                view.updateTopPlayersList(sb.toString());
             }
         } catch (GameException e) {
             view.updateTopPlayersList("Unable to load Hall of Fame.");
