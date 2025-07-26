@@ -23,6 +23,8 @@ public class CharacterManualCreationView extends JFrame {
     private JComboBox<String> dropdown3 = new JComboBox<>();
     private JComboBox<String> dropdown4 = new JComboBox<>();
     private JComboBox<String> dropdown5 = new JComboBox<>();
+    private JComboBox<String> dropdown6 = new JComboBox<>();
+    private JPanel ability4Panel;
     private JButton btnCreate;
     private JButton btnReturn;
 
@@ -122,6 +124,10 @@ public class CharacterManualCreationView extends JFrame {
         centerPanel.add(createDropdownPanel("Select Ability 2:", dropdown4));
         centerPanel.add(Box.createVerticalStrut(10));
         centerPanel.add(createDropdownPanel("Select Ability 3:", dropdown5));
+        ability4Panel = createDropdownPanel("Select Ability 4:", dropdown6);
+        ability4Panel.setVisible(false);
+        centerPanel.add(Box.createVerticalStrut(10));
+        centerPanel.add(ability4Panel);
         centerPanel.add(Box.createVerticalStrut(20));
 
         // Bottom panel for buttons
@@ -187,6 +193,7 @@ public class CharacterManualCreationView extends JFrame {
         dropdown3.addActionListener(listener);
         dropdown4.addActionListener(listener);
         dropdown5.addActionListener(listener);
+        dropdown6.addActionListener(listener);
     }
 
 
@@ -241,6 +248,7 @@ public class CharacterManualCreationView extends JFrame {
             case 1 -> dropdown3;
             case 2 -> dropdown4;
             case 3 -> dropdown5;
+            case 4 -> dropdown6;
             default -> throw new IllegalArgumentException("Invalid ability slot: " + abilitySlot);
         };
         target.removeAllItems();
@@ -259,6 +267,7 @@ public class CharacterManualCreationView extends JFrame {
         dropdown3.setSelectedIndex(-1);
         dropdown4.setSelectedIndex(-1);
         dropdown5.setSelectedIndex(-1);
+        dropdown6.setSelectedIndex(-1);
     }
 
 
@@ -281,8 +290,21 @@ public class CharacterManualCreationView extends JFrame {
         return new String[] {
             (String) dropdown3.getSelectedItem(),
             (String) dropdown4.getSelectedItem(),
-            (String) dropdown5.getSelectedItem()
+            (String) dropdown5.getSelectedItem(),
+            (String) dropdown6.getSelectedItem()
         };
+    }
+
+    public void setAbility4Visible(boolean visible) {
+        ability4Panel.setVisible(visible);
+    }
+
+    public void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void showInfoMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
 }

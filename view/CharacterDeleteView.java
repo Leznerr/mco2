@@ -236,4 +236,12 @@ public class CharacterDeleteView extends JFrame {
         return (String) charDropdown.getSelectedItem();
     }
 
+    public void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void showInfoMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
 }

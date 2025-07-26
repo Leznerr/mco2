@@ -216,4 +216,16 @@ public class CharacterAutoCreationView extends JFrame {
         return charDetailsArea.getText().trim();
     }
 
+    public void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void showInfoMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void showGeneratedDetails(String details) {
+        setGeneratedCharacterDetails(details);
+    }
+
 }

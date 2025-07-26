@@ -80,7 +80,7 @@ public final class GameManagerController implements ActionListener {
 
     /** Wires this controller to the main menu buttons. */
     private void bindUI() {
-        mainMenuView.setController(this);
+        mainMenuView.setActionListener(this);
         mainMenuView.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -102,11 +102,11 @@ public void actionPerformed(ActionEvent e) {
     String command = e.getActionCommand();
 
     switch (command) {
-        case MainMenuView.ACTION_REGISTER_PLAYERS -> {
+        case MainMenuView.REGISTER_PLAYERS -> {
             sceneManager.showPlayerRegistration(); // Shows Player Registration View
             mainMenuView.dispose(); // Close the MainMenuView
         }
-        case MainMenuView.ACTION_MANAGE_CHARACTERS -> {
+        case MainMenuView.MANAGE_CHARACTERS -> {
             if (players.isEmpty()) {
                 JOptionPane.showMessageDialog(mainMenuView, "Please register players first.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
@@ -114,11 +114,11 @@ public void actionPerformed(ActionEvent e) {
                 mainMenuView.dispose();
             }
         }
-        case MainMenuView.ACTION_HALL_OF_FAME -> {
+        case MainMenuView.HALL_OF_FAME -> {
             sceneManager.showHallOfFameManagement(); // Show Hall of Fame View
             mainMenuView.dispose(); // Close the MainMenuView
         }
-        case MainMenuView.ACTION_START_BATTLE -> {
+        case MainMenuView.START_BATTLE -> {
             if (players.isEmpty() || players.get(0).getCharacters().isEmpty()) {
                 JOptionPane.showMessageDialog(mainMenuView, "Please create a player and at least one character first.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
@@ -134,7 +134,7 @@ public void actionPerformed(ActionEvent e) {
                 }
             }
         }
-        case MainMenuView.ACTION_EXIT -> {
+        case MainMenuView.EXIT -> {
             quitApplication();
         }
         default -> {
@@ -152,8 +152,9 @@ public void actionPerformed(ActionEvent e) {
      * @param playerID the ID or name of the player to manage
      */
     public void handleNavigateToCharacterCreationManagement(String playerName) {
+        int playerId = getPlayerIndexByName(playerName);
         SwingUtilities.invokeLater(() -> {
-            CharacterCreationManagementView view = new CharacterCreationManagementView(playerName);
+            CharacterCreationManagementView view = new CharacterCreationManagementView(playerId);
 
             view.setActionListener(e -> {
                 String command = e.getActionCommand();
@@ -180,21 +181,23 @@ public void actionPerformed(ActionEvent e) {
 
     
     private void handleNavigateToManualCreation(String playerName) {
+        int playerId = getPlayerIndexByName(playerName);
         SwingUtilities.invokeLater(() -> {
-            CharacterManualCreationView manualView = new CharacterManualCreationView(playerName);
+            CharacterManualCreationView manualView = new CharacterManualCreationView(playerId);
             CharacterManualCreationController controller =
                 new CharacterManualCreationController(manualView, playerName, this);
-            manualView.setController(controller);
+            manualView.setActionListener(controller);
             manualView.setVisible(true);
         });
     }
 
     private void handleNavigateToAutoCreation(String playerName) {
+        int playerId = getPlayerIndexByName(playerName);
         SwingUtilities.invokeLater(() -> {
-            CharacterAutoCreationView autoView = new CharacterAutoCreationView(playerName);
+            CharacterAutoCreationView autoView = new CharacterAutoCreationView(playerId);
             CharacterAutoCreationController controller =
                 new CharacterAutoCreationController(autoView, playerName, this);
-            autoView.setController(controller);
+            autoView.setActionListener(controller);
             autoView.setVisible(true);
         });
     }
@@ -361,6 +364,16 @@ public void actionPerformed(ActionEvent e) {
      */
     public List<Player> getPlayers() {
         return Collections.unmodifiableList(players);
+    }
+
+    /** Returns the 1-based index of the player with the given name. */
+    private int getPlayerIndexByName(String name) {
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).getName().equalsIgnoreCase(name)) {
+                return i + 1;
+            }
+        }
+        return 1;
     }
 
     /**
