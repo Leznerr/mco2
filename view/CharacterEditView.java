@@ -168,17 +168,17 @@ public class CharacterEditView extends JFrame {
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         OutlinedLabel label = new OutlinedLabel(labelText);
-        Dimension labelSize = new Dimension(170, label.getPreferredSize().height);
+        Dimension labelSize = new Dimension(200, label.getPreferredSize().height);
         label.setPreferredSize(labelSize);
         label.setMinimumSize(labelSize);
         label.setMaximumSize(labelSize);
-        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 8));
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
 
-        dropdown.setFont(new Font("Serif", Font.BOLD, 16));
-        Dimension ddSize = new Dimension(300, 36);
+        dropdown.setFont(new Font("Serif", Font.BOLD, 18));
+        Dimension ddSize = new Dimension(350, 40);
         dropdown.setPreferredSize(ddSize);
         dropdown.setMaximumSize(ddSize);
-        dropdown.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 
         panel.add(label);
         panel.add(dropdown);
