@@ -65,6 +65,32 @@ public class CharacterManagementMenuView extends JFrame {
         setContentPane(bgPanel);
     }
 
+    /**
+     * Updates the label for the first player's manage button.
+     */
+    public void setPlayer1Name(String name) {
+        if (name == null || name.isBlank()) {
+            btnManagePlayer1.setText(MANAGE_PLAYER1);
+            btnManagePlayer1.setEnabled(false);
+        } else {
+            btnManagePlayer1.setText("Manage " + name);
+            btnManagePlayer1.setEnabled(true);
+        }
+    }
+
+    /**
+     * Updates the label for the second player's manage button.
+     */
+    public void setPlayer2Name(String name) {
+        if (name == null || name.isBlank()) {
+            btnManagePlayer2.setText(MANAGE_PLAYER2);
+            btnManagePlayer2.setEnabled(false);
+        } else {
+            btnManagePlayer2.setText("Manage " + name);
+            btnManagePlayer2.setEnabled(true);
+        }
+    }
+
     public void setActionListener(ActionListener l) {
         btnManagePlayer1.addActionListener(l);
         btnManagePlayer2.addActionListener(l);

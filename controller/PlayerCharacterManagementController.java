@@ -60,6 +60,7 @@ public class PlayerCharacterManagementController {
             }
         });
         refreshCharacterList(listView);
+        listView.setVisible(true);
     }
 
     private void refreshCharacterList(CharacterListViewingView lv) {
@@ -116,6 +117,7 @@ public class PlayerCharacterManagementController {
             }
         });
         specView.resetView();
+        specView.setVisible(true);
     }
 
     private void openEditCharacter() {
@@ -136,6 +138,7 @@ public class PlayerCharacterManagementController {
         });
 
         populateEditFields(editView);
+        editView.setVisible(true);
     }
 
     private void populateEditFields(CharacterEditView ev) {
