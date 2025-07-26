@@ -25,11 +25,13 @@ public class PlayerRegistrationView extends JFrame {
     // Button labels
     public static final String NEW_PLAYERS = "New Players";
     public static final String SAVED_PLAYERS = "Saved Players";
+    public static final String DELETE_PLAYER = "Delete Player";
     public static final String RETURN_TO_MENU = "Return to Menu";
 
     // UI components
     private JButton btnNewPlayers;
     private JButton btnSavedPlayers;
+    private JButton btnDeletePlayer;
     private JButton btnReturnToMenu;
     
     
@@ -62,6 +64,7 @@ public class PlayerRegistrationView extends JFrame {
 
         setLocationRelativeTo(null);
         setResizable(false);
+        setVisible(true);
     }
 
 
@@ -104,7 +107,7 @@ public class PlayerRegistrationView extends JFrame {
         backgroundPanel.add(logoLabel);
 
         // Add vertical space between logo and buttons
-        backgroundPanel.add(Box.createVerticalStrut(60));
+        backgroundPanel.add(Box.createVerticalStrut(40));
 
         // Panel for buttons, centered
         JPanel buttonPanel = new JPanel();
@@ -113,12 +116,15 @@ public class PlayerRegistrationView extends JFrame {
 
         btnNewPlayers = new RoundedButton(NEW_PLAYERS);
         btnSavedPlayers = new RoundedButton(SAVED_PLAYERS);
+        btnDeletePlayer = new RoundedButton(DELETE_PLAYER);
         btnReturnToMenu = new RoundedButton(RETURN_TO_MENU);
 
         // Add buttons with vertical spacing (how they stack)
         buttonPanel.add(btnNewPlayers);
         buttonPanel.add(Box.createVerticalStrut(20));
         buttonPanel.add(btnSavedPlayers);
+        buttonPanel.add(Box.createVerticalStrut(20));
+        buttonPanel.add(btnDeletePlayer);
         buttonPanel.add(Box.createVerticalStrut(20));
         buttonPanel.add(btnReturnToMenu);
 
@@ -142,6 +148,7 @@ public class PlayerRegistrationView extends JFrame {
         btnNewPlayers.addActionListener(listener);
         btnSavedPlayers.addActionListener(listener);
         btnReturnToMenu.addActionListener(listener);
+        btnDeletePlayer.addActionListener(listener);
     }
 
 }

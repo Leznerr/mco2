@@ -1,56 +1,32 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 // import controller._;
 
 /**
- * The battle character selection view for Fatal Fantasy: Tactics Game.
+ * The players deletion view for Fatal Fantasy: Tactics Game.
  */
-public class BattleCharSelectionView extends JFrame {
-    private int playerID;
+public class PlayerDeleteView extends JFrame {
 
     // Button labels
-    public static final String SELECT = "Select";
+    public static final String DELETE = "Delete";
     public static final String RETURN = "Return";
 
     // UI components
-    private JButton btnSelect;
+    private JButton btnDelete;
     private JButton btnReturn;
-    private JComboBox<String> charDropdown;
-    private JTextArea charListArea;
+    private JComboBox<String> playerDropdown;
+    private JTextArea playerListArea;
 
 
     /**
-     * Constructs the Battle Character Selection UI of Fatal Fantasy: Tactics Game.
+     * Constructs the Specific Player Deletion UI of Fatal Fantasy: Tactics Game.
      */
-    public BattleCharSelectionView(int playerID) {
-        super(getTitleForPlayer(playerID));
-
-        this.playerID = playerID;
+    public PlayerDeleteView() {
+        super("Fatal Fantasy: Tactics | Player Deletion");
 
         initUI();
         
@@ -61,7 +37,7 @@ public class BattleCharSelectionView extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 int choice = JOptionPane.showConfirmDialog(
-                    BattleCharSelectionView.this,
+                    PlayerDeleteView.this,
                     "Are you sure you want to quit?",
                     "Confirm Exit",
                     JOptionPane.YES_NO_OPTION
@@ -75,20 +51,7 @@ public class BattleCharSelectionView extends JFrame {
 
         setLocationRelativeTo(null);
         setResizable(false);
-    }
-
-
-    /**
-     * Returns the title for the battle character selection view based on the Player ID.
-     * @param playerID
-     * @return the title string
-     */
-    private static String getTitleForPlayer(int playerID) {
-        if (playerID == 1 || playerID == 2) {
-            return "Fatal Fantasy: Tactics | Player " + playerID + " Battle Character Selection";
-        } else {
-            return "Fatal Fantasy: Tactics | Player Battle Character Selection";
-        }
+        setVisible(true);
     }
 
 
@@ -97,7 +60,7 @@ public class BattleCharSelectionView extends JFrame {
      */
     private void initUI() {
         JPanel backgroundPanel = new JPanel() {
-            private Image bg = new ImageIcon("view/assets/CharSelectAndBattleBG.jpg").getImage();
+            private Image bg = new ImageIcon("view/assets/DeleteCharBG.jpg").getImage();
 
             @Override
             protected void paintComponent(Graphics g) {
@@ -124,35 +87,34 @@ public class BattleCharSelectionView extends JFrame {
         JPanel centerPanel = new JPanel();
         centerPanel.setOpaque(false);
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-        centerPanel.add(Box.createVerticalStrut(40));
+        centerPanel.add(Box.createVerticalStrut(30));
 
-        String headlineImagePath = String.format("view/assets/Player%dBattleCharSelectionLogo.png", playerID);
-        ImageIcon logoIcon = new ImageIcon(headlineImagePath);
-        Image logoImg = logoIcon.getImage().getScaledInstance(500, -1, Image.SCALE_SMOOTH);
+        ImageIcon logoIcon = new ImageIcon("view/assets/DeletePlayerLogo.png");
+        Image logoImg = logoIcon.getImage().getScaledInstance(480, -1, Image.SCALE_SMOOTH);
         JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         centerPanel.add(logoLabel);
 
         centerPanel.add(Box.createVerticalStrut(10));
 
-        // Rounded display box for character list
+        // Rounded display box for player list
         RoundedDisplayBox detailsPanel = new RoundedDisplayBox();
         detailsPanel.setPreferredSize(new Dimension(400, 500));
         detailsPanel.setMaximumSize(new Dimension(400, 500));
         detailsPanel.setLayout(new BorderLayout());
         detailsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Text area for character list
-        charListArea = new JTextArea();
-        charListArea.setFont(new Font("Serif", Font.PLAIN, 18));
-        charListArea.setForeground(Color.WHITE);
-        charListArea.setOpaque(false);
-        charListArea.setEditable(false);
-        charListArea.setLineWrap(true);
-        charListArea.setWrapStyleWord(true);
+        // Text area for player list
+        playerListArea = new JTextArea();
+        playerListArea.setFont(new Font("Serif", Font.PLAIN, 18));
+        playerListArea.setForeground(Color.WHITE);
+        playerListArea.setOpaque(false);
+        playerListArea.setEditable(false);
+        playerListArea.setLineWrap(true);
+        playerListArea.setWrapStyleWord(true);
 
         // Scroll pane
-        JScrollPane scrollPane = new JScrollPane(charListArea);
+        JScrollPane scrollPane = new JScrollPane(playerListArea);
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -171,17 +133,17 @@ public class BattleCharSelectionView extends JFrame {
         dropdownPanel.setLayout(new BoxLayout(dropdownPanel, BoxLayout.X_AXIS));
         dropdownPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel selectLabel = new JLabel("Select a Character:");
+        JLabel selectLabel = new JLabel("Select a Player:");
         selectLabel.setFont(new Font("Serif", Font.BOLD, 18));
         selectLabel.setForeground(Color.WHITE);
         selectLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
         dropdownPanel.add(selectLabel);
 
-        charDropdown = new JComboBox<>();
-        charDropdown.setFont(new Font("Serif", Font.BOLD, 18));
-        charDropdown.setMaximumSize(new Dimension(250, 35));
-        charDropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3)); 
-        dropdownPanel.add(charDropdown);
+        playerDropdown = new JComboBox<>();
+        playerDropdown.setFont(new Font("Serif", Font.BOLD, 18));
+        playerDropdown.setMaximumSize(new Dimension(250, 35));
+        playerDropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3)); 
+        dropdownPanel.add(playerDropdown);
 
         centerPanel.add(dropdownPanel);
 
@@ -193,10 +155,10 @@ public class BattleCharSelectionView extends JFrame {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 50));
         buttonPanel.setOpaque(false);
 
-        btnSelect = new RoundedButton(SELECT);
+        btnDelete = new RoundedButton(DELETE);
         btnReturn = new RoundedButton(RETURN);
 
-        buttonPanel.add(btnSelect);
+        buttonPanel.add(btnDelete);
         buttonPanel.add(btnReturn);
 
         backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -206,38 +168,38 @@ public class BattleCharSelectionView extends JFrame {
 
 
     /**
-     * Sets the action listener for the button click and dropdown events.
+     * Sets the action listener for the button click events.
      * 
      * @param listener The listener
      */
     public void setActionListener(ActionListener listener) {
         btnReturn.addActionListener(listener);
-        btnSelect.addActionListener(listener);
-        charDropdown.addActionListener(listener);
+        btnDelete.addActionListener(listener);
+        playerDropdown.addActionListener(listener);
     }
 
 
     /**
-     * Updates the character list display area.
+     * Updates the player list display area.
      * 
-     * @param text The formatted character list string
+     * @param text The formatted player list string
      */
-    public void updateCharacterList(String text) {
-        charListArea.setText(text);
+    public void updatePlayerList(String text) {
+        playerListArea.setText(text);
     }
 
     
     /**
-     * Confirms character selection with the user.
+     * Confirms player deletion with the user.
      * 
-     * @param characterName The name of the character to be deleted
+     * @param playerName The name of the player to be deleted
      * @return true if the user confirms deletion, false otherwise
      */
-    public boolean confirmCharacterSelection(String characterName) {
+    public boolean confirmPlayerDeletion(String playerName) {
         int option = JOptionPane.showConfirmDialog(
             this,
-            "Are you sure you want to select \"" + characterName + "\"?",
-            "Confirm Selection",
+            "Are you sure you want to delete \"" + playerName + "\"?",
+            "Confirm Deletion",
             JOptionPane.YES_NO_OPTION
         );
         return option == JOptionPane.YES_OPTION;
@@ -245,15 +207,15 @@ public class BattleCharSelectionView extends JFrame {
 
 
     /**
-     * Sets the character options in the dropdown.
+     * Sets the player options in the dropdown.
      * 
-     * @param characterNames The array of character names
+     * @param playerNames The array of player names
      */
-    public void setCharacterOptions(String[] characterNames) {
-        charDropdown.removeAllItems();
+    public void setPlayerOptions(String[] playerNames) {
+        playerDropdown.removeAllItems();
 
-        for (String name : characterNames) {
-            charDropdown.addItem(name);
+        for (String name : playerNames) {
+            playerDropdown.addItem(name);
         }
     }
 
@@ -262,12 +224,12 @@ public class BattleCharSelectionView extends JFrame {
      * Resets all dropdown selections.
      */
     public void resetDropdowns() {
-        charDropdown.setSelectedIndex(-1);
+        playerDropdown.setSelectedIndex(-1);
     }
 
 
-    public String getSelectedCharacter() {
-        return (String) charDropdown.getSelectedItem();
+    public String getSelectedPlayer() {
+        return (String) playerDropdown.getSelectedItem();
     }
 
 }
