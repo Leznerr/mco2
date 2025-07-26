@@ -128,24 +128,26 @@ public class PlayerCharacterManagementController {
     }
 
     private void openEditCharacter() {
-        CharacterEditView editView = new CharacterEditView(view.getPlayerID());
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            CharacterEditView editView = new CharacterEditView(view.getPlayerID());
 
-        editView.setCharacterOptions(player.getCharacters().stream()
-                .map(Character::getName).toArray(String[]::new));
+            editView.setCharacterOptions(player.getCharacters().stream()
+                    .map(Character::getName).toArray(String[]::new));
 
-        editView.setActionListener(e -> {
-            String cmd = e.getActionCommand();
-            if (CharacterEditView.RETURN.equals(cmd)) {
-                editView.dispose();
-            } else if (CharacterEditView.EDIT.equals(cmd)) {
-                handleEditConfirmation(editView);
-            } else if (e.getSource() == editView.getCharacterDropdown()) {
-                populateEditFields(editView);
-            }
+            editView.setActionListener(e -> {
+                String cmd = e.getActionCommand();
+                if (CharacterEditView.RETURN.equals(cmd)) {
+                    editView.dispose();
+                } else if (CharacterEditView.EDIT.equals(cmd)) {
+                    handleEditConfirmation(editView);
+                } else if (e.getSource() == editView.getCharacterDropdown()) {
+                    populateEditFields(editView);
+                }
+            });
+
+            populateEditFields(editView);
+            editView.setVisible(true);
         });
-
-        populateEditFields(editView);
-        editView.setVisible(true);
     }
 
     private void populateEditFields(CharacterEditView ev) {

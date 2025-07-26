@@ -105,14 +105,14 @@ public class CharacterEditView extends JFrame {
         abilitiesPanel.setLayout(new BoxLayout(abilitiesPanel, BoxLayout.Y_AXIS));
 
         abilitiesPanel.add(Box.createVerticalStrut(20));
-        abilitiesPanel.add(createDropdownPanel("Select Ability 1:", dropdownAbility1));
+        abilitiesPanel.add(createDropdownPanel("Select Ability 1 (Depends on Class)", dropdownAbility1));
         abilitiesPanel.add(Box.createVerticalStrut(20));
-        abilitiesPanel.add(createDropdownPanel("Select Ability 2:", dropdownAbility2));
+        abilitiesPanel.add(createDropdownPanel("Select Ability 2 (Depends on Class)", dropdownAbility2));
         abilitiesPanel.add(Box.createVerticalStrut(20));
-        abilitiesPanel.add(createDropdownPanel("Select Ability 3:", dropdownAbility3));
+        abilitiesPanel.add(createDropdownPanel("Select Ability 3 (Depends on Class)", dropdownAbility3));
 
         ability4Spacer = Box.createVerticalStrut(20);
-        ability4Panel = createDropdownPanel("Select Ability 4:", dropdownAbility4);
+        ability4Panel = createDropdownPanel("Select Ability 4 (Depends on Class)", dropdownAbility4);
         ability4Panel.setVisible(false);
         ability4Spacer.setVisible(false);
 
@@ -145,7 +145,7 @@ public class CharacterEditView extends JFrame {
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         OutlinedLabel label = new OutlinedLabel(labelText);
-        Dimension labelSize = new Dimension(200, label.getPreferredSize().height);
+        Dimension labelSize = new Dimension(350, 40);
         label.setPreferredSize(labelSize);
         label.setMinimumSize(labelSize);
         label.setMaximumSize(labelSize);
@@ -241,6 +241,22 @@ public class CharacterEditView extends JFrame {
 
     public String getSelectedCharacter() {
         return (String) dropdownCharacter.getSelectedItem();
+    }
+
+    /**
+     * Retrieves the selected ability for a specific slot.
+     *
+     * @param slot ability slot number (1-4)
+     * @return the ability name or {@code null} if none selected
+     */
+    public String getSelectedAbility(int slot) {
+        return switch (slot) {
+            case 1 -> (String) dropdownAbility1.getSelectedItem();
+            case 2 -> (String) dropdownAbility2.getSelectedItem();
+            case 3 -> (String) dropdownAbility3.getSelectedItem();
+            case 4 -> (String) dropdownAbility4.getSelectedItem();
+            default -> null;
+        };
     }
 
     public String[] getSelectedAbilities() {
