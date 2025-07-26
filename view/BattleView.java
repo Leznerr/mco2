@@ -58,6 +58,7 @@ public class BattleView extends JFrame {
     private JTextArea p1NameCharNameArea, p2NameCharNameArea, p0NameCharNameArea, botNameCharNameArea, p1StatusArea, p2StatusArea, p0StatusArea, botStatusArea;
     private JTextArea p1AbilitiesItemsArea, p2AbilitiesItemsArea, p0AbilitiesItemsArea, botAbilitiesItemsArea, battleLogArea, battleOutcomeArea;
     private OutlinedLabel roundLabel;
+    private int lastLogIndex = 0;
     
     /**
      * Constructs the Battle UI of Fatal Fantasy: Tactics Game.
@@ -652,6 +653,12 @@ public class BattleView extends JFrame {
         battleLogArea.append(text + "\n");
     }
 
+    /** Clears the battle log display and resets the tracking index. */
+    public void resetBattleLog() {
+        battleLogArea.setText("");
+        lastLogIndex = 0;
+    }
+
 
     /**
      * Sets the battle outcome
@@ -660,6 +667,11 @@ public class BattleView extends JFrame {
      */
     public void setBattleOutcome(String text) {
         battleOutcomeArea.setText(text);
+    }
+
+    /** Clears any text from the battle outcome area. */
+    public void clearBattleOutcome() {
+        battleOutcomeArea.setText("");
     }
 
     /**
@@ -742,13 +754,18 @@ public class BattleView extends JFrame {
     // --- Minimal callbacks expected by BattleController ---
 
     public void displayBattleStart(Character c1, Character c2) {
-        appendBattleLog("Battle started between " + c1.getName() + " and " + c2.getName() + ".");
+        // The battle log already records the start message. Simply reset the
+        // UI log so displayTurnResults can show entries sequentially.
+        resetBattleLog();
+        clearBattleOutcome();
     }
 
     public void displayTurnResults(CombatLog log) {
-        for (String entry : log.getLogEntries()) {
-            appendBattleLog(entry);
+        var entries = log.getLogEntries();
+        for (int i = lastLogIndex; i < entries.size(); i++) {
+            appendBattleLog(entries.get(i));
         }
+        lastLogIndex = entries.size();
     }
 
     public void displayBattleEnd(Character winner) {

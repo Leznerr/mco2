@@ -122,6 +122,8 @@ public final class BattleController {
         aiCharacter = null;
         humanOpponent = null;
         view.displayBattleStart(battleC1, battleC2);
+        view.setRoundNumber(1);
+        view.displayTurnResults(battle.getCombatLog());
         view.setBattleControlsEnabled(true);
         view.setEndButtonsEnabled(false);
         updatePlayerPanels();
