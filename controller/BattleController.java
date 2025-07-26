@@ -6,6 +6,7 @@ import model.battle.Move;
 import model.battle.Defend;
 import model.battle.Recharge;
 import model.battle.ItemMove;
+import model.battle.AbilityMove;
 import model.core.Character;
 import model.core.Ability;
 import model.core.Player;
