@@ -2,6 +2,7 @@ package controller;
 
 import model.core.Player;
 import view.CharacterManagementMenuView;
+import javax.swing.JOptionPane;
 
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -19,6 +20,7 @@ public class CharacterManagementMenuController {
         this.players = players;
         this.sceneManager = sceneManager;
         bind();
+        updateLabels();
     }
 
     private void bind() {
@@ -37,6 +39,25 @@ public class CharacterManagementMenuController {
         if (idx >= 0 && idx < players.size()) {
             Player p = players.get(idx);
             sceneManager.showPlayerCharacterManagement(p);
+        }
+    }
+
+    private void updateLabels() {
+        if (players.isEmpty()) {
+            JOptionPane.showMessageDialog(view,
+                    "No players registered.",
+                    "Info", JOptionPane.INFORMATION_MESSAGE);
+            view.setPlayer1Name(null);
+            view.setPlayer2Name(null);
+            return;
+        }
+        if (players.size() > 0) {
+            view.setPlayer1Name(players.get(0).getName());
+        }
+        if (players.size() > 1) {
+            view.setPlayer2Name(players.get(1).getName());
+        } else {
+            view.setPlayer2Name(null);
         }
     }
 }
