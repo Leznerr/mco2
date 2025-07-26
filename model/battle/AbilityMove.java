@@ -6,6 +6,7 @@ import model.util.GameException;
 import model.util.InputValidator;
 import model.util.StatusEffectFactory;
 import model.util.StatusEffectType;
+import model.core.AbilityEffectType;
 
 /**
  * Represents a battle move that executes a specific {@link Ability}.
@@ -72,6 +73,9 @@ public final class AbilityMove implements Move {
                 if (statusType != null && statusType != StatusEffectType.NONE) {
                     user.addStatusEffect(StatusEffectFactory.create(statusType));
                     log.addEntry(user.getName() + " gains " + statusType + ".");
+                } else if (ability.getAbilityEffectType() == AbilityEffectType.DEFENSE) {
+                    user.addStatusEffect(StatusEffectFactory.create(StatusEffectType.DEFENSE_UP));
+                    log.addEntry(user.getName() + " braces for impact.");
                 } else if (ability.getEffectValue() > 0) {
                     user.heal(ability.getEffectValue());
                     log.addEntry(user.getName() + " recovers " + ability.getEffectValue() + " HP.");

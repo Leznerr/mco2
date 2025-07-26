@@ -4,6 +4,8 @@ import model.core.Character;
 import model.util.Constants;
 import model.util.GameException;
 import model.util.InputValidator;
+import model.util.StatusEffectFactory;
+import model.util.StatusEffectType;
 
 /**
  * Battle action representing the universal "Defend" move.
@@ -38,7 +40,7 @@ public final class Defend implements MoveAction {
             throw new GameException(user.getName() + " does not have enough EP to defend.");
         }
 
+        user.addStatusEffect(StatusEffectFactory.create(StatusEffectType.DEFENSE_UP));
         log.addEntry(user.getName() + " takes a defensive stance.");
-        // Any damage mitigation would be handled by the battle system
     }
 }

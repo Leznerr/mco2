@@ -11,6 +11,7 @@ import model.core.Ability;
 import model.core.Player;
 import controller.GameManagerController;
 import model.item.SingleUseItem;
+import model.item.PassiveItem;
 import model.battle.LevelingSystem;
 import model.util.Constants;
 import model.util.GameException;
@@ -89,6 +90,7 @@ public final class BattleController {
         humanOpponent = null;
         view.displayBattleStart(c1, c2);
         updatePlayerPanels();
+        startRound();
     }
 
     /**
@@ -161,7 +163,13 @@ public final class BattleController {
                 .filter(a -> a.getName().equals(choice))
                 .findFirst();
         if (abilityOpt.isPresent()) {
-            submitMove(user, new AbilityMove(abilityOpt.get()));
+            Ability a = abilityOpt.get();
+            if (a.getEpCost() > user.getCurrentEp()) {
+                battle.getCombatLog().addEntry(user.getName() + " lacks EP for " + a.getName());
+                view.displayTurnResults(battle.getCombatLog());
+                return;
+            }
+            submitMove(user, new AbilityMove(a));
         } else {
             battle.getCombatLog().addEntry("Unknown action: " + choice);
         }
@@ -216,9 +224,6 @@ public final class BattleController {
         for (Turn t : order) {
             if (!t.actor.isAlive()) continue;
 
-            t.actor.processStartOfTurnEffects(log);
-            if (!t.actor.isAlive()) continue;
-
             if (t.actor.isStunned()) {
                 log.addEntry(t.actor.getName() + " is stunned and cannot act.");
             } else if (t.target.isAlive()) {
@@ -226,18 +231,12 @@ public final class BattleController {
             }
 
             t.actor.processEndOfTurnEffects(log);
+            if (battleEnded()) break;
         }
-
-        battle.getCharacter1().gainEp(Constants.ROUND_EP_REGEN);
-        battle.getCharacter2().gainEp(Constants.ROUND_EP_REGEN);
 
         view.displayTurnResults(log);
         updatePlayerPanels();
         selections.clear(); // prepare for next round
-
-        if (!battleEnded() && aiController != null) {
-            queueAIMove();
-        }
 
         if (battleEnded()) {
             Character winner = battle.getCharacter1().isAlive()
@@ -266,6 +265,10 @@ public final class BattleController {
         }
         else {
             battle.nextRound();
+            startRound();
+            if (aiController != null) {
+                queueAIMove();
+            }
         }
     }
 
@@ -295,6 +298,42 @@ public final class BattleController {
         if (aiController != null && aiCharacter != null && humanOpponent != null) {
             Move aiMove = aiController.requestMove(aiCharacter, humanOpponent);
             selections.put(aiCharacter, aiMove);
+        }
+    }
+
+    private void startRound() throws GameException {
+        ensureRunning();
+        CombatLog log = battle.getCombatLog();
+        log.addEntry("--- Round " + battle.getRoundNumber() + " Begins ---");
+
+        processRoundStartFor(battle.getCharacter1(), log);
+        processRoundStartFor(battle.getCharacter2(), log);
+
+        view.displayTurnResults(log);
+        updatePlayerPanels();
+    }
+
+    private void processRoundStartFor(Character c, CombatLog log) throws GameException {
+        c.gainEp(Constants.ROUND_EP_REGEN);
+        if (c.getInventory().getEquippedItem() instanceof PassiveItem p) {
+            applyPassiveItemEffect(c, p, log);
+        }
+        c.processStartOfTurnEffects(log);
+    }
+
+    private void applyPassiveItemEffect(Character c, PassiveItem item, CombatLog log) throws GameException {
+        String name = item.getName();
+        switch (name) {
+            case "Copper Ring" -> {
+                c.gainEp(5);
+                log.addEntry(c.getName() + " gains 5 EP from " + name + ".");
+            }
+            case "Silver Amulet" -> {
+                c.heal(5);
+                log.addEntry(c.getName() + " gains 5 HP from " + name + ".");
+            }
+            case "Golden Dragon Scale" -> log.addEntry(c.getName() + " is shielded by " + name + ".");
+            default -> log.addEntry("Item effect for " + name + " not implemented.");
         }
     }
 
