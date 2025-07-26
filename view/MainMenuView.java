@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 /**
  * The main menu view for Fatal Fantasy: Tactics Game.
  */
-public class MainMenuView extends JFrame {
+public class MainMenuView extends JPanel {
     // Button labels
     public static final String REGISTER_PLAYERS = "Register Players";
     public static final String MANAGE_CHARACTERS = "Manage Characters";
@@ -41,31 +41,11 @@ public class MainMenuView extends JFrame {
      * Constructs the Main Menu UI of Fatal Fantasy: Tactics Game.
      */
     public MainMenuView() {
-        super("Fatal Fantasy: Tactics | Main Menu");
 
         initUI();
         
-        setSize(800, 700);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                int choice = JOptionPane.showConfirmDialog(
-                    MainMenuView.this,
-                    "Are you sure you want to quit?",
-                    "Confirm Exit",
-                    JOptionPane.YES_NO_OPTION
-                );
 
-                if (choice == JOptionPane.YES_OPTION) {
-                    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // closes all windows
-                }
-            }
-        });
-
-        setLocationRelativeTo(null);
-        setResizable(false);
     }
 
 
@@ -139,7 +119,8 @@ public class MainMenuView extends JFrame {
         // Add vertical glue to push everything to the center
         backgroundPanel.add(Box.createVerticalGlue());
 
-        setContentPane(backgroundPanel);
+        setLayout(new BorderLayout());
+        add(backgroundPanel);
     }
 
 

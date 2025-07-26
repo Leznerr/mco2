@@ -9,7 +9,7 @@ import javax.swing.*;
 /**
  * The character delete view for Fatal Fantasy: Tactics Game.
  */
-public class CharacterDeleteView extends JFrame {
+public class CharacterDeleteView extends JPanel {
     private int playerID;
 
     // Button labels
@@ -27,34 +27,13 @@ public class CharacterDeleteView extends JFrame {
      * Constructs the Specific Character Deletion UI of Fatal Fantasy: Tactics Game.
      */
     public CharacterDeleteView(int playerID) {
-        super("Fatal Fantasy: Tactics | Player " + playerID + " Character Deletion");
 
         this.playerID = playerID;
 
         initUI();
         
-        setSize(800, 700);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                int choice = JOptionPane.showConfirmDialog(
-                    CharacterDeleteView.this,
-                    "Are you sure you want to quit?",
-                    "Confirm Exit",
-                    JOptionPane.YES_NO_OPTION
-                );
 
-                if (choice == JOptionPane.YES_OPTION) {
-                    dispose(); // closes the window
-                }
-            }
-        });
-
-        setLocationRelativeTo(null);
-        setResizable(false);
-        setVisible(true);
     }
 
 
@@ -167,7 +146,8 @@ public class CharacterDeleteView extends JFrame {
 
         backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        setContentPane(backgroundPanel);
+        setLayout(new BorderLayout());
+        add(backgroundPanel);
     }
 
 

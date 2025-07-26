@@ -30,7 +30,7 @@ import javax.swing.JTextArea;
 /**
  * The trading view for Fatal Fantasy: Tactics Game.
  */
-public class TradingView extends JFrame {
+public class TradingView extends JPanel {
 
     // Button labels
     public static final String TRADE = "Trade";
@@ -47,31 +47,11 @@ public class TradingView extends JFrame {
      * Constructs the Trading UI of Fatal Fantasy: Tactics Game.
      */
     public TradingView() {
-        super("Fatal Fantasy: Tactics | Trading");
 
         initUI();
         
-        setSize(1200, 700);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                int choice = JOptionPane.showConfirmDialog(
-                    TradingView.this,
-                    "Are you sure you want to quit?",
-                    "Confirm Exit",
-                    JOptionPane.YES_NO_OPTION
-                );
 
-                if (choice == JOptionPane.YES_OPTION) {
-                    dispose(); // closes the window
-                }
-            }
-        });
-
-        setLocationRelativeTo(null);
-        setResizable(false);
     }
 
 
@@ -162,7 +142,8 @@ public class TradingView extends JFrame {
         backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
 
 
-        setContentPane(backgroundPanel);
+        setLayout(new BorderLayout());
+        add(backgroundPanel);
     }
 
 

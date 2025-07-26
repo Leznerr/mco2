@@ -9,7 +9,7 @@ import javax.swing.*;
 /**
  * The player character management view for Fatal Fantasy: Tactics Game.
  */
-public class PlayerCharManagementView extends JFrame {
+public class PlayerCharManagementView extends JPanel {
     private int playerID;
 
     // Button labels
@@ -32,34 +32,13 @@ public class PlayerCharManagementView extends JFrame {
      * Constructs the Player Character Management UI of Fatal Fantasy: Tactics Game.
      */
     public PlayerCharManagementView(int playerID) {
-        super("Fatal Fantasy: Tactics | Player " + playerID + " Management");
 
         this.playerID = playerID;
 
         initUI();
         
-        setSize(800, 700);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                int choice = JOptionPane.showConfirmDialog(
-                    PlayerCharManagementView.this,
-                    "Are you sure you want to quit?",
-                    "Confirm Exit",
-                    JOptionPane.YES_NO_OPTION
-                );
 
-                if (choice == JOptionPane.YES_OPTION) {
-                    dispose(); // closes the window
-                }
-            }
-        });
-
-        setLocationRelativeTo(null);
-        setResizable(false);
-        setVisible(true);
     }
 
 
@@ -137,7 +116,8 @@ public class PlayerCharManagementView extends JFrame {
         // Add vertical glue to push everything to the center
         backgroundPanel.add(Box.createVerticalGlue());
 
-        setContentPane(backgroundPanel);
+        setLayout(new BorderLayout());
+        add(backgroundPanel);
     }
 
 

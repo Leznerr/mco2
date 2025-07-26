@@ -9,7 +9,7 @@ import javax.swing.*;
 /**
  * The battle character selection view for Fatal Fantasy: Tactics Game.
  */
-public class BattleCharSelectionView extends JFrame {
+public class BattleCharSelectionView extends JPanel {
     private int playerID;
 
     // Button labels
@@ -27,34 +27,13 @@ public class BattleCharSelectionView extends JFrame {
      * Constructs the Battle Character Selection UI of Fatal Fantasy: Tactics Game.
      */
     public BattleCharSelectionView(int playerID) {
-        super(getTitleForPlayer(playerID));
 
         this.playerID = playerID;
 
         initUI();
         
-        setSize(800, 700);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                int choice = JOptionPane.showConfirmDialog(
-                    BattleCharSelectionView.this,
-                    "Are you sure you want to quit?",
-                    "Confirm Exit",
-                    JOptionPane.YES_NO_OPTION
-                );
 
-                if (choice == JOptionPane.YES_OPTION) {
-                    dispose(); // closes the window
-                }
-            }
-        });
-
-        setLocationRelativeTo(null);
-        setResizable(false);
-        setVisible(true);
     }
 
 
@@ -181,7 +160,8 @@ public class BattleCharSelectionView extends JFrame {
 
         backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        setContentPane(backgroundPanel);
+        setLayout(new BorderLayout());
+        add(backgroundPanel);
     }
 
 

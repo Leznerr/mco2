@@ -9,7 +9,7 @@ import javax.swing.*;
 /**
  * The automatic character creation view for Fatal Fantasy: Tactics Game.
  */
-public class CharacterAutoCreationView extends JFrame {
+public class CharacterAutoCreationView extends JPanel {
     private int playerID;
 
     // Button labels
@@ -28,34 +28,13 @@ public class CharacterAutoCreationView extends JFrame {
      * Constructs the Automatic Character Creation UI of Fatal Fantasy: Tactics Game.
      */
     public CharacterAutoCreationView(int playerID) {
-        super("Fatal Fantasy: Tactics | Player " + playerID + " Automatic Character Creation");
 
         this.playerID = playerID;
 
         initUI();
         
-        setSize(800, 700);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                int choice = JOptionPane.showConfirmDialog(
-                    CharacterAutoCreationView.this,
-                    "Are you sure you want to quit?",
-                    "Confirm Exit",
-                    JOptionPane.YES_NO_OPTION
-                );
 
-                if (choice == JOptionPane.YES_OPTION) {
-                    dispose(); // closes the window
-                }
-            }
-        });
-
-        setLocationRelativeTo(null);
-        setResizable(false);
-        setVisible(true);
     }
 
 
@@ -155,7 +134,8 @@ public class CharacterAutoCreationView extends JFrame {
 
         backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        setContentPane(backgroundPanel);
+        setLayout(new BorderLayout());
+        add(backgroundPanel);
     }
 
     

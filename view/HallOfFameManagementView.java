@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 /**
  * The hall of fame management view for Fatal Fantasy: Tactics Game.
  */
-public class HallOfFameManagementView extends JFrame {
+public class HallOfFameManagementView extends JPanel {
     // Button labels
     public static final String TOP_PLAYERS = "Top Players";
     public static final String TOP_CHARACTERS = "Top Characters";
@@ -37,31 +37,11 @@ public class HallOfFameManagementView extends JFrame {
      * Constructs the Hall Of Fame Management UI of Fatal Fantasy: Tactics Game.
      */
     public HallOfFameManagementView() {
-        super("Fatal Fantasy: Tactics | Hall Of Fame Management");
 
         initUI();
         
-        setSize(800, 700);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                int choice = JOptionPane.showConfirmDialog(
-                    HallOfFameManagementView.this,
-                    "Are you sure you want to quit?",
-                    "Confirm Exit",
-                    JOptionPane.YES_NO_OPTION
-                );
 
-                if (choice == JOptionPane.YES_OPTION) {
-                    dispose(); // closes the window
-                }
-            }
-        });
-
-        setLocationRelativeTo(null);
-        setResizable(false);
     }
 
 
@@ -129,7 +109,8 @@ public class HallOfFameManagementView extends JFrame {
         // Add vertical glue to push everything to the center
         backgroundPanel.add(Box.createVerticalGlue());
 
-        setContentPane(backgroundPanel);
+        setLayout(new BorderLayout());
+        add(backgroundPanel);
     }
 
 
