@@ -24,8 +24,10 @@ public class CharacterEditView extends JFrame {
     private final JComboBox<String> dropdownAbility4  = new JComboBox<>();
     private final JComboBox<String> dropdownMagicItem = new JComboBox<>();
 
+    private JPanel abilitiesPanel;
     private JPanel ability4Panel;
     private Component ability4Spacer;
+    private Component abilitiesToItemSpacer;
 
     private final JButton btnEdit   = new RoundedButton(EDIT);
     private final JButton btnReturn = new RoundedButton(RETURN);
@@ -97,19 +99,32 @@ public class CharacterEditView extends JFrame {
 
         centerPanel.add(Box.createVerticalStrut(10));
         centerPanel.add(createDropdownPanel("Select Character:", dropdownCharacter));
-        centerPanel.add(Box.createVerticalStrut(20));
-        centerPanel.add(createDropdownPanel("Select Ability 1:", dropdownAbility1));
-        centerPanel.add(Box.createVerticalStrut(20));
-        centerPanel.add(createDropdownPanel("Select Ability 2:", dropdownAbility2));
-        centerPanel.add(Box.createVerticalStrut(20));
-        centerPanel.add(createDropdownPanel("Select Ability 3:", dropdownAbility3));
+
+        abilitiesPanel = new JPanel();
+        abilitiesPanel.setOpaque(false);
+        abilitiesPanel.setLayout(new BoxLayout(abilitiesPanel, BoxLayout.Y_AXIS));
+
+        abilitiesPanel.add(Box.createVerticalStrut(20));
+        abilitiesPanel.add(createDropdownPanel("Select Ability 1:", dropdownAbility1));
+        abilitiesPanel.add(Box.createVerticalStrut(20));
+        abilitiesPanel.add(createDropdownPanel("Select Ability 2:", dropdownAbility2));
+        abilitiesPanel.add(Box.createVerticalStrut(20));
+        abilitiesPanel.add(createDropdownPanel("Select Ability 3:", dropdownAbility3));
+
+        ability4Spacer = Box.createVerticalStrut(20);
         ability4Panel = createDropdownPanel("Select Ability 4:", dropdownAbility4);
         ability4Panel.setVisible(false);
-        ability4Spacer = Box.createVerticalStrut(20);
-        centerPanel.add(ability4Spacer);
-        centerPanel.add(ability4Panel);
-        centerPanel.add(Box.createVerticalStrut(20));
-        centerPanel.add(createDropdownPanel("Un/Equip Magic Item (includes N/A):", dropdownMagicItem));
+        ability4Spacer.setVisible(false);
+
+        abilitiesPanel.add(ability4Spacer);
+        abilitiesPanel.add(ability4Panel);
+
+        centerPanel.add(abilitiesPanel);
+
+        abilitiesToItemSpacer = Box.createVerticalStrut(20);
+        centerPanel.add(abilitiesToItemSpacer);
+
+        centerPanel.add(createDropdownPanel("Un/Equip Magic Item (includes N/A)", dropdownMagicItem));
         centerPanel.add(Box.createVerticalGlue());
 
         backgroundPanel.add(centerPanel, BorderLayout.CENTER);
@@ -251,7 +266,9 @@ public class CharacterEditView extends JFrame {
     public void setAbility4Visible(boolean visible) {
         ability4Panel.setVisible(visible);
         if (ability4Spacer != null) ability4Spacer.setVisible(visible);
-        revalidate();
-        repaint();
+        if (abilitiesPanel != null) {
+            abilitiesPanel.revalidate();
+            abilitiesPanel.repaint();
+        }
     }
 }
