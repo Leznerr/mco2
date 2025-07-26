@@ -289,7 +289,14 @@ public class Character implements Serializable {
         var iterator = activeStatusEffects.iterator();
         while (iterator.hasNext()) {
             StatusEffect effect = iterator.next();
+            int beforeHp = this.currentHp;
             effect.onTurnStart(this);
+            if (effect.getType() == StatusEffectType.POISONED) {
+                int dmg = beforeHp - this.currentHp;
+                if (dmg > 0) {
+                    log.addEntry(this.name + " suffers " + dmg + " poison damage.");
+                }
+            }
             if (effect.getDuration() <= 0) {
                 effect.remove(this);
                 iterator.remove();

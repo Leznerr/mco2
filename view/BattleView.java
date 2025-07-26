@@ -27,6 +27,7 @@ import javax.swing.JTextArea;
 
 import model.battle.CombatLog;
 import model.core.Character;
+import view.OutlinedLabel;
 
 // import controller._;
 
@@ -56,6 +57,7 @@ public class BattleView extends JFrame {
     private JComboBox<String> cmbP0Abilities = new JComboBox<>();
     private JTextArea p1NameCharNameArea, p2NameCharNameArea, p0NameCharNameArea, botNameCharNameArea, p1StatusArea, p2StatusArea, p0StatusArea, botStatusArea;
     private JTextArea p1AbilitiesItemsArea, p2AbilitiesItemsArea, p0AbilitiesItemsArea, botAbilitiesItemsArea, battleLogArea, battleOutcomeArea;
+    private OutlinedLabel roundLabel;
     
     /**
      * Constructs the Battle UI of Fatal Fantasy: Tactics Game.
@@ -151,7 +153,12 @@ public class BattleView extends JFrame {
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         bottomPanel.setOpaque(false);
 
-        centerPanel.add(Box.createVerticalStrut(100));
+        centerPanel.add(Box.createVerticalStrut(20));
+        roundLabel = new OutlinedLabel("Round 1");
+        roundLabel.setFont(new Font("Serif", Font.BOLD, 22));
+        roundLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        centerPanel.add(roundLabel);
+        centerPanel.add(Box.createVerticalStrut(60));
 
         // Rounded display box for battle log
         RoundedDisplayBox battleLogPanel = new RoundedDisplayBox();
@@ -651,6 +658,17 @@ public class BattleView extends JFrame {
      */
     public void setBattleOutcome(String text) {
         battleOutcomeArea.setText(text);
+    }
+
+    /**
+     * Updates the displayed round number.
+     *
+     * @param round current battle round
+     */
+    public void setRoundNumber(int round) {
+        if (roundLabel != null) {
+            roundLabel.setText("Round " + round);
+        }
     }
     
 
