@@ -5,6 +5,7 @@ import model.core.Character;
 import model.util.GameException;
 import model.util.InputValidator;
 import model.util.StatusEffectFactory;
+import model.util.StatusEffectType;
 
 /**
  * Represents a battle move that executes a specific {@link Ability}.
@@ -49,12 +50,32 @@ public final class AbilityMove implements Move {
 
         // Modular and extensible effect processing
         switch (ability.getAbilityEffectType()) {
-            case DAMAGE -> target.takeDamage(ability.getEffectValue());
-            case HEAL -> user.heal(ability.getEffectValue());
+            case DAMAGE -> {
+                target.takeDamage(ability.getEffectValue());
+                log.addEntry(target.getName() + " takes " + ability.getEffectValue() + " damage.");
+            }
+            case HEAL -> {
+                user.heal(ability.getEffectValue());
+                log.addEntry(user.getName() + " heals " + ability.getEffectValue() + " HP.");
+            }
+            case ENERGY_GAIN -> {
+                user.gainEp(ability.getEffectValue());
+                log.addEntry(user.getName() + " gains " + ability.getEffectValue() + " EP.");
+            }
             case APPLY_STATUS -> {
-                // Create the correct status effect using the factory
                 var statusType = ability.getStatusEffectApplied();
                 target.addStatusEffect(StatusEffectFactory.create(statusType));
+                log.addEntry(target.getName() + " is now " + statusType + ".");
+            }
+            case DEFENSE, EVADE, UTILITY -> {
+                var statusType = ability.getStatusEffectApplied();
+                if (statusType != null && statusType != StatusEffectType.NONE) {
+                    user.addStatusEffect(StatusEffectFactory.create(statusType));
+                    log.addEntry(user.getName() + " gains " + statusType + ".");
+                } else if (ability.getEffectValue() > 0) {
+                    user.heal(ability.getEffectValue());
+                    log.addEntry(user.getName() + " recovers " + ability.getEffectValue() + " HP.");
+                }
             }
             default -> throw new GameException("Unhandled ability effect: " + ability.getAbilityEffectType());
         }
