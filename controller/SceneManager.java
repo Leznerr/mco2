@@ -97,6 +97,7 @@ public final class SceneManager {
             mainMenuView.setActionListener(gameManagerController);
             root.add(mainMenuView.getContentPane(), CARD_MAIN_MENU);
         }
+        stage.setSize(800, 700);
         cards.show(root, CARD_MAIN_MENU);
     }
 
@@ -276,6 +277,7 @@ public final class SceneManager {
                 showMainMenu();
             });
             root.add(battleView.getContentPane(), CARD_BATTLE);
+            stage.setSize(1200, 700);
             cards.show(root, CARD_BATTLE);
             battleController.startBattleVsBot(human, bot, aiController);
         } catch (GameException e) {
@@ -315,6 +317,7 @@ public final class SceneManager {
                 showMainMenu();
             });
             root.add(battleView.getContentPane(), CARD_BATTLE);
+            stage.setSize(1200, 700);
             cards.show(root, CARD_BATTLE);
             controller.startBattle(c1, c2);
         } catch (GameException e) {
