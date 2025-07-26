@@ -1,145 +1,163 @@
 package view;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
 
-
-import controller.CharacterManualCreationController;
+// import controller._;
 
 /**
  * The manual character creation view for Fatal Fantasy: Tactics Game.
- * <p>
- * Pure view: renders UI, exposes listener registration and setter methods.
- * No game logic.
  */
 public class CharacterManualCreationView extends JFrame {
+    private int playerID;
 
-    private final String playerName;
-
-    // Command constants
-    public static final String CREATE = "CREATE";
-    public static final String RETURN = "RETURN";
-    public static final String CLASS_CHANGED = "CLASS_CHANGED";
+    // Button labels
+    public static final String CREATE = "Create";
+    public static final String RETURN = "Return";
 
     // UI components
-    private final RoundedTextField charNameField;
-    private final JComboBox<String> dropdownRace = new JComboBox<>();
-    private final JComboBox<String> dropdownClass = new JComboBox<>();
-    private final JComboBox<String> dropdownAbility1 = new JComboBox<>();
-    private final JComboBox<String> dropdownAbility2 = new JComboBox<>();
-    private final JComboBox<String> dropdownAbility3 = new JComboBox<>();
-    private final JComboBox<String> dropdownAbility4 = new JComboBox<>();
-    private final JButton btnCreate;
-    private final JButton btnReturn;
+    private RoundedTextField charNameField;
+    private JComboBox<String> dropdown1 = new JComboBox<>();
+    private JComboBox<String> dropdown2 = new JComboBox<>();
+    private JComboBox<String> dropdown3 = new JComboBox<>();
+    private JComboBox<String> dropdown4 = new JComboBox<>();
+    private JComboBox<String> dropdown5 = new JComboBox<>();
+    private JButton btnCreate;
+    private JButton btnReturn;
 
-    private JPanel ability4Panel;
+    /**
+     * Constructs the Manual Character Creation UI of Fatal Fantasy: Tactics Game.
+     */
+    public CharacterManualCreationView(int playerID) {
+        super("Fatal Fantasy: Tactics | Player " + playerID + " Manual Character Creation");
 
-    private CharacterManualCreationController controller;
+        this.playerID = playerID;
 
-    public CharacterManualCreationView(String playerName) {
-        super("Fatal Fantasy: Tactics | Manual Character Creation - " + playerName);
-        this.playerName = playerName;
-
-        charNameField = new RoundedTextField("Enter character name", 20);
-        btnCreate = new RoundedButton(CREATE);
-        btnReturn = new RoundedButton(RETURN);
-
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        initUI();
+        
         setSize(800, 700);
-        setLocationRelativeTo(null);
-        setResizable(false);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        buildUI();
-
-        // Confirm dialog on close
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                int opt = JOptionPane.showConfirmDialog(
-                        CharacterManualCreationView.this,
-                        "Are you sure you want to quit?",
-                        "Confirm Exit",
-                        JOptionPane.YES_NO_OPTION);
-                if (opt == JOptionPane.YES_OPTION) dispose();
+                int choice = JOptionPane.showConfirmDialog(
+                    CharacterManualCreationView.this,
+                    "Are you sure you want to quit?",
+                    "Confirm Exit",
+                    JOptionPane.YES_NO_OPTION
+                );
+
+                if (choice == JOptionPane.YES_OPTION) {
+                    dispose(); // closes the window
+                }
             }
         });
 
-      
+        setLocationRelativeTo(null);
+        setResizable(false);
+        setVisible(true);
     }
 
-    private void buildUI() {
+
+    /**
+     * Initializes the UI components and arranges them in the main layout.
+     */
+    private void initUI() {
         JPanel backgroundPanel = new JPanel() {
-            private final Image bg = new ImageIcon("view/assets/CharCreationBG.jpg").getImage();
+            private Image bg = new ImageIcon("view/assets/CharCreationBG.jpg").getImage();
+            
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                int w = getWidth(), h = getHeight();
+                int panelWidth = getWidth();
+                int panelHeight = getHeight();
+                int imgWidth = bg.getWidth(this);
+                int imgHeight = bg.getHeight(this);
                 double scale = Math.max(
-                        w / (double) bg.getWidth(null),
-                        h / (double) bg.getHeight(null));
-                int ww = (int) (bg.getWidth(null) * scale);
-                int hh = (int) (bg.getHeight(null) * scale);
-                g.drawImage(bg, (w - ww) / 2, (h - hh) / 2, ww, hh, this);
+                    panelWidth / (double) imgWidth,
+                    panelHeight / (double) imgHeight
+                );
+                int width = (int) (imgWidth * scale);
+                int height = (int) (imgHeight * scale);
+                int x = (panelWidth - width) / 2;
+                int y = (panelHeight - height) / 2;
+                g.drawImage(bg, x, y, width, height, this);
             }
         };
+
         backgroundPanel.setLayout(new BorderLayout());
 
+        // Center panel for logo and text fields
         JPanel centerPanel = new JPanel();
         centerPanel.setOpaque(false);
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-        centerPanel.add(Box.createVerticalStrut(40));
 
-        // Logo
-        String headlineImagePath = String.format("view/assets/Player%sManualCharCreationLogo.png", playerName);
+        centerPanel.add(Box.createVerticalStrut(40));
+        String headlineImagePath = String.format("view/assets/Player%dManualCharCreationLogo.png", playerID);
         ImageIcon logoIcon = new ImageIcon(headlineImagePath);
         Image logoImg = logoIcon.getImage().getScaledInstance(550, -1, Image.SCALE_SMOOTH);
         JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         centerPanel.add(logoLabel);
+        
         centerPanel.add(Box.createVerticalStrut(10));
 
-        // Character name
+        // Character name input field
+        charNameField = new RoundedTextField("Enter character name", 20);
         charNameField.setMaximumSize(new Dimension(300, 35));
         centerPanel.add(charNameField);
         centerPanel.add(Box.createVerticalStrut(40));
 
-        // Dropdown panels
-        centerPanel.add(createDropdownPanel("Select Race:      ", dropdownRace));
-        centerPanel.add(Box.createVerticalStrut(10));
-        centerPanel.add(createDropdownPanel("Select Class:     ", dropdownClass));
-        centerPanel.add(Box.createVerticalStrut(10));
-        centerPanel.add(createDropdownPanel("Select Ability 1:", dropdownAbility1));
-        centerPanel.add(Box.createVerticalStrut(10));
-        centerPanel.add(createDropdownPanel("Select Ability 2:", dropdownAbility2));
-        centerPanel.add(Box.createVerticalStrut(10));
-        centerPanel.add(createDropdownPanel("Select Ability 3:", dropdownAbility3));
-        ability4Panel = createDropdownPanel("Select Ability 4:", dropdownAbility4);
-        ability4Panel.setVisible(false);
-        centerPanel.add(Box.createVerticalStrut(10));
-        centerPanel.add(ability4Panel);
-        centerPanel.add(Box.createVerticalStrut(20));
-
         backgroundPanel.add(centerPanel, BorderLayout.CENTER);
 
-        // Button row
+        // Dropdown Panels with Outlined Labels
+        centerPanel.add(createDropdownPanel("Select Race:      ", dropdown1));
+        centerPanel.add(Box.createVerticalStrut(10));
+        centerPanel.add(createDropdownPanel("Select Class:     ", dropdown2));
+        centerPanel.add(Box.createVerticalStrut(10));
+        centerPanel.add(createDropdownPanel("Select Ability 1:", dropdown3));
+        centerPanel.add(Box.createVerticalStrut(10));
+        centerPanel.add(createDropdownPanel("Select Ability 2:", dropdown4));
+        centerPanel.add(Box.createVerticalStrut(10));
+        centerPanel.add(createDropdownPanel("Select Ability 3:", dropdown5));
+        centerPanel.add(Box.createVerticalStrut(20));
+
+        // Bottom panel for buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 50));
         buttonPanel.setOpaque(false);
+
+        btnCreate = new RoundedButton(CREATE);
+        btnReturn = new RoundedButton(RETURN);
+
         buttonPanel.add(btnCreate);
         buttonPanel.add(btnReturn);
+
         backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         setContentPane(backgroundPanel);
     }
 
+
+    /**
+     * Helper method to create dropdown panels with outlined labels
+     * 
+     * @param labelText the text for the label
+     * @param dropdown the JComboBox to be added
+     * @return a JPanel containing the label and dropdown
+     */
     private JPanel createDropdownPanel(String labelText, JComboBox<String> dropdown) {
-        JPanel panel = new JPanel();
-        panel.setOpaque(false);
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel dropdownPanel = new JPanel();
+        dropdownPanel.setOpaque(false);
+        dropdownPanel.setLayout(new BoxLayout(dropdownPanel, BoxLayout.X_AXIS));
+        dropdownPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         OutlinedLabel label = new OutlinedLabel(labelText);
-        int fixedLabelWidth = 140;
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+
+        // Force all labels to same preferred width
+        int fixedLabelWidth = 140; // adjust as needed
         Dimension labelSize = new Dimension(fixedLabelWidth, label.getPreferredSize().height);
         label.setPreferredSize(labelSize);
         label.setMinimumSize(labelSize);
@@ -149,123 +167,122 @@ public class CharacterManualCreationView extends JFrame {
         dropdown.setMaximumSize(new Dimension(250, 35));
         dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 
-        panel.add(label);
-        panel.add(dropdown);
-        return panel;
+        dropdownPanel.add(label);
+        dropdownPanel.add(dropdown);
+
+        return dropdownPanel;
     }
 
-    // --- Listener Registration (for Controller) ---
-
-    public void addCreateCharacterListener(ActionListener l) {
-        btnCreate.setActionCommand(CREATE);
-        btnCreate.addActionListener(l);
+    
+    /**
+     * Sets the action listener for the button click events.
+     * 
+     * @param listener The listener
+     */
+    public void setActionListener(ActionListener listener) {
+        btnCreate.addActionListener(listener);
+        btnReturn.addActionListener(listener);
+        dropdown1.addActionListener(listener);
+        dropdown2.addActionListener(listener);  
+        dropdown3.addActionListener(listener);
+        dropdown4.addActionListener(listener);
+        dropdown5.addActionListener(listener);
     }
 
-    public void addReturnListener(ActionListener l) {
-        btnReturn.setActionCommand(RETURN);
-        btnReturn.addActionListener(l);
-    }
 
-    public void addClassDropdownListener(ActionListener l) {
-        dropdownClass.setActionCommand(CLASS_CHANGED);
-        dropdownClass.addActionListener(l);
-    }
-
-    public void addRaceDropdownListener(ActionListener l) {
-        dropdownRace.addActionListener(l);
-    }
-
-    // --- Setters for Controller to populate dropdowns ---
-
-    public void setRaceOptions(String[] races) {
-        dropdownRace.removeAllItems();
-        for (String r : races) dropdownRace.addItem(r);
-    }
-
-    public void setClassOptions(String[] classes) {
-        dropdownClass.removeAllItems();
-        for (String c : classes) dropdownClass.addItem(c);
-    }
-
-    public void setAbilityOptions(int abilitySlot, String[] abilities) {
-        JComboBox<String> target = switch (abilitySlot) {
-            case 1 -> dropdownAbility1;
-            case 2 -> dropdownAbility2;
-            case 3 -> dropdownAbility3;
-            case 4 -> dropdownAbility4;
-            default -> throw new IllegalArgumentException("Invalid ability slot: " + abilitySlot);
-        };
-        target.removeAllItems();
-        for (String a : abilities) target.addItem(a);
-    }
-
-    public void resetFields() {
-        charNameField.setText("");
-        dropdownRace.setSelectedIndex(-1);
-        dropdownClass.setSelectedIndex(-1);
-        dropdownAbility1.setSelectedIndex(-1);
-        dropdownAbility2.setSelectedIndex(-1);
-        dropdownAbility3.setSelectedIndex(-1);
-        dropdownAbility4.setSelectedIndex(-1);
-    }
-
-    // --- Getters for Controller to retrieve input ---
-
-    public String getCharacterName() { return charNameField.getText().trim(); }
-
-    public String getSelectedRace() { return (String) dropdownRace.getSelectedItem(); }
-
-    public String getSelectedClass() { return (String) dropdownClass.getSelectedItem(); }
-
-    public String[] getSelectedAbilities() {
-        if (ability4Panel.isVisible()) {
-            return new String[] {
-                (String) dropdownAbility1.getSelectedItem(),
-                (String) dropdownAbility2.getSelectedItem(),
-                (String) dropdownAbility3.getSelectedItem(),
-                (String) dropdownAbility4.getSelectedItem()
-            };
-        }
-        return new String[] {
-            (String) dropdownAbility1.getSelectedItem(),
-            (String) dropdownAbility2.getSelectedItem(),
-            (String) dropdownAbility3.getSelectedItem()
-        };
-    }
-
-    // --- Feedback dialogs ---
-    public void showInfoMessage(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Info", JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    public void showErrorMessage(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
+    /**
+     * Confirms character creation with the user.
+     * 
+     * @param characterName The name of the character to be created
+     * @return true if the user confirms creation, false otherwise
+     */
     public boolean confirmCharacterCreation(String characterName) {
         int option = JOptionPane.showConfirmDialog(
-                this,
-                "Are you sure you want to create \"" + characterName + "\"?",
-                "Confirm Creation",
-                JOptionPane.YES_NO_OPTION
+            this,
+            "Are you sure you want to create \"" + characterName + "\"?",
+            "Confirm Creation",
+            JOptionPane.YES_NO_OPTION
         );
+
         return option == JOptionPane.YES_OPTION;
     }
 
-    // Optional: expose dropdowns for advanced use
-    public JComboBox<String> getRaceDropdown()   { return dropdownRace; }
-    public JComboBox<String> getClassDropdown()  { return dropdownClass; }
-    public JComboBox<String> getAbility1Dropdown() { return dropdownAbility1; }
-    public JComboBox<String> getAbility2Dropdown() { return dropdownAbility2; }
-    public JComboBox<String> getAbility3Dropdown() { return dropdownAbility3; }
-    public JComboBox<String> getAbility4Dropdown() { return dropdownAbility4; }
 
-    public void setAbility4Visible(boolean visible) {
-        ability4Panel.setVisible(visible);
+    /**
+     * Sets the available race options in the dropdown.
+     * 
+     * @param options The array of race options
+     */
+    public void setRaceOptions(String[] options) {
+        dropdown1.removeAllItems();
+        for (String opt : options) dropdown1.addItem(opt);
     }
 
-    // Controller setter (optional, for reference by controller)
-    public void setController(CharacterManualCreationController controller) {
-        this.controller = controller;
+
+    /**
+     * Sets the available class options in the dropdown.
+     * 
+     * @param options The array of class options
+     */
+    public void setClassOptions(String[] options) {
+        dropdown2.removeAllItems();
+        for (String opt : options) dropdown2.addItem(opt);
     }
+
+    /**
+     * Sets the available ability options in the dropdown.
+     * 
+     * @param abilitySlot The slot number (1, 2, or 3)
+     * @param options The array of ability options
+     * 
+     */
+    public void setAbilityOptions(int abilitySlot, String[] options) {
+        JComboBox<String> target = switch (abilitySlot) {
+            case 1 -> dropdown3;
+            case 2 -> dropdown4;
+            case 3 -> dropdown5;
+            default -> throw new IllegalArgumentException("Invalid ability slot: " + abilitySlot);
+        };
+        target.removeAllItems();
+
+        for (String opt : options) target.addItem(opt);
+    }
+
+
+    /**
+     * Clears the character name and resets all dropdown selections.
+     */
+    public void resetFields() {
+        charNameField.setText("");
+        dropdown1.setSelectedIndex(-1);
+        dropdown2.setSelectedIndex(-1);
+        dropdown3.setSelectedIndex(-1);
+        dropdown4.setSelectedIndex(-1);
+        dropdown5.setSelectedIndex(-1);
+    }
+
+
+    public String getCharacterName() {
+        return charNameField.getText().trim();
+    }
+
+
+    public String getSelectedRace() {
+        return (String) dropdown1.getSelectedItem();
+    }
+
+
+    public String getSelectedClass() {
+        return (String) dropdown2.getSelectedItem();
+    }
+
+
+    public String[] getSelectedAbilities() {
+        return new String[] {
+            (String) dropdown3.getSelectedItem(),
+            (String) dropdown4.getSelectedItem(),
+            (String) dropdown5.getSelectedItem()
+        };
+    }
+
 }

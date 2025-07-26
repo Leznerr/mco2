@@ -4,9 +4,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import model.core.Character;
-import model.battle.CombatLog;
-
 // import controller._;
 
 /**
@@ -15,9 +12,6 @@ import model.battle.CombatLog;
 public class BattleView extends JFrame {
     public static final int BATTLE_PVP = 1;
     public static final int BATTLE_PVB = 2;
-
-    private Character char1;
-    private Character char2;
 
     private int mode;
 
@@ -68,15 +62,6 @@ public class BattleView extends JFrame {
         setLocationRelativeTo(null);
         setResizable(false);
         setVisible(true);
-    }
-
-    /**
-     * Convenience constructor using two characters. Defaults to PvP mode.
-     */
-    public BattleView(Character c1, Character c2) {
-        this(BATTLE_PVP);
-        this.char1 = c1;
-        this.char2 = c2;
     }
 
 
@@ -633,6 +618,16 @@ public class BattleView extends JFrame {
     }
     
 
+    /**
+     * Resets all dropdown selections.
+     */
+    public void resetFields() {
+        cmbP1Abilities.setSelectedIndex(-1);
+        cmbP2Abilities.setSelectedIndex(-1);
+        cmbP0Abilities.setSelectedIndex(-1);
+    }
+
+
     public String getSelectedAbility(int playerID) {
         String selectedAbility;
 
@@ -645,43 +640,6 @@ public class BattleView extends JFrame {
         }
 
         return selectedAbility;
-    }
-
-    // --- Additional helpers used by controllers ---
-
-    public JComboBox<String> getAbilitySelectorP1() {
-        return cmbP1Abilities;
-    }
-
-    public void addUseAbilityP1Listener(ActionListener l) {
-        btnP1Use.addActionListener(l);
-    }
-
-    public void addReturnListener(ActionListener l) {
-        btnReturn.addActionListener(l);
-    }
-
-    public void setPlayer2ControlsEnabled(boolean enabled) {
-        cmbP2Abilities.setEnabled(enabled);
-        if (btnP2Use != null) {
-            btnP2Use.setEnabled(enabled);
-        }
-    }
-
-    // --- Minimal callbacks expected by BattleController ---
-
-    public void displayBattleStart(Character c1, Character c2) {
-        appendBattleLog("Battle started between " + c1.getName() + " and " + c2.getName() + ".");
-    }
-
-    public void displayTurnResults(CombatLog log) {
-        for (String entry : log.getLogEntries()) {
-            appendBattleLog(entry);
-        }
-    }
-
-    public void displayBattleEnd(Character winner) {
-        setBattleOutcome(winner.getName() + " wins!");
     }
 
 }

@@ -1,14 +1,7 @@
 package view;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.RenderingHints;
-
-import javax.swing.BorderFactory;
-import javax.swing.JTextField;
+import java.awt.*;
+import javax.swing.*;
 
 public class RoundedTextField extends JTextField {
     private String placeholder;

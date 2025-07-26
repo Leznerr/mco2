@@ -46,7 +46,6 @@ public class CharacterSpecViewingView extends JFrame {
 
                 if (choice == JOptionPane.YES_OPTION) {
                     dispose(); // closes the window
-                    // System.exit(0);
                 }
             }
         });
@@ -200,33 +199,16 @@ public class CharacterSpecViewingView extends JFrame {
         }
     }
 
+    /**
+     * Resets all dropdown selections.
+     */
+    public void resetDropdowns() {
+        charDropdown.setSelectedIndex(-1);
+    }
+
 
     public String getSelectedCharacter() {
         return (String) charDropdown.getSelectedItem();
     }
 
-
-    /**
- * Displays an informational message.
- * @param message the message to show
- */
-public void showInfoMessage(String message) {
-    JOptionPane.showMessageDialog(this, message, "Info", JOptionPane.INFORMATION_MESSAGE);
-}
-
-/**
- * Displays an error message.
- * @param message the message to show
- */
-public void showErrorMessage(String message) {
-    JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
-}
-
-/**
- * Clears the character details area and resets dropdown selection.
- */
-public void resetView() {
-    charDropdown.setSelectedIndex(-1);
-    charDetailsArea.setText("");
-}
 }

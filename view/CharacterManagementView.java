@@ -1,82 +1,65 @@
 package view;
 
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.event.ActionListener;
-import java.util.List;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-
-import model.core.Player;
+// import controller._;
 
 /**
- * Character Management Menu View for Fatal Fantasy: Tactics Game.
- * Solely responsible for GUI rendering and forwarding user actions via listeners.
+ * The character management menu view for Fatal Fantasy: Tactics Game.
  */
 public class CharacterManagementView extends JFrame {
-
-    // Button action commands
-    public static final String VIEW_CHARACTERS   = "View Characters";
-    public static final String CREATE_CHARACTER  = "Create Character";
-    public static final String EDIT_CHARACTER    = "Edit Character";
-    public static final String DELETE_CHARACTER  = "Delete Character";
-    public static final String RETURN            = "Return";
+    // Button labels
+    public static final String MANAGE_PLAYER1 = "Manage Player 1";
+    public static final String MANAGE_PLAYER2 = "Manage Player 2";
+    public static final String RETURN_TO_MENU = "Return to Menu";
 
     // UI components
-    private final JButton btnViewCharacters;
-    private final JButton btnCreateCharacter;
-    private final JButton btnEditCharacter;
-    private final JButton btnDeleteCharacter;
-    private final JButton btnReturn;
-    private final JTextArea characterListArea;
-
-    private Player player;
-
+    private JButton btnManagePlayer1;
+    private JButton btnManagePlayer2;
+    private JButton btnReturnToMenu;
+    
+    
     /**
-     * Constructs the Character Management UI.
-     *
-     * @param player the Player object that will be managed.
+     * Constructs the Character Management UI of Fatal Fantasy: Tactics Game.
      */
-    public CharacterManagementView(Player player) {
+    public CharacterManagementView() {
         super("Fatal Fantasy: Tactics | Character Management");
-        this.player = player;
 
+        initUI();
+        
         setSize(800, 700);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        addWindowListener(new java.awt.event.WindowAdapter() {
+        addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(java.awt.event.WindowEvent e) {
+            public void windowClosing(WindowEvent e) {
                 int choice = JOptionPane.showConfirmDialog(
-                        CharacterManagementView.this,
-                        "Are you sure you want to quit?",
-                        "Confirm Exit",
-                        JOptionPane.YES_NO_OPTION
+                    CharacterManagementView.this,
+                    "Are you sure you want to quit?",
+                    "Confirm Exit",
+                    JOptionPane.YES_NO_OPTION
                 );
+
                 if (choice == JOptionPane.YES_OPTION) {
-                    dispose();
+                    dispose(); // closes the window
                 }
             }
         });
 
         setLocationRelativeTo(null);
         setResizable(false);
+        setVisible(true);
+    }
 
-        // Background panel with custom painting
+
+    /**
+     * Initializes the UI components and arranges them in the main layout.
+     */
+    private void initUI() {
         JPanel backgroundPanel = new JPanel() {
-            private final Image bg = new ImageIcon("view/assets/CharAndPlayerCharManagBG.jpg").getImage();
+            private Image bg = new ImageIcon("view/assets/CharAndPlayerCharManagBG.jpg").getImage();
 
             @Override
             protected void paintComponent(Graphics g) {
@@ -85,7 +68,10 @@ public class CharacterManagementView extends JFrame {
                 int panelHeight = getHeight();
                 int imgWidth = bg.getWidth(this);
                 int imgHeight = bg.getHeight(this);
-                double scale = Math.max(panelWidth / (double) imgWidth, panelHeight / (double) imgHeight);
+                double scale = Math.max(
+                    panelWidth / (double) imgWidth,
+                    panelHeight / (double) imgHeight
+                );
                 int width = (int) (imgWidth * scale);
                 int height = (int) (imgHeight * scale);
                 int x = (panelWidth - width) / 2;
@@ -93,102 +79,58 @@ public class CharacterManagementView extends JFrame {
                 g.drawImage(bg, x, y, width, height, this);
             }
         };
-
+        
         backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.Y_AXIS));
-        backgroundPanel.add(Box.createVerticalStrut(80));
 
+        // Add vertical space at the top
+        backgroundPanel.add(Box.createVerticalStrut(100));
+
+        // Logo image centered and scaled
         ImageIcon logoIcon = new ImageIcon("view/assets/CharManagLogo.png");
         Image logoImg = logoIcon.getImage().getScaledInstance(500, -1, Image.SCALE_SMOOTH);
         JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         backgroundPanel.add(logoLabel);
 
-        backgroundPanel.add(Box.createVerticalStrut(30));
+        // Add vertical space between logo and buttons
+        backgroundPanel.add(Box.createVerticalStrut(60));
 
-        // Character list area
-        characterListArea = new JTextArea(12, 40);
-        characterListArea.setEditable(false);
-        characterListArea.setFont(new Font("Monospaced", Font.PLAIN, 15));
-        JScrollPane scrollPane = new JScrollPane(characterListArea);
-        scrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        backgroundPanel.add(scrollPane);
-
-        backgroundPanel.add(Box.createVerticalStrut(20));
-
-        // Instantiate all buttons
-        btnViewCharacters   = new RoundedButton(VIEW_CHARACTERS);
-        btnCreateCharacter  = new RoundedButton(CREATE_CHARACTER);
-        btnEditCharacter    = new RoundedButton(EDIT_CHARACTER);
-        btnDeleteCharacter  = new RoundedButton(DELETE_CHARACTER);
-        btnReturn           = new RoundedButton(RETURN);
-
-        // Arrange buttons vertically
+        // Panel for buttons, centered
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+
+        btnManagePlayer1 = new RoundedButton(MANAGE_PLAYER1);
+        btnManagePlayer2 = new RoundedButton(MANAGE_PLAYER2);
+        btnReturnToMenu = new RoundedButton(RETURN_TO_MENU);
+
+        // Add buttons with vertical spacing (how they stack)
+        buttonPanel.add(btnManagePlayer1);
+        buttonPanel.add(Box.createVerticalStrut(20));
+        buttonPanel.add(btnManagePlayer2);
+        buttonPanel.add(Box.createVerticalStrut(20));
+        buttonPanel.add(btnReturnToMenu);
+
+        // Center the button panel horizontally
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        buttonPanel.add(btnViewCharacters);
-        buttonPanel.add(Box.createVerticalStrut(15));
-        buttonPanel.add(btnCreateCharacter);
-        buttonPanel.add(Box.createVerticalStrut(15));
-        buttonPanel.add(btnEditCharacter);
-        buttonPanel.add(Box.createVerticalStrut(15));
-        buttonPanel.add(btnDeleteCharacter);
-        buttonPanel.add(Box.createVerticalStrut(15));
-        buttonPanel.add(btnReturn);
-
         backgroundPanel.add(buttonPanel);
+
+        // Add vertical glue to push everything to the center
         backgroundPanel.add(Box.createVerticalGlue());
 
         setContentPane(backgroundPanel);
-        setVisible(true);
     }
+
 
     /**
-     * Set a single action listener for all management buttons.
-     * Action command will be set for each button.
+     * Sets the action listener for the button click events.
+     * 
+     * @param listener The listener
      */
-    public void setActionListener(ActionListener l) {
-        btnViewCharacters.setActionCommand(VIEW_CHARACTERS);
-        btnCreateCharacter.setActionCommand(CREATE_CHARACTER);
-        btnEditCharacter.setActionCommand(EDIT_CHARACTER);
-        btnDeleteCharacter.setActionCommand(DELETE_CHARACTER);
-        btnReturn.setActionCommand(RETURN);
-        btnViewCharacters.addActionListener(l);
-        btnCreateCharacter.addActionListener(l);
-        btnEditCharacter.addActionListener(l);
-        btnDeleteCharacter.addActionListener(l);
-        btnReturn.addActionListener(l);
+    public void setActionListener(ActionListener listener) {
+        btnManagePlayer1.addActionListener(listener);
+        btnManagePlayer2.addActionListener(listener);
+        btnReturnToMenu.addActionListener(listener);
     }
 
-    /**
-     * Displays the character list in the text area.
-     *
-     * @param formattedCharacterDetails list of strings representing characters
-     */
-    public void displayCharacterList(List<String> formattedCharacterDetails) {
-        characterListArea.setText(String.join("\n", formattedCharacterDetails));
-    }
-
-    public void showInfoMessage(String message) {
-        JOptionPane.showMessageDialog(this, message, "Info", JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    public void showErrorMessage(String message) {
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    // Getter for the player object in case we need it externally
-    public Player getPlayer() {
-        return this.player;
-    }
-
-    // Expose the buttons for controller if fine-grained control needed
-    public JButton getBtnViewCharacters()   { return btnViewCharacters; }
-    public JButton getBtnCreateCharacter()  { return btnCreateCharacter; }
-    public JButton getBtnEditCharacter()    { return btnEditCharacter; }
-    public JButton getBtnDeleteCharacter()  { return btnDeleteCharacter; }
-    public JButton getBtnReturn()           { return btnReturn; }
 }

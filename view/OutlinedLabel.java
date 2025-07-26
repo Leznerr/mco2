@@ -1,42 +1,10 @@
 package view;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Shape;
+import java.awt.*;
+import javax.swing.*;
 import java.awt.font.GlyphVector;
 
-import javax.swing.JLabel;
-
-/**
- * A JLabel with an outlined text effect.
- * <p>
- * This reusable Swing component is designed for emphasizing headers or titles
- * in the GUI, such as character names or battle titles, by rendering a white
- * filled label text with a black outline.
- * <p>
- * This view component is strictly visual and adheres to MVC design.
- *
- * <p><strong>Usage:</strong></p>
- * <pre>
- *     OutlinedLabel label = new OutlinedLabel("Victory!");
- *     label.setFont(new Font("Serif", Font.BOLD, 24));
- *     somePanel.add(label);
- * </pre>
- */
 public class OutlinedLabel extends JLabel {
-
-    /**
-     * Constructs a label with outlined text.
-     *
-     * @param text The text to display
-     */
     public OutlinedLabel(String text) {
         super(text);
         setFont(new Font("Serif", Font.BOLD, 18));
@@ -63,6 +31,7 @@ public class OutlinedLabel extends JLabel {
         String text = getText();
         Font font = getFont();
 
+        // Center text with outline included
         GlyphVector gv = font.createGlyphVector(g2.getFontRenderContext(), text);
         Shape textShape = gv.getOutline();
         Rectangle bounds = textShape.getBounds();
@@ -72,11 +41,13 @@ public class OutlinedLabel extends JLabel {
 
         g2.translate(x, y);
 
-        g2.setColor(Color.BLACK); // Outline color
+        // Draw outline
+        g2.setColor(Color.BLACK);
         g2.setStroke(new BasicStroke(2f));
         g2.draw(textShape);
 
-        g2.setColor(getForeground()); // Fill color
+        // Fill text
+        g2.setColor(getForeground());
         g2.fill(textShape);
 
         g2.dispose();

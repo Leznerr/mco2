@@ -41,7 +41,6 @@ public class HallOfFameCharactersView extends JFrame {
 
                 if (choice == JOptionPane.YES_OPTION) {
                     dispose(); // closes the window
-                    // System.exit(0);
                 }
             }
         });
@@ -155,14 +154,6 @@ public class HallOfFameCharactersView extends JFrame {
      */
     public void updateTopCharactersList(String text) {
         topCharactersListArea.setText(text);
-    }
-
-     /** Dialog helpers used by the controller. */
-    public void showInfoMessage(String msg)  {
-        JOptionPane.showMessageDialog(this, msg, "Info",  JOptionPane.INFORMATION_MESSAGE);
-    }   
-    public void showErrorMessage(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
 }

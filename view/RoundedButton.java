@@ -1,15 +1,7 @@
 package view;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-
-import javax.swing.JButton;
+import java.awt.*;
+import javax.swing.*;
 
 public class RoundedButton extends JButton {
     public RoundedButton(String text) {

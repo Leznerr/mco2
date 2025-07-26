@@ -1,12 +1,7 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-
-import javax.swing.JPanel;
+import java.awt.*;
+import javax.swing.*;
 
 public class RoundedDisplayBox extends JPanel {
     public RoundedDisplayBox() {

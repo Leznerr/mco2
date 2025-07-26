@@ -7,27 +7,34 @@ import javax.swing.*;
 // import controller._;
 
 /**
- * The player registration view for Fatal Fantasy: Tactics Game.
+ * The player character management view for Fatal Fantasy: Tactics Game.
  */
-public class PlayerRegistrationView extends JFrame {
+public class PlayerCharManagementView extends JFrame {
+    private int playerID;
+
     // Button labels
-    public static final String NEW_PLAYERS = "New Players";
-    public static final String SAVED_PLAYERS = "Saved Players";
-    public static final String DELETE_PLAYER = "Delete Player";
-    public static final String RETURN_TO_MENU = "Return to Menu";
+    public static final String VIEW_CHAR = "View Characters";
+    public static final String CREATE_CHAR = "Create Character";
+    public static final String EDIT_CHAR = "Edit Character";
+    public static final String DELETE_CHAR = "Delete Character";
+    public static final String INVENTORY = "Inventory";
+    public static final String RETURN = "Return";
 
     // UI components
-    private JButton btnNewPlayers;
-    private JButton btnSavedPlayers;
-    private JButton btnDeletePlayer;
-    private JButton btnReturnToMenu;
-    
-    
+    private JButton btnViewChar;
+    private JButton btnCreateChar;
+    private JButton btnEditChar;
+    private JButton btnDeleteChar;
+    private JButton btnInventory;
+    private JButton btnReturn;
+
     /**
-     * Constructs the PlayerRegistrationView UI of Fatal Fantasy: Tactics Game.
+     * Constructs the Player Character Management UI of Fatal Fantasy: Tactics Game.
      */
-    public PlayerRegistrationView() {
-        super("Fatal Fantasy: Tactics | Players Registration Menu");
+    public PlayerCharManagementView(int playerID) {
+        super("Fatal Fantasy: Tactics | Player " + playerID + " Management");
+
+        this.playerID = playerID;
 
         initUI();
         
@@ -38,7 +45,7 @@ public class PlayerRegistrationView extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 int choice = JOptionPane.showConfirmDialog(
-                    PlayerRegistrationView.this,
+                    PlayerCharManagementView.this,
                     "Are you sure you want to quit?",
                     "Confirm Exit",
                     JOptionPane.YES_NO_OPTION
@@ -61,8 +68,8 @@ public class PlayerRegistrationView extends JFrame {
      */
     private void initUI() {
         JPanel backgroundPanel = new JPanel() {
-            private Image bg = new ImageIcon("view/assets/PlayersRegistrationBG.jpg").getImage();
-            
+            private Image bg = new ImageIcon("view/assets/CharAndPlayerCharManagBG.jpg").getImage();
+
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -81,40 +88,47 @@ public class PlayerRegistrationView extends JFrame {
                 g.drawImage(bg, x, y, width, height, this);
             }
         };
-
+        
         backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.Y_AXIS));
 
         // Add vertical space at the top
-        backgroundPanel.add(Box.createVerticalStrut(100));
+        backgroundPanel.add(Box.createVerticalStrut(50));
 
         // Logo image centered and scaled
-        ImageIcon logoIcon = new ImageIcon("view/assets/PlayerRegLogo.png");
+        String headlineImagePath = String.format("view/assets/Player%dCharManagLogo.png", playerID);
+        ImageIcon logoIcon = new ImageIcon(headlineImagePath);
         Image logoImg = logoIcon.getImage().getScaledInstance(500, -1, Image.SCALE_SMOOTH);
         JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         backgroundPanel.add(logoLabel);
 
         // Add vertical space between logo and buttons
-        backgroundPanel.add(Box.createVerticalStrut(40));
+        backgroundPanel.add(Box.createVerticalStrut(10));
 
         // Panel for buttons, centered
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 
-        btnNewPlayers = new RoundedButton(NEW_PLAYERS);
-        btnSavedPlayers = new RoundedButton(SAVED_PLAYERS);
-        btnDeletePlayer = new RoundedButton(DELETE_PLAYER);
-        btnReturnToMenu = new RoundedButton(RETURN_TO_MENU);
+        btnViewChar = new RoundedButton(VIEW_CHAR);
+        btnCreateChar = new RoundedButton(CREATE_CHAR);
+        btnEditChar = new RoundedButton(EDIT_CHAR);
+        btnDeleteChar = new RoundedButton(DELETE_CHAR);
+        btnInventory = new RoundedButton(INVENTORY);
+        btnReturn = new RoundedButton(RETURN);
 
         // Add buttons with vertical spacing (how they stack)
-        buttonPanel.add(btnNewPlayers);
-        buttonPanel.add(Box.createVerticalStrut(20));
-        buttonPanel.add(btnSavedPlayers);
-        buttonPanel.add(Box.createVerticalStrut(20));
-        buttonPanel.add(btnDeletePlayer);
-        buttonPanel.add(Box.createVerticalStrut(20));
-        buttonPanel.add(btnReturnToMenu);
+        buttonPanel.add(btnViewChar);
+        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(btnCreateChar);
+        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(btnEditChar);
+        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(btnDeleteChar);
+        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(btnInventory);
+        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(btnReturn);
 
         // Center the button panel horizontally
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -133,10 +147,12 @@ public class PlayerRegistrationView extends JFrame {
      * @param listener The listener
      */
     public void setActionListener(ActionListener listener) {
-        btnNewPlayers.addActionListener(listener);
-        btnSavedPlayers.addActionListener(listener);
-        btnReturnToMenu.addActionListener(listener);
-        btnDeletePlayer.addActionListener(listener);
+        btnViewChar.addActionListener(listener);
+        btnCreateChar.addActionListener(listener);
+        btnEditChar.addActionListener(listener);
+        btnDeleteChar.addActionListener(listener);
+        btnInventory.addActionListener(listener);
+        btnReturn.addActionListener(listener);
     }
 
 }

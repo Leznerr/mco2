@@ -47,7 +47,6 @@ public class CharacterListViewingView extends JFrame {
 
                 if (choice == JOptionPane.YES_OPTION) {
                     dispose(); // closes the window
-                    // System.exit(0);
                 }
             }
         });
@@ -165,14 +164,6 @@ public class CharacterListViewingView extends JFrame {
      */
     public void updateCharacterList(String text) {
         charListArea.setText(text);
-    }
-
-     /** Dialog helpers used by the controller. */
-    public void showInfoMessage(String msg)  {
-        JOptionPane.showMessageDialog(this, msg, "Info",  JOptionPane.INFORMATION_MESSAGE);
-    }   
-    public void showErrorMessage(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
 }
