@@ -351,6 +351,20 @@ public void actionPerformed(ActionEvent e) {
         return Collections.unmodifiableList(players);
     }
 
+    /** Deletes a player with the given name from the current session. */
+    public void deletePlayerByName(String name) throws GameException {
+        InputValidator.requireNonNull(name, "name");
+        boolean removed = players.removeIf(p -> p.getName().equals(name));
+        if (!removed) {
+            throw new GameException("Player not found: " + name);
+        }
+    }
+
+    /** Returns the current game data snapshot for persistence. */
+    public GameData getGameData() throws GameException {
+        return new GameData(players, hallOfFameController.getHallOfFame());
+    }
+
     /** Returns the 1-based index of the player with the given name. */
     private int getPlayerIndexByName(String name) {
         for (int i = 0; i < players.size(); i++) {
