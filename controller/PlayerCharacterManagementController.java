@@ -170,11 +170,22 @@ public class PlayerCharacterManagementController {
         ev.setAbilityOptions(2, opts);
         ev.setAbilityOptions(3, opts);
 
+        boolean isGnome = c.getRaceType() == model.core.RaceType.GNOME;
+        ev.setAbility4Visible(isGnome);
+        if (isGnome) {
+            String[] all = classService.getAllAbilities().stream()
+                    .map(Ability::getName).toArray(String[]::new);
+            ev.setAbilityOptions(4, all);
+        }
+
         List<Ability> current = c.getAbilities();
         if (current.size() >= 3) {
             ev.setSelectedAbility(1, current.get(0).getName());
             ev.setSelectedAbility(2, current.get(1).getName());
             ev.setSelectedAbility(3, current.get(2).getName());
+        }
+        if (isGnome && current.size() >= 4) {
+            ev.setSelectedAbility(4, current.get(3).getName());
         }
 
         List<MagicItem> items = c.getInventory().getAllItems();
@@ -222,14 +233,21 @@ public class PlayerCharacterManagementController {
                 return;
             }
 
-            // Validate abilities for the character's class
+            // Validate abilities for the character's class (first three only)
             java.util.List<String> valid = classService.getAvailableAbilities(c.getClassType())
                     .stream().map(Ability::getName).toList();
-            for (String a : abilityNames) {
+            for (int i = 0; i < Math.min(3, abilityNames.length); i++) {
+                String a = abilityNames[i];
                 if (!valid.contains(a)) {
                     ev.showErrorMessage("Invalid ability selection for class.");
                     return;
                 }
+            }
+
+            int expected = 3 + (c.getRaceType() == model.core.RaceType.GNOME ? 1 : 0);
+            if (abilityNames.length != expected) {
+                ev.showErrorMessage("Incorrect number of abilities selected.");
+                return;
             }
 
             java.util.List<Ability> newAbilities = classService.getAbilitiesByNames(abilityNames);
