@@ -33,7 +33,7 @@ public class HallOfFameController implements ActionListener {
             this.hallOfFameEntries = new ArrayList<>();
         }
 
-        this.view.setController(this); // Connect view to this controller
+        this.view.setActionListener(this); // Connect view to this controller
     }
 
     /** Opens the Top Players subview and displays leaderboard data. */
@@ -150,8 +150,8 @@ public class HallOfFameController implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
         switch (command) {
-            case HallOfFameManagementView.SHOW_TOP_PLAYERS -> showTopPlayers();
-            case HallOfFameManagementView.SHOW_TOP_CHARACTERS -> showTopCharacters();
+            case HallOfFameManagementView.TOP_PLAYERS -> showTopPlayers();
+            case HallOfFameManagementView.TOP_CHARACTERS -> showTopCharacters();
             case HallOfFameManagementView.RETURN -> view.dispose();
             default -> view.showErrorMessage("Unknown action: " + command);
         }

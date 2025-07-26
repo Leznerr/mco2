@@ -279,4 +279,20 @@ private int playerID;
         return (String) dropdown5.getSelectedItem();
     }
 
+    public JComboBox<String> getCharacterDropdown() {
+        return dropdown1;
+    }
+
+    public String getSelectedMagicItem() {
+        return getMagicItem();
+    }
+
+    public void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void showInfoMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
 }

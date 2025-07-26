@@ -133,4 +133,12 @@ public class HallOfFameManagementView extends JFrame {
         btnReturn.addActionListener(listener);
     }
 
+    public void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void showInfoMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
 }
