@@ -676,8 +676,18 @@ public class BattleView extends JFrame {
         return cmbP1Abilities;
     }
 
+    public JComboBox<String> getAbilitySelectorP2() {
+        return cmbP2Abilities;
+    }
+
     public void addUseAbilityP1Listener(ActionListener l) {
         btnP1Use.addActionListener(l);
+    }
+
+    public void addUseAbilityP2Listener(ActionListener l) {
+        if (btnP2Use != null) {
+            btnP2Use.addActionListener(l);
+        }
     }
 
     public void addReturnListener(ActionListener l) {

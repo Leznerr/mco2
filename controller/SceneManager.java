@@ -15,6 +15,7 @@ import model.util.GameException;
 import persistence.GameData;
 import persistence.SaveLoadService;
 import view.BattleView;
+import view.BattleModesView;
 import view.CharacterManagementMenuView;
 import view.HallOfFameManagementView;
 import view.MainMenuView;
@@ -25,6 +26,9 @@ import view.PlayerDeleteView;
 import view.SavedPlayersRegistrationView;
 import controller.PlayerDeleteController;
 import controller.CharacterManagementMenuController;
+import controller.BattleModesController;
+import controller.BattleController;
+import controller.AIController;
 
 public final class SceneManager {
 
@@ -42,6 +46,7 @@ public final class SceneManager {
     private static final String CARD_CHARACTER_MENU = "characterMenu";
     private static final String CARD_PLAYER_CHARACTER = "playerCharacter";
     private static final String CARD_BATTLE = "battle";
+    private static final String CARD_BATTLE_MODES = "battleModes";
     private static final String CARD_DELETE_PLAYER = "deletePlayer";
 
     // ---------- Cached View Instances ----------
@@ -56,6 +61,7 @@ public final class SceneManager {
     private BattleView battleView;
     private PlayerDeleteView playerDeleteView;
     private PlayerDeleteController playerDeleteController;
+    private view.BattleModesView battleModesView;
 
     private GameManagerController gameManagerController; // Keep the controller instance here
 
@@ -241,6 +247,14 @@ public final class SceneManager {
         return 1;
     }
 
+    /** Shows the battle mode selection screen. */
+    public void showBattleModes(List<Player> players) {
+        battleModesView = new view.BattleModesView();
+        new BattleModesController(battleModesView, players, this, gameManagerController);
+        root.add(battleModesView.getContentPane(), CARD_BATTLE_MODES);
+        cards.show(root, CARD_BATTLE_MODES);
+    }
+
     /** Displays a battle between two characters. */
     public void showPlayerVsBotBattle(Player humanPlayer, Character human, Character bot, AIController aiController) {
         battleView = new BattleView(human, bot);
@@ -262,6 +276,43 @@ public final class SceneManager {
                 showMainMenu();
             });
             battleController.startBattleVsBot(human, bot, aiController);
+        } catch (GameException e) {
+            JOptionPane.showMessageDialog(stage, "Unable to start battle: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            battleView.dispose();
+        }
+    }
+
+    /** Displays a PvP battle between two players. */
+    public void showPlayerVsPlayerBattle(Player p1, Character c1, Player p2, Character c2) {
+        battleView = new BattleView(c1, c2);
+        battleView.setPlayer2ControlsEnabled(true);
+        try {
+            BattleController controller = new BattleController(battleView, gameManagerController, p1, p2);
+            battleView.addUseAbilityP1Listener(e -> {
+                int idx = battleView.getAbilitySelectorP1().getSelectedIndex();
+                if (idx >= 0) {
+                    try {
+                        controller.submitMove(c1, new model.battle.AbilityMove(c1.getAbilities().get(idx)));
+                    } catch (GameException ex) {
+                        DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
+                    }
+                }
+            });
+            battleView.addUseAbilityP2Listener(e -> {
+                int idx = battleView.getAbilitySelectorP2().getSelectedIndex();
+                if (idx >= 0) {
+                    try {
+                        controller.submitMove(c2, new model.battle.AbilityMove(c2.getAbilities().get(idx)));
+                    } catch (GameException ex) {
+                        DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
+                    }
+                }
+            });
+            battleView.addReturnListener(e -> {
+                battleView.dispose();
+                showMainMenu();
+            });
+            controller.startBattle(c1, c2);
         } catch (GameException e) {
             JOptionPane.showMessageDialog(stage, "Unable to start battle: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             battleView.dispose();
