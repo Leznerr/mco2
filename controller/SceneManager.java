@@ -221,23 +221,29 @@ public final class SceneManager {
 
     /** Displays a battle between two characters. */
     public void showPlayerVsBotBattle(Player humanPlayer, Character human, Character bot, AIController aiController) {
-        battleView = new BattleView(human, bot);
-        battleView.setPlayer2ControlsEnabled(false);
+        battleView = new BattleView(BattleView.BATTLE_PVB);
         try {
             BattleController battleController = new BattleController(battleView, gameManagerController, humanPlayer, null);
-            battleView.addUseAbilityP1Listener(e -> {
-                int idx = battleView.getAbilitySelectorP1().getSelectedIndex();
-                if (idx >= 0) {
-                    try {
-                        battleController.submitMove(human, new model.battle.AbilityMove(human.getAbilities().get(idx)));
-                    } catch (GameException ex) {
-                        DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
+            battleView.setActionListener(e -> {
+                String cmd = e.getActionCommand();
+                if (BattleView.P1_USE.equals(cmd)) {
+                    String ability = battleView.getSelectedAbility(1);
+                    if (ability != null) {
+                        for (var ab : human.getAbilities()) {
+                            if (ab.getName().equals(ability)) {
+                                try {
+                                    battleController.submitMove(human, new model.battle.AbilityMove(ab));
+                                } catch (GameException ex) {
+                                    DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
+                                }
+                                break;
+                            }
+                        }
                     }
+                } else if (BattleView.RETURN.equals(cmd)) {
+                    battleView.dispose();
+                    showMainMenu();
                 }
-            });
-            battleView.addReturnListener(e -> {
-                battleView.dispose();
-                showMainMenu();
             });
             battleController.startBattleVsBot(human, bot, aiController);
         } catch (GameException e) {

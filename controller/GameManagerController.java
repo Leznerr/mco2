@@ -184,9 +184,7 @@ public void actionPerformed(ActionEvent e) {
         int playerId = getPlayerIndexByName(playerName);
         SwingUtilities.invokeLater(() -> {
             CharacterManualCreationView manualView = new CharacterManualCreationView(playerId);
-            CharacterManualCreationController controller =
-                new CharacterManualCreationController(manualView, playerName, this);
-            manualView.setActionListener(controller);
+            new CharacterManualCreationController(manualView, playerName, this);
             manualView.setVisible(true);
         });
     }
@@ -195,9 +193,7 @@ public void actionPerformed(ActionEvent e) {
         int playerId = getPlayerIndexByName(playerName);
         SwingUtilities.invokeLater(() -> {
             CharacterAutoCreationView autoView = new CharacterAutoCreationView(playerId);
-            CharacterAutoCreationController controller =
-                new CharacterAutoCreationController(autoView, playerName, this);
-            autoView.setActionListener(controller);
+            new CharacterAutoCreationController(autoView, playerName, this);
             autoView.setVisible(true);
         });
     }

@@ -115,7 +115,7 @@ public class PlayerCharacterManagementController {
                 specView.updateCharacterDetails(details);
             }
         });
-        specView.resetView();
+        specView.resetDropdowns();
     }
 
     private void openEditCharacter() {
@@ -161,11 +161,7 @@ public class PlayerCharacterManagementController {
         ev.setAbilityOptions(3, opts);
 
         List<Ability> current = c.getAbilities();
-        if (current.size() >= 3) {
-            ev.setSelectedAbility(1, current.get(0).getName());
-            ev.setSelectedAbility(2, current.get(1).getName());
-            ev.setSelectedAbility(3, current.get(2).getName());
-        }
+        // View no longer supports programmatic selection of abilities
 
         List<MagicItem> items = c.getInventory().getAllItems();
         String[] itemNames = new String[items.size() + 1];
@@ -174,8 +170,6 @@ public class PlayerCharacterManagementController {
             itemNames[i + 1] = items.get(i).getName();
         }
         ev.setMagicItemOptions(itemNames);
-        MagicItem equipped = c.getEquippedItem();
-        ev.setSelectedMagicItem(equipped != null ? equipped.getName() : "None");
     }
 
     private void handleEditConfirmation(CharacterEditView ev) {
