@@ -1,23 +1,23 @@
 package controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import model.battle.Battle;
 import model.battle.CombatLog;
-import model.battle.Move;
 import model.battle.Defend;
-import model.battle.Recharge;
-import model.battle.ItemMove;
-import model.core.Character;
-import model.core.Ability;
-import model.core.Player;
-import controller.GameManagerController;
-import model.item.SingleUseItem;
 import model.battle.LevelingSystem;
+import model.battle.Move;
+import model.battle.Recharge;
+import model.core.Character;
+import model.core.Player;
+import model.item.SingleUseItem;
 import model.util.GameException;
 import model.util.InputValidator;
 import view.BattleView;
-import controller.AIController;
-
-import java.util.*;
 
 /**
  * Central orchestrator for a two-character, turn-based battle.

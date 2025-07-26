@@ -15,9 +15,9 @@ import model.util.InputValidator;
 import view.CharacterDeleteView;
 import view.CharacterEditView;
 import view.CharacterListViewingView;
-import view.PlayerCharacterManagementView;
 import view.CharacterManualCreationView;
 import view.CharacterSpecViewingView;
+import view.PlayerCharacterManagementView;
 
 /**
  * Controller responsible for managing all character-related actions

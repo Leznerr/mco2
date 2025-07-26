@@ -55,6 +55,8 @@ C:\Users\User\Downloads\mco2-main\mco2\model\util\effects\PoisonEffect.java
 C:\Users\User\Downloads\mco2-main\mco2\model\util\effects\StunEffect.java 
 C:\Users\User\Downloads\mco2-main\mco2\persistence\GameData.java 
 C:\Users\User\Downloads\mco2-main\mco2\persistence\SaveLoadService.java 
+C:\Users\User\Downloads\mco2-main\mco2\view\BattleCharSelectionView.java 
+C:\Users\User\Downloads\mco2-main\mco2\view\BattleModesView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\BattleView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\CharacterAutoCreationView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\CharacterCreationManagementView.java 
@@ -68,11 +70,17 @@ C:\Users\User\Downloads\mco2-main\mco2\view\CharacterSpecViewingView.java
 C:\Users\User\Downloads\mco2-main\mco2\view\HallOfFameCharactersView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\HallOfFameManagementView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\HallOfFamePlayersView.java 
+C:\Users\User\Downloads\mco2-main\mco2\view\InventoryView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\MainMenuView.java 
+C:\Users\User\Downloads\mco2-main\mco2\view\NewPlayersRegistrationView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\OutlinedLabel.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\PlayerCharacterManagementView.java 
+C:\Users\User\Downloads\mco2-main\mco2\view\PlayerCharManagementView.java 
+C:\Users\User\Downloads\mco2-main\mco2\view\PlayerDeleteView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\PlayerRegistrationView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\RoundedButton.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\RoundedDisplayBox.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\RoundedTextField.java 
+C:\Users\User\Downloads\mco2-main\mco2\view\SavedPlayersRegistrationView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\TradeView.java 
+C:\Users\User\Downloads\mco2-main\mco2\view\TradingView.java 
