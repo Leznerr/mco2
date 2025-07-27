@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
+import javax.swing.ListSelectionModel;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -40,8 +41,8 @@ public class TradeView extends JFrame {
     private final JComboBox<Character> charBox1;
     private final JComboBox<Character> charBox2;
 
-    private final JComboBox<MagicItem> itemBox1;
-    private final JComboBox<MagicItem> itemBox2;
+    private final javax.swing.JList<MagicItem> itemList1;
+    private final javax.swing.JList<MagicItem> itemList2;
 
     private final JButton btnTrade;
     private final JButton btnCancel;
@@ -54,11 +55,15 @@ public class TradeView extends JFrame {
         charBox1 = new JComboBox<>(p1.getCharacters().toArray(new Character[0]));
         charBox2 = new JComboBox<>(p2.getCharacters().toArray(new Character[0]));
 
-        itemBox1 = new JComboBox<>();
-        itemBox2 = new JComboBox<>();
+        itemList1 = new javax.swing.JList<>();
+        itemList2 = new javax.swing.JList<>();
 
-        itemBox1.setRenderer(new ItemRenderer());
-        itemBox2.setRenderer(new ItemRenderer());
+        itemList1.setCellRenderer(new ItemRenderer());
+        itemList2.setCellRenderer(new ItemRenderer());
+        itemList1.setVisibleRowCount(8);
+        itemList2.setVisibleRowCount(8);
+        itemList1.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        itemList2.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         btnTrade = new RoundedButton("Trade");
         btnCancel = new RoundedButton("Return");
@@ -85,14 +90,14 @@ public class TradeView extends JFrame {
         left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
         left.add(createDropdownPanel("Character", charBox1));
         left.add(Box.createVerticalStrut(10));
-        left.add(createDropdownPanel("Item", itemBox1));
+        left.add(createListPanel("Items", itemList1));
         lists.add(left);
 
         JPanel right = new JPanel();
         right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
         right.add(createDropdownPanel("Character", charBox2));
         right.add(Box.createVerticalStrut(10));
-        right.add(createDropdownPanel("Item", itemBox2));
+        right.add(createListPanel("Items", itemList2));
         lists.add(right);
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
@@ -119,21 +124,24 @@ public class TradeView extends JFrame {
     }
 
     public void refreshLists() {
-        itemBox1.removeAllItems();
         Character c1 = getSelectedChar1();
+        Character c2 = getSelectedChar2();
+
+        javax.swing.DefaultListModel<MagicItem> m1 = new javax.swing.DefaultListModel<>();
         if (c1 != null) {
             for (MagicItem m : c1.getInventory().getAllItems()) {
-                itemBox1.addItem(m);
+                m1.addElement(m);
             }
         }
+        itemList1.setModel(m1);
 
-        itemBox2.removeAllItems();
-        Character c2 = getSelectedChar2();
+        javax.swing.DefaultListModel<MagicItem> m2 = new javax.swing.DefaultListModel<>();
         if (c2 != null) {
             for (MagicItem m : c2.getInventory().getAllItems()) {
-                itemBox2.addItem(m);
+                m2.addElement(m);
             }
         }
+        itemList2.setModel(m2);
     }
 
     public Character getSelectedChar1() {
@@ -144,32 +152,12 @@ public class TradeView extends JFrame {
         return (Character) charBox2.getSelectedItem();
     }
 
-    public MagicItem getSelectedItem1() {
-        return (MagicItem) itemBox1.getSelectedItem();
-    }
-
-    public MagicItem getSelectedItem2() {
-        return (MagicItem) itemBox2.getSelectedItem();
-    }
-
-    /**
-     * Returns the currently selected item(s) from the first character list.
-     * This view only allows a single selection, but the controller expects a
-     * list so we wrap the item in an immutable list for compatibility.
-     */
     public java.util.List<MagicItem> getSelectedItems1() {
-        MagicItem item = getSelectedItem1();
-        return item == null ? java.util.List.of() : java.util.List.of(item);
+        return itemList1.getSelectedValuesList();
     }
 
-    /**
-     * Returns the currently selected item(s) from the second character list.
-     * Similar to {@link #getSelectedItems1()} this wraps the single selection
-     * in a list.
-     */
     public java.util.List<MagicItem> getSelectedItems2() {
-        MagicItem item = getSelectedItem2();
-        return item == null ? java.util.List.of() : java.util.List.of(item);
+        return itemList2.getSelectedValuesList();
     }
 
     public void setActionListener(ActionListener l) {
@@ -208,6 +196,23 @@ public class TradeView extends JFrame {
 
         panel.add(label);
         panel.add(dropdown);
+        return panel;
+    }
+
+    private JPanel createListPanel(String labelText, javax.swing.JList<?> list) {
+        JPanel panel = new JPanel();
+        panel.setOpaque(false);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        OutlinedLabel label = new OutlinedLabel(labelText);
+        label.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        javax.swing.JScrollPane scroll = new javax.swing.JScrollPane(list);
+        scroll.setAlignmentX(Component.LEFT_ALIGNMENT);
+        scroll.setPreferredSize(new Dimension(350, 150));
+
+        panel.add(label);
+        panel.add(scroll);
         return panel;
     }
 

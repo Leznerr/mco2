@@ -113,6 +113,14 @@ public void actionPerformed(ActionEvent e) {
             }
         }
         case MainMenuView.ACTION_HALL_OF_FAME -> showHallOfFameScreen();
+        case MainMenuView.ACTION_TRADING_HALL -> {
+            if (players.isEmpty()) {
+                JOptionPane.showMessageDialog(mainMenuView, "Please register players first.", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                sceneManager.showTradingHall(players);
+                mainMenuView.dispose();
+            }
+        }
         case MainMenuView.ACTION_START_BATTLE -> {
             if (players.isEmpty()) {
                 JOptionPane.showMessageDialog(mainMenuView, "Please register players first.", "Error", JOptionPane.ERROR_MESSAGE);

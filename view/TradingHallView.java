@@ -50,7 +50,6 @@ public class TradingHallView extends JFrame {
 
         setLocationRelativeTo(null);
         setResizable(false);
-        setVisible(true);
     }
 
 

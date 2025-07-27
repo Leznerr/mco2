@@ -27,12 +27,14 @@ public class MainMenuView extends JFrame {
     public static final String ACTION_MANAGE_CHARACTERS = "ACTION_MANAGE_CHARACTERS";
     public static final String ACTION_HALL_OF_FAME = "ACTION_HALL_OF_FAME";
     public static final String ACTION_START_BATTLE = "ACTION_START_BATTLE";
+    public static final String ACTION_TRADING_HALL = "ACTION_TRADING_HALL";
     public static final String ACTION_EXIT = "ACTION_EXIT";
 
     // UI Labels
     private static final String LABEL_REGISTER_PLAYERS = "Register Players";
     private static final String LABEL_MANAGE_CHARACTERS = "Manage Characters";
     private static final String LABEL_HALL_OF_FAME = "Hall Of Fame";
+    private static final String LABEL_TRADING_HALL = "Trading Hall";
     private static final String LABEL_START_BATTLE = "Start Battle";
     private static final String LABEL_EXIT = "Exit";
 
@@ -40,6 +42,7 @@ public class MainMenuView extends JFrame {
     private JButton btnRegisterPlayers;
     private JButton btnManageCharacters;
     private JButton btnHallOfFame;
+    private JButton btnTradingHall;
     private JButton btnStartBattle;
     private JButton btnExit;
 
@@ -127,6 +130,9 @@ public class MainMenuView extends JFrame {
         btnHallOfFame = new RoundedButton(LABEL_HALL_OF_FAME);
         btnHallOfFame.setActionCommand(ACTION_HALL_OF_FAME);
 
+        btnTradingHall = new RoundedButton(LABEL_TRADING_HALL);
+        btnTradingHall.setActionCommand(ACTION_TRADING_HALL);
+
         btnStartBattle = new RoundedButton(LABEL_START_BATTLE);
         btnStartBattle.setActionCommand(ACTION_START_BATTLE);
 
@@ -138,6 +144,8 @@ public class MainMenuView extends JFrame {
         buttonPanel.add(btnManageCharacters);
         buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnHallOfFame);
+        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(btnTradingHall);
         buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnStartBattle);
         buttonPanel.add(Box.createVerticalStrut(10));
@@ -159,6 +167,7 @@ public class MainMenuView extends JFrame {
         btnRegisterPlayers.addActionListener(listener);
         btnManageCharacters.addActionListener(listener);
         btnHallOfFame.addActionListener(listener);
+        btnTradingHall.addActionListener(listener);
         btnStartBattle.addActionListener(listener);
         btnExit.addActionListener(listener);
     }
@@ -190,6 +199,10 @@ public class MainMenuView extends JFrame {
 
     public JButton getHallOfFameButton() {
         return btnHallOfFame;
+    }
+
+    public JButton getTradingHallButton() {
+        return btnTradingHall;
     }
 
     public JButton getStartBattleButton() {

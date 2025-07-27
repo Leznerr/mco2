@@ -11,6 +11,7 @@ import model.util.GameException;
 import model.util.InputValidator;
 import view.TradeView;
 import view.TradingHallView;
+import controller.SceneManager;
 
 /**
  * Controller for the Trading Hall screen. Handles player selection
@@ -20,17 +21,20 @@ public class TradingHallController implements ActionListener {
 
     private final TradingHallView view;
     private final List<Player> players;
+    private final SceneManager sceneManager;
 
-    public TradingHallController(TradingHallView view, List<Player> players) throws GameException {
+    public TradingHallController(TradingHallView view, List<Player> players, SceneManager sceneManager) throws GameException {
         InputValidator.requireNonNull(view, "view");
         InputValidator.requireNonNull(players, "players");
+        InputValidator.requireNonNull(sceneManager, "sceneManager");
         this.view = view;
         this.players = players;
+        this.sceneManager = sceneManager;
         this.view.setActionListener(this);
-        refreshOptions();
+        refresh();
     }
 
-    private void refreshOptions() {
+    public void refresh() {
         String[] names = players.stream()
                 .filter(p -> !"Bot".equalsIgnoreCase(p.getName()))
                 .map(Player::getName)
@@ -45,6 +49,7 @@ public class TradingHallController implements ActionListener {
         String cmd = e.getActionCommand();
         if (TradingHallView.RETURN_TO_MENU.equals(cmd)) {
             view.dispose();
+            sceneManager.showMainMenu();
         } else if (TradingHallView.START_TRADING.equals(cmd)) {
             handleStartTrading();
         } else {
@@ -73,6 +78,7 @@ public class TradingHallController implements ActionListener {
         TradeView tv = new TradeView(p1, p2);
         try {
             new TradeController(tv, players);
+            tv.setVisible(true);
         } catch (GameException ex) {
             JOptionPane.showMessageDialog(view, ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
