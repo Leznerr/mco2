@@ -7,7 +7,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.Image; // retained for background
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -22,7 +22,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -50,8 +49,8 @@ public class TradeView extends JFrame {
     private final DefaultListModel<model.item.MagicItem> clientListModel = new DefaultListModel<>();
     private final JList<model.item.MagicItem> lstMerchantItems = new JList<>(merchantListModel);
     private final JList<model.item.MagicItem> lstClientItems = new JList<>(clientListModel);
-    private JTextArea p0NameArea, t0NameArea;
-    private JTextArea p0ItemsArea, t0ItemsArea, tradeLogArea;
+    private JTextArea clientNameArea, merchantNameArea;
+    private JTextArea tradeLogArea;
     
     /**
      * Constructs the Trading UI of Fatal Fantasy: Tactics Game.
@@ -140,7 +139,12 @@ public class TradeView extends JFrame {
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         bottomPanel.setOpaque(false);
 
-        centerPanel.add(Box.createVerticalStrut(100));
+        centerPanel.add(Box.createVerticalStrut(60));
+        OutlinedLabel tradeLogLabel = new OutlinedLabel("TRADE LOG");
+        tradeLogLabel.setFont(new Font("Serif", Font.BOLD, 26));
+        tradeLogLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        centerPanel.add(tradeLogLabel);
+        centerPanel.add(Box.createVerticalStrut(20));
 
         // Rounded display box for battle log
         RoundedDisplayBox tradeLogPanel = new RoundedDisplayBox();
@@ -208,24 +212,15 @@ public class TradeView extends JFrame {
         panel.setMinimumSize(fixedPanelSize);
         panel.setMaximumSize(fixedPanelSize);
 
-        panel.add(Box.createVerticalStrut(60));
+        panel.add(Box.createVerticalStrut(40));
 
-        String headlineImagePath;
+        String headline = (ID == 1) ? "CLIENT" : "MERCHANT";
+        OutlinedLabel headerLabel = new OutlinedLabel(headline);
+        headerLabel.setFont(new Font("Serif", Font.BOLD, 26));
+        headerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(headerLabel);
 
-        // Logo
-        if (ID == 1) {
-            headlineImagePath = String.format("view/assets/PlayerTradingLogo.png");
-        } else {
-            headlineImagePath = String.format("view/assets/TraderTradingLogo.png");
-
-        }
-        ImageIcon logoIcon = new ImageIcon(headlineImagePath);
-        Image logoImg = logoIcon.getImage().getScaledInstance(200, -1, Image.SCALE_SMOOTH);
-        JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
-        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(logoLabel);
-
-        panel.add(Box.createVerticalStrut(10));
+        panel.add(Box.createVerticalStrut(15));
 
         // Name Area
         RoundedDisplayBox namePanel = new RoundedDisplayBox();
@@ -237,11 +232,11 @@ public class TradeView extends JFrame {
 
         JTextArea nameArea;
         if (ID == 1) {
-            if (p0NameArea == null) p0NameArea = new JTextArea();
-            nameArea = p0NameArea;
+            if (clientNameArea == null) clientNameArea = new JTextArea();
+            nameArea = clientNameArea;
         } else {
-            if (t0NameArea == null) t0NameArea = new JTextArea();
-            nameArea = t0NameArea;
+            if (merchantNameArea == null) merchantNameArea = new JTextArea();
+            nameArea = merchantNameArea;
         }
         nameArea.setFont(new Font("Serif", Font.PLAIN, 18));
         nameArea.setForeground(Color.WHITE);
@@ -254,51 +249,16 @@ public class TradeView extends JFrame {
         panel.add(Box.createVerticalStrut(10));
         panel.add(namePanel);
 
-        // Abilities/Items Area
-        RoundedDisplayBox itemsPanel = new RoundedDisplayBox();
-        itemsPanel.setPreferredSize(new Dimension(280, 200));
-        itemsPanel.setMaximumSize(new Dimension(280, 200));
-        itemsPanel.setMinimumSize(new Dimension(280, 200));
-        itemsPanel.setLayout(new BorderLayout());
-        itemsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JTextArea itemsArea;
-        if (ID == 1) {
-            if (p0ItemsArea == null) {
-                p0ItemsArea = new JTextArea();
-            }
-            itemsArea = p0ItemsArea;
-        } else {
-            if (t0ItemsArea == null) {
-                t0ItemsArea = new JTextArea();
-            }
-            itemsArea = t0ItemsArea;
-        }
-        itemsArea.setFont(new Font("Serif", Font.PLAIN, 18));
-        itemsArea.setForeground(Color.WHITE);
-        itemsArea.setOpaque(false);
-        itemsArea.setEditable(false);
-        itemsArea.setLineWrap(true);
-        itemsArea.setWrapStyleWord(true);
-
-        JScrollPane scrollPane = new JScrollPane(itemsArea);
-        scrollPane.setOpaque(false);
-        scrollPane.getViewport().setOpaque(false);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        itemsPanel.add(scrollPane, BorderLayout.CENTER);
-
         panel.add(Box.createVerticalStrut(20));
-        panel.add(itemsPanel);
 
         // Item selection list
-        panel.add(Box.createVerticalStrut(30));
         JList<model.item.MagicItem> lst;
         if (ID == 1) {
-            lst = lstMerchantItems;
-        } else {
             lst = lstClientItems;
+        } else {
+            lst = lstMerchantItems;
         }
-        panel.add(createListPanel("Select magic item(s) to trade:", lst));
+        panel.add(createListPanel("Select item(s) to trade:", lst));
 
         panel.add(Box.createVerticalGlue());
     }
@@ -322,26 +282,33 @@ public class TradeView extends JFrame {
         label.setFont(new Font("Serif", Font.BOLD, 17));
 
         list.setFont(new Font("Serif", Font.BOLD, 18));
-        list.setVisibleRowCount(5);
+        list.setVisibleRowCount(6);
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         list.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> l, Object value, int index, boolean s, boolean f) {
                 super.getListCellRendererComponent(l, value, index, s, f);
                 if (value instanceof model.item.MagicItem mi) {
-                    setText(mi.getName());
+                    setText((index + 1) + ". " + mi.getName());
                 }
                 return this;
             }
         });
 
         JScrollPane pane = new JScrollPane(list);
-        pane.setMaximumSize(new Dimension(250, 100));
-        pane.setPreferredSize(new Dimension(250, 100));
+        pane.setOpaque(false);
+        pane.getViewport().setOpaque(false);
+        pane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        pane.setMaximumSize(new Dimension(250, 130));
+        pane.setPreferredSize(new Dimension(250, 130));
+
+        RoundedDisplayBox box = new RoundedDisplayBox();
+        box.setLayout(new BorderLayout());
+        box.add(pane, BorderLayout.CENTER);
 
         panel.add(label);
         panel.add(Box.createVerticalStrut(5));
-        panel.add(pane);
+        panel.add(box);
 
         return panel;
     }
@@ -365,7 +332,7 @@ public class TradeView extends JFrame {
      * Updates the selectable item list for the given side.
      */
     public void updateItemList(int ID, java.util.List<model.item.MagicItem> items) {
-        DefaultListModel<model.item.MagicItem> model = (ID == 1) ? merchantListModel : clientListModel;
+        DefaultListModel<model.item.MagicItem> model = (ID == 1) ? clientListModel : merchantListModel;
         model.clear();
         for (model.item.MagicItem m : items) {
             model.addElement(m);
@@ -381,43 +348,22 @@ public class TradeView extends JFrame {
      */
     public void setPlayerTraderName(int ID, String text) {
         switch (ID) {
-            case 1 -> p0NameArea.setText(text);
-            case 2 -> t0NameArea.setText(text);
+            case 1 -> clientNameArea.setText(text);
+            case 2 -> merchantNameArea.setText(text);
         }
     }
 
-
-    /**
-     * Sets the items for the player and trader
-     * 
-     * @param ID the ID of the player or trader
-     * @param items the items text
-     */
-    public void setPlayerTraderItems(int ID, String items) {
-        switch (ID) {
-            case 1 -> p0ItemsArea.setText(items);
-            case 2 -> t0ItemsArea.setText(items);
-        }
-    }
 
     /** Populates UI fields with the merchant and client data. */
     private void populateInitialData() {
-        if (merchantChar != null) {
-            setPlayerTraderName(1, merchantChar.getName());
-            setPlayerTraderItems(1, buildItemsList(merchantChar));
-            updateItemList(1, merchantChar.getInventory().getAllItems());
-        }
         if (clientChar != null) {
-            setPlayerTraderName(2, clientChar.getName());
-            setPlayerTraderItems(2, buildItemsList(clientChar));
-            updateItemList(2, clientChar.getInventory().getAllItems());
+            setPlayerTraderName(1, clientChar.getName());
+            updateItemList(1, clientChar.getInventory().getAllItems());
         }
-    }
-
-    private String buildItemsList(model.core.Character c) {
-        return c.getInventory().getAllItems().stream()
-                .map(model.item.MagicItem::getName)
-                .collect(java.util.stream.Collectors.joining(", "));
+        if (merchantChar != null) {
+            setPlayerTraderName(2, merchantChar.getName());
+            updateItemList(2, merchantChar.getInventory().getAllItems());
+        }
     }
 
 
@@ -473,13 +419,11 @@ public class TradeView extends JFrame {
 
     /** Refreshes inventory displays and item lists. */
     public void refresh() {
-        if (merchantChar != null) {
-            setPlayerTraderItems(1, buildItemsList(merchantChar));
-            updateItemList(1, merchantChar.getInventory().getAllItems());
-        }
         if (clientChar != null) {
-            setPlayerTraderItems(2, buildItemsList(clientChar));
-            updateItemList(2, clientChar.getInventory().getAllItems());
+            updateItemList(1, clientChar.getInventory().getAllItems());
+        }
+        if (merchantChar != null) {
+            updateItemList(2, merchantChar.getInventory().getAllItems());
         }
         resetFields();
     }
