@@ -8,19 +8,14 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.util.List;
-
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
 
 import model.core.Character;
 import model.core.Player;
@@ -36,7 +31,7 @@ import model.item.MagicItem;
 public class TradeView extends JFrame {
 
     public static final String TRADE = "TRADE";
-    public static final String CANCEL = "CANCEL";
+    public static final String RETURN = "RETURN";
 
     private final Player player1;
     private final Player player2;
@@ -44,10 +39,8 @@ public class TradeView extends JFrame {
     private final JComboBox<Character> charBox1;
     private final JComboBox<Character> charBox2;
 
-    private final DefaultListModel<MagicItem> model1;
-    private final DefaultListModel<MagicItem> model2;
-    private final JList<MagicItem> list1;
-    private final JList<MagicItem> list2;
+    private final JComboBox<MagicItem> itemBox1;
+    private final JComboBox<MagicItem> itemBox2;
 
     private final JButton btnTrade;
     private final JButton btnCancel;
@@ -60,17 +53,14 @@ public class TradeView extends JFrame {
         charBox1 = new JComboBox<>(p1.getCharacters().toArray(new Character[0]));
         charBox2 = new JComboBox<>(p2.getCharacters().toArray(new Character[0]));
 
-        model1 = new DefaultListModel<>();
-        model2 = new DefaultListModel<>();
-        list1 = new JList<>(model1);
-        list2 = new JList<>(model2);
-        list1.setVisibleRowCount(8);
-        list2.setVisibleRowCount(8);
-        list1.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        list2.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        itemBox1 = new JComboBox<>();
+        itemBox2 = new JComboBox<>();
+
+        itemBox1.setRenderer(new ItemRenderer());
+        itemBox2.setRenderer(new ItemRenderer());
 
         btnTrade = new RoundedButton("Trade");
-        btnCancel = new RoundedButton("Cancel");
+        btnCancel = new RoundedButton("Return");
 
         initUI();
         configureWindow();
@@ -90,14 +80,18 @@ public class TradeView extends JFrame {
         JPanel lists = new JPanel(new GridLayout(1, 2, 10, 10));
         lists.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JPanel left = new JPanel(new BorderLayout());
-        left.add(createDropdownPanel("", charBox1), BorderLayout.NORTH);
-        left.add(new JScrollPane(list1), BorderLayout.CENTER);
+        JPanel left = new JPanel();
+        left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
+        left.add(createDropdownPanel("Character", charBox1));
+        left.add(Box.createVerticalStrut(10));
+        left.add(createDropdownPanel("Item", itemBox1));
         lists.add(left);
 
-        JPanel right = new JPanel(new BorderLayout());
-        right.add(createDropdownPanel("", charBox2), BorderLayout.NORTH);
-        right.add(new JScrollPane(list2), BorderLayout.CENTER);
+        JPanel right = new JPanel();
+        right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
+        right.add(createDropdownPanel("Character", charBox2));
+        right.add(Box.createVerticalStrut(10));
+        right.add(createDropdownPanel("Item", itemBox2));
         lists.add(right);
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
@@ -124,19 +118,19 @@ public class TradeView extends JFrame {
     }
 
     public void refreshLists() {
-        model1.clear();
+        itemBox1.removeAllItems();
         Character c1 = getSelectedChar1();
         if (c1 != null) {
             for (MagicItem m : c1.getInventory().getAllItems()) {
-                model1.addElement(m);
+                itemBox1.addItem(m);
             }
         }
 
-        model2.clear();
+        itemBox2.removeAllItems();
         Character c2 = getSelectedChar2();
         if (c2 != null) {
             for (MagicItem m : c2.getInventory().getAllItems()) {
-                model2.addElement(m);
+                itemBox2.addItem(m);
             }
         }
     }
@@ -149,17 +143,17 @@ public class TradeView extends JFrame {
         return (Character) charBox2.getSelectedItem();
     }
 
-    public List<MagicItem> getSelectedItems1() {
-        return list1.getSelectedValuesList();
+    public MagicItem getSelectedItem1() {
+        return (MagicItem) itemBox1.getSelectedItem();
     }
 
-    public List<MagicItem> getSelectedItems2() {
-        return list2.getSelectedValuesList();
+    public MagicItem getSelectedItem2() {
+        return (MagicItem) itemBox2.getSelectedItem();
     }
 
     public void setActionListener(ActionListener l) {
         btnTrade.setActionCommand(TRADE);
-        btnCancel.setActionCommand(CANCEL);
+        btnCancel.setActionCommand(RETURN);
         btnTrade.addActionListener(l);
         btnCancel.addActionListener(l);
     }
@@ -194,6 +188,26 @@ public class TradeView extends JFrame {
         panel.add(label);
         panel.add(dropdown);
         return panel;
+    }
+
+    /** Simple list cell renderer showing item details. */
+    private static class ItemRenderer extends javax.swing.DefaultListCellRenderer {
+        @Override
+        public Component getListCellRendererComponent(javax.swing.JList<?> list,
+                                                      Object value,
+                                                      int index,
+                                                      boolean isSelected,
+                                                      boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            if (value instanceof MagicItem m) {
+                String text = m.getName() + " [" + m.getItemType() + "]";
+                if (m instanceof model.item.SingleUseItem su) {
+                    text += " - " + su.getEffectType() + " " + su.getEffectValue();
+                }
+                setText(text);
+            }
+            return this;
+        }
     }
 }
 
