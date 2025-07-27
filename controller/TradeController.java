@@ -5,7 +5,6 @@ import model.core.Player;
 import model.item.MagicItem;
 import model.util.GameException;
 import model.util.InputValidator;
-import model.util.TradeOffer;
 import persistence.GameData;
 import persistence.SaveLoadService;
 import view.TradeView;
@@ -14,6 +13,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,6 +35,55 @@ public class TradeController implements ActionListener {
         view.setActionListener(this);
     }
 
+    // ------------------------------------------------------------------
+    // Core business logic
+    // ------------------------------------------------------------------
+
+    public List<Character> listEligibleCharacters(Character self) throws GameException {
+        InputValidator.requireNonNull(self, "self");
+        List<Character> result = new ArrayList<>();
+        for (Player p : players) {
+            for (Character c : p.getCharacters()) {
+                if (!c.equals(self) && !isBot(c)) {
+                    result.add(c);
+                }
+            }
+        }
+        return Collections.unmodifiableList(result);
+    }
+
+    public List<MagicItem> getInventory(Character character) throws GameException {
+        InputValidator.requireNonNull(character, "character");
+        return character.getInventory().getAllItems();
+    }
+
+    public void executeTrade(Character a, MagicItem aItem,
+                             Character b, MagicItem bItem) throws GameException {
+        InputValidator.requireNonNull(a, "character A");
+        InputValidator.requireNonNull(b, "character B");
+        InputValidator.requireNonNull(aItem, "character A item");
+        InputValidator.requireNonNull(bItem, "character B item");
+
+        if (a.equals(b)) {
+            throw new GameException("Cannot trade items with oneself.");
+        }
+        if (isBot(a) || isBot(b)) {
+            throw new GameException("Trading with bots is not allowed.");
+        }
+        if (!a.getInventory().getAllItems().contains(aItem)) {
+            throw new GameException(a.getName() + " does not possess " + aItem.getName());
+        }
+        if (!b.getInventory().getAllItems().contains(bItem)) {
+            throw new GameException(b.getName() + " does not possess " + bItem.getName());
+        }
+
+        a.getInventory().removeItem(aItem);
+        b.getInventory().addItem(aItem);
+
+        b.getInventory().removeItem(bItem);
+        a.getInventory().addItem(bItem);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
@@ -49,34 +98,21 @@ public class TradeController implements ActionListener {
         try {
             Character c1 = view.getSelectedChar1();
             Character c2 = view.getSelectedChar2();
-            InputValidator.requireNonNull(c1, "Offering character");
-            InputValidator.requireNonNull(c2, "Receiving character");
+            InputValidator.requireNonNull(c1, "Character A");
+            InputValidator.requireNonNull(c2, "Character B");
 
-            List<MagicItem> offered = new ArrayList<>(view.getSelectedItems1());
-            List<MagicItem> requested = new ArrayList<>(view.getSelectedItems2());
+            List<MagicItem> sel1 = new ArrayList<>(view.getSelectedItems1());
+            List<MagicItem> sel2 = new ArrayList<>(view.getSelectedItems2());
 
-            // Validate ownership
-            if (!c1.getInventory().getAllItems().containsAll(offered) ||
-                !c2.getInventory().getAllItems().containsAll(requested)) {
-                view.showError("Invalid item selection for trade.");
+            if (sel1.isEmpty() || sel2.isEmpty()) {
+                view.showError("Select one item from each character to trade.");
                 return;
             }
 
-            Player p1 = findPlayerForCharacter(c1);
-            Player p2 = findPlayerForCharacter(c2);
+            MagicItem m1 = sel1.get(0);
+            MagicItem m2 = sel2.get(0);
 
-            // Construct offer for record/possible future use
-            new TradeOffer(p1, p2, offered, requested);
-
-            // Execute trade
-            for (MagicItem m : offered) {
-                c1.getInventory().removeItem(m);
-                c2.getInventory().addItem(m);
-            }
-            for (MagicItem m : requested) {
-                c2.getInventory().removeItem(m);
-                c1.getInventory().addItem(m);
-            }
+            executeTrade(c1, m1, c2, m2);
 
             persist();
             view.showInfo("Trade completed successfully.");
@@ -84,6 +120,10 @@ public class TradeController implements ActionListener {
         } catch (GameException ex) {
             view.showError(ex.getMessage());
         }
+    }
+
+    private boolean isBot(Character c) {
+        return c.getName().equalsIgnoreCase("Bot");
     }
 
     private Player findPlayerForCharacter(Character c) throws GameException {
