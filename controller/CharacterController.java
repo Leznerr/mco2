@@ -8,6 +8,7 @@ import model.core.Character;
 import model.core.ClassType;
 import model.core.Player;
 import model.core.RaceType;
+import model.item.MagicItem;
 import model.service.ClassService;
 import model.service.RaceService;
 import model.util.GameException;
@@ -18,6 +19,7 @@ import view.CharacterListViewingView;
 import view.CharacterManagementView;
 import view.CharacterManualCreationView;
 import view.CharacterSpecViewingView;
+import view.InventoryView;
 
 /**
  * Controller responsible for managing all character-related actions
@@ -230,6 +232,21 @@ public void openManualCreationView() {
     public List<Ability> getAvailableAbilities(ClassType classType) {
         InputValidator.requireNonNull(classType, "classType");
         return classService.getAvailableAbilities(classType);
+    }
+
+    // ------------------ Inventory Convenience Methods -----------------------
+
+    /** Returns a read-only list of items for the given character. */
+    public List<MagicItem> getInventoryForCharacter(Character character) {
+        InputValidator.requireNonNull(character, "character");
+        return character.getInventory().getAllItems();
+    }
+
+    /** Refreshes an InventoryView to display the character's current items. */
+    public void refreshInventoryDisplay(Character character, InventoryView view) {
+        InputValidator.requireNonNull(character, "character");
+        InputValidator.requireNonNull(view, "view");
+        view.updateInventory(getInventoryForCharacter(character), character.getEquippedItem());
     }
 
     // ------------------ CharacterListViewingView Integration -----------------------
