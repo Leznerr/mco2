@@ -35,7 +35,7 @@ public class Character implements Serializable {
     /** Character abilities. Always initialized. Never null. */
     private final List<Ability> abilities = new ArrayList<>();
     /** Inventory for magic items. Always initialized. Never null. */
-    private final Inventory inventory = new Inventory();
+    private final Inventory inventory;
     /** Status effects currently affecting the character. Always initialized. Never null. */
     private transient List<StatusEffect> activeStatusEffects = new ArrayList<>();
     private MagicItem equippedItem;
@@ -57,41 +57,37 @@ public class Character implements Serializable {
     // --- Temporary Battle State ---
     private boolean isStunned;
 
-    /**
-     * Creates a deep copy of this character for use in battle. The returned
-     * instance shares no mutable state with the original. All dynamic battle
-     * statistics (HP, EP, status effects, stun flag) are reset to full health
-     * and energy with no active effects. Progression attributes such as level
-     * and XP are retained so calculations like XP rewards remain accurate.
-     *
-     * <p>The inventory contents are also deep-copied so that item consumption
-     * during battle does not affect the persistent character.</p>
-     *
-     * @return independent copy initialised for a fresh battle
-     */
-    public Character copyForBattle() {
-        try {
-            Character c = new Character(name, race, classType, new ArrayList<>(abilities));
+    // --- Copy constructor for deep copy ---
+    public Character(Character other) throws GameException {
+        InputValidator.requireNonNull(other, "character to copy");
 
-            // Copy inventory contents
-            for (MagicItem item : inventory.getAllItems()) {
-                c.getInventory().addItem(item.copy());
-            }
-            if (inventory.getEquippedItem() != null) {
-                MagicItem eqCopy = inventory.getEquippedItem().copy();
-                c.getInventory().equipItem(eqCopy);
-            }
+        this.name = other.name;
+        this.race = other.race;
+        this.classType = other.classType;
 
-            // Replicate progression stats
-            c.setLevel(level);
-            c.setMaxStats(maxHp, maxEp); // also restores HP/EP
-            c.addXp(xp); // xp is needed for potential level calculations
+        this.abilities.clear();
+        this.abilities.addAll(other.abilities);
 
-            return c;
-        } catch (GameException e) {
-            // Should not occur as original character is already validated
-            throw new RuntimeException("Failed to copy character", e);
-        }
+        this.inventory = new Inventory(other.inventory);
+
+        this.activeStatusEffects = new ArrayList<>();
+        this.equippedItem = other.equippedItem != null ? other.equippedItem.copy() : null;
+
+        this.maxHp = other.maxHp;
+        this.currentHp = other.currentHp;
+        this.maxEp = other.maxEp;
+        this.currentEp = other.currentEp;
+
+        this.level = other.level;
+        this.xp = other.xp;
+        this.winCount = other.winCount;
+
+        this.isStunned = false;
+    }
+
+    // --- Method to create a copy for battle ---
+    public Character copyForBattle() throws GameException {
+        return new Character(this);
     }
 
     /**
@@ -119,6 +115,8 @@ public class Character implements Serializable {
         this.name = name;
         this.race = race;
         this.classType = classType;
+
+        this.inventory = new Inventory();
 
         this.abilities.clear();
         this.abilities.addAll(abilities); // Defensive copy
