@@ -24,6 +24,8 @@ import view.PlayerCharacterManagementView;
 import view.PlayerRegistrationView;
 import view.PlayerDeleteView;
 import view.SavedPlayersRegistrationView;
+import view.TradingHallView;
+import controller.TradingHallController;
 import controller.PlayerDeleteController;
 import controller.CharacterManagementMenuController;
 import controller.BattleModesController;
@@ -49,6 +51,7 @@ public final class SceneManager {
     private static final String CARD_BATTLE = "battle";
     private static final String CARD_BATTLE_MODES = "battleModes";
     private static final String CARD_DELETE_PLAYER = "deletePlayer";
+    private static final String CARD_TRADING_HALL = "tradingHall";
 
     // ---------- Cached View Instances ----------
     private MainMenuView mainMenuView;
@@ -64,6 +67,8 @@ public final class SceneManager {
     private PlayerDeleteController playerDeleteController;
     private view.BattleModesView battleModesView;
     private HallOfFameController hallOfFameController;
+    private TradingHallView tradingHallView;
+    private TradingHallController tradingHallController;
 
     private GameManagerController gameManagerController; // Keep the controller instance here
 
@@ -219,6 +224,18 @@ public final class SceneManager {
             root.add(hallOfFameView.getContentPane(), CARD_HALL_OF_FAME);
         }
         cards.show(root, CARD_HALL_OF_FAME);
+    }
+
+    /** Displays the Trading Hall screen. */
+    public void showTradingHall(List<Player> players) {
+        if (tradingHallView == null) {
+            tradingHallView = new TradingHallView();
+            tradingHallController = new TradingHallController(tradingHallView, players, this);
+            root.add(tradingHallView.getContentPane(), CARD_TRADING_HALL);
+        } else {
+            tradingHallController.refresh();
+        }
+        cards.show(root, CARD_TRADING_HALL);
     }
 
     /** Shows the menu to pick which player's characters to manage. */

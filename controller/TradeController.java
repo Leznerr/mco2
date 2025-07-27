@@ -145,6 +145,62 @@ public class TradeController implements ActionListener {
         inv2.addItem(itemFromSource);
     }
 
+    /**
+     * Executes a multi-item trade between two characters.
+     */
+    public void executeTrade(Character source,
+                             List<MagicItem> itemsFromSource,
+                             Character target,
+                             List<MagicItem> itemsFromTarget) throws GameException {
+
+        InputValidator.requireNonNull(source, "source");
+        InputValidator.requireNonNull(target, "target");
+        InputValidator.requireNonNull(itemsFromSource, "itemsFromSource");
+        InputValidator.requireNonNull(itemsFromTarget, "itemsFromTarget");
+
+        if (source == target) {
+            throw new GameException("Cannot trade items with oneself.");
+        }
+
+        Player p1 = findPlayerForCharacter(source);
+        Player p2 = findPlayerForCharacter(target);
+        if (isBot(p1) || isBot(p2)) {
+            throw new GameException("Trading with bots is not allowed.");
+        }
+
+        if (itemsFromSource.isEmpty() && itemsFromTarget.isEmpty()) {
+            throw new GameException("No items selected for trade.");
+        }
+
+        Inventory inv1 = source.getInventory();
+        Inventory inv2 = target.getInventory();
+
+        if (!inv1.getAllItems().containsAll(itemsFromSource) ||
+            !inv2.getAllItems().containsAll(itemsFromTarget)) {
+            throw new GameException("Selected items must belong to the chosen characters.");
+        }
+
+        for (MagicItem m : itemsFromSource) {
+            inv1.removeItem(m);
+            if (source.getEquippedItem() == m) {
+                source.unequipItem();
+            }
+        }
+        for (MagicItem m : itemsFromTarget) {
+            inv2.removeItem(m);
+            if (target.getEquippedItem() == m) {
+                target.unequipItem();
+            }
+        }
+
+        for (MagicItem m : itemsFromSource) {
+            inv2.addItem(m);
+        }
+        for (MagicItem m : itemsFromTarget) {
+            inv1.addItem(m);
+        }
+    }
+
     /** Determines if the given player represents an AI bot. */
     private boolean isBot(Player p) {
         return p != null && "Bot".equalsIgnoreCase(p.getName());
@@ -152,23 +208,23 @@ public class TradeController implements ActionListener {
 
     private void handleTrade() {
         boolean executed = false;
-        MagicItem m1 = null;
-        MagicItem m2 = null;
         Character c1 = null;
         Character c2 = null;
+        List<MagicItem> items1 = Collections.emptyList();
+        List<MagicItem> items2 = Collections.emptyList();
         try {
             c1 = view.getSelectedChar1();
             c2 = view.getSelectedChar2();
             InputValidator.requireNonNull(c1, "Offering character");
             InputValidator.requireNonNull(c2, "Receiving character");
 
-            m1 = view.getSelectedItem1();
-            m2 = view.getSelectedItem2();
-            if (m1 == null || m2 == null) {
-                view.showError("Select an item from each character.");
+            items1 = view.getSelectedItems1();
+            items2 = view.getSelectedItems2();
+            if (items1.isEmpty() && items2.isEmpty()) {
+                view.showError("Select at least one item to trade.");
                 return;
             }
-            executeTrade(c1, m1, c2, m2);
+            executeTrade(c1, items1, c2, items2);
             executed = true;
 
             persist();
@@ -176,10 +232,8 @@ public class TradeController implements ActionListener {
             view.refreshLists();
         } catch (GameException ex) {
             if (executed) {
-                // revert trade on failure
                 try {
-                    // swap back
-                    executeTrade(c1, m2, c2, m1);
+                    executeTrade(c1, items2, c2, items1);
                 } catch (GameException ignore) {
                     // ignore to avoid masking original error
                 }

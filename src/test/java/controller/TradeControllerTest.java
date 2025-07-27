@@ -42,7 +42,7 @@ public class TradeControllerTest {
 
     @Test
     public void testSuccessfulTrade() throws GameException {
-        controller.executeTrade(c1, item1, c2, item2);
+        controller.executeTrade(c1, List.of(item1), c2, List.of(item2));
         assertTrue(c1.getInventory().getAllItems().contains(item2));
         assertTrue(c2.getInventory().getAllItems().contains(item1));
     }
@@ -50,13 +50,20 @@ public class TradeControllerTest {
     @Test
     public void testTradeWithSelfFails() {
         assertThrows(GameException.class, () ->
-                controller.executeTrade(c1, item1, c1, item1));
+                controller.executeTrade(c1, List.of(item1), c1, List.of(item1)));
     }
 
     @Test
     public void testTradeNonOwnedItemFails() {
         PassiveItem other = new PassiveItem("Other", "", "Common");
         assertThrows(GameException.class, () ->
-                controller.executeTrade(c1, other, c2, item2));
+                controller.executeTrade(c1, List.of(other), c2, List.of(item2)));
+
+    }
+
+    @Test
+    public void testTradeNoItemsSelectedFails() {
+        assertThrows(GameException.class, () ->
+                controller.executeTrade(c1, List.of(), c2, List.of()));
     }
 }
