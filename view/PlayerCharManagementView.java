@@ -3,7 +3,6 @@ package view;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -31,6 +30,7 @@ public class PlayerCharManagementView extends JFrame {
     public static final String CREATE_CHAR = "Create Character";
     public static final String EDIT_CHAR = "Edit Character";
     public static final String DELETE_CHAR = "Delete Character";
+    public static final String INVENTORY = "Inventory";
     public static final String RETURN = "Return";
 
     // UI components
@@ -38,9 +38,8 @@ public class PlayerCharManagementView extends JFrame {
     private JButton btnCreateChar;
     private JButton btnEditChar;
     private JButton btnDeleteChar;
+    private JButton btnInventory;
     private JButton btnReturn;
-
-    private ActionListener externalListener;
 
     /**
      * Constructs the Player Character Management UI for a specific player.
@@ -67,9 +66,8 @@ public class PlayerCharManagementView extends JFrame {
                     JOptionPane.YES_NO_OPTION
                 );
 
-                if (choice == JOptionPane.YES_OPTION && externalListener != null) {
-                    ActionEvent evt = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Exit");
-                    externalListener.actionPerformed(evt);
+                if (choice == JOptionPane.YES_OPTION) {
+                    dispose();
                 }
             }
         });
@@ -115,7 +113,7 @@ public class PlayerCharManagementView extends JFrame {
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         backgroundPanel.add(logoLabel);
 
-        backgroundPanel.add(Box.createVerticalStrut(60));
+        backgroundPanel.add(Box.createVerticalStrut(40));
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
@@ -125,16 +123,19 @@ public class PlayerCharManagementView extends JFrame {
         btnCreateChar = new RoundedButton(CREATE_CHAR);
         btnEditChar = new RoundedButton(EDIT_CHAR);
         btnDeleteChar = new RoundedButton(DELETE_CHAR);
+        btnInventory = new RoundedButton(INVENTORY);
         btnReturn = new RoundedButton(RETURN);
 
         buttonPanel.add(btnViewChar);
-        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(Box.createVerticalStrut(15));
         buttonPanel.add(btnCreateChar);
-        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(Box.createVerticalStrut(15));
         buttonPanel.add(btnEditChar);
-        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(Box.createVerticalStrut(15));
         buttonPanel.add(btnDeleteChar);
-        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(Box.createVerticalStrut(15));
+        buttonPanel.add(btnInventory);
+        buttonPanel.add(Box.createVerticalStrut(15));
         buttonPanel.add(btnReturn);
 
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -150,11 +151,11 @@ public class PlayerCharManagementView extends JFrame {
      * @param listener The listener
      */
     public void setActionListener(ActionListener listener) {
-        this.externalListener = listener;
         btnViewChar.addActionListener(listener);
         btnCreateChar.addActionListener(listener);
         btnEditChar.addActionListener(listener);
         btnDeleteChar.addActionListener(listener);
+        btnInventory.addActionListener(listener);
         btnReturn.addActionListener(listener);
     }
 

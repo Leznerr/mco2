@@ -90,8 +90,8 @@ public final class Inventory implements Serializable {
         InputValidator.requireNonNull(item, "Item to check");
         return items.contains(item);
     }
-
-
+    /**
+     * Adds a magic item to this inventory if it is not already present.
      *
      * @param item the item to add (must not be {@code null})
      */
