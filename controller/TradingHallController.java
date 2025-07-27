@@ -82,6 +82,7 @@ public class TradingHallController implements ActionListener {
         }
         model.core.Character mChar = p1.getCharacters().get(0);
         model.core.Character cChar = p2.getCharacters().get(0);
+        view.dispose();
         sceneManager.showTradeView(mChar, cChar, players);
     }
 
