@@ -243,9 +243,11 @@ public final class SceneManager {
         cards.show(root, CARD_TRADING_HALL);
     }
 
-    /** Displays the full TradeView for two players. */
-    public void showTradeView(Player merchant, Player client, List<Player> players) {
-        tradeView = new TradeView();
+    /** Displays the full TradeView for two characters. */
+    public void showTradeView(model.core.Character merchant,
+                              model.core.Character client,
+                              List<Player> players) {
+        tradeView = new TradeView(merchant, client);
         try {
             tradeController = new TradeController(tradeView, players);
         } catch (GameException e) {
@@ -262,7 +264,7 @@ public final class SceneManager {
         if (tradeView.getContentPane().getParent() == null) {
             root.add(tradeView.getContentPane(), CARD_TRADE_VIEW);
         }
-        stage.setSize(1200, 700);
+        stage.setSize(990, 529);
         cards.show(root, CARD_TRADE_VIEW);
     }
 

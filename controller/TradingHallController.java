@@ -74,7 +74,15 @@ public class TradingHallController implements ActionListener {
         }
         Player p1 = findPlayerByName(mName);
         Player p2 = findPlayerByName(cName);
-        sceneManager.showTradeView(p1, p2, players);
+        if (p1.getCharacters().isEmpty() || p2.getCharacters().isEmpty()) {
+            JOptionPane.showMessageDialog(view,
+                    "Both players must have at least one character to trade.",
+                    "Invalid Selection", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        model.core.Character mChar = p1.getCharacters().get(0);
+        model.core.Character cChar = p2.getCharacters().get(0);
+        sceneManager.showTradeView(mChar, cChar, players);
     }
 
     private Player findPlayerByName(String name) {
