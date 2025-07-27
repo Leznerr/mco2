@@ -109,6 +109,7 @@ public class TradingHallView extends JFrame {
         buttonPanel.setOpaque(false);
 
         btnStartTrading = new RoundedButton(START_TRADING);
+        btnStartTrading.setEnabled(false);
         btnReturnToMenu = new RoundedButton(RETURN_TO_MENU);
 
         buttonPanel.add(btnStartTrading);
@@ -204,6 +205,11 @@ public class TradingHallView extends JFrame {
 
     public String getSelectedClient() {
         return (String) dropdown2.getSelectedItem();
+    }
+
+    /** Enables or disables the start trading button. */
+    public void setStartTradingEnabled(boolean enabled) {
+        btnStartTrading.setEnabled(enabled);
     }
 
 }
