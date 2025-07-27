@@ -14,6 +14,7 @@ public class TradeView extends JFrame {
     // Button labels
     public static final String TRADE = "Trade";
     public static final String RETURN = "Return";
+    public static final String CANCEL = "CANCEL";
 
     // UI components
     private JButton btnTrade, btnReturn;
@@ -291,7 +292,9 @@ public class TradeView extends JFrame {
      * @param listener The listener
      */
     public void setActionListener(ActionListener listener) {
-        // Bottom Panel Buttons
+        btnTrade.setActionCommand(TRADE);
+        btnReturn.setActionCommand(CANCEL);
+
         btnTrade.addActionListener(listener);
         btnReturn.addActionListener(listener);
     }
@@ -377,6 +380,45 @@ public class TradeView extends JFrame {
         }
 
         return selectedItem;
+    }
+
+    // ------------------------------------------------------------------
+    // Public API required by TradeController
+    // ------------------------------------------------------------------
+
+    /** Returns the first selected character for trading, or {@code null}. */
+    public model.core.Character getSelectedChar1() {
+        return null;
+    }
+
+    /** Returns the second selected character for trading, or {@code null}. */
+    public model.core.Character getSelectedChar2() {
+        return null;
+    }
+
+    /** Returns the list of items offered by character 1. */
+    public java.util.List<model.item.MagicItem> getSelectedItems1() {
+        return java.util.Collections.emptyList();
+    }
+
+    /** Returns the list of items offered by character 2. */
+    public java.util.List<model.item.MagicItem> getSelectedItems2() {
+        return java.util.Collections.emptyList();
+    }
+
+    /** Displays an error dialog with the provided message. */
+    public void showError(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    /** Displays an informational dialog with the provided message. */
+    public void showInfo(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    /** Refreshes any item and character lists displayed by this view. */
+    public void refreshLists() {
+        // no-op for this simplified implementation
     }
 
 }
