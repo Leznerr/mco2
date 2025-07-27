@@ -80,6 +80,17 @@ public final class Inventory implements Serializable {
         return Collections.unmodifiableList(new ArrayList<>(items));
     }
 
+    /**
+     * Checks whether the specified item is currently stored in this inventory.
+     *
+     * @param item the item to look for (must not be {@code null})
+     * @return {@code true} if the inventory contains the item
+     */
+    public boolean hasItem(MagicItem item) {
+        InputValidator.requireNonNull(item, "Item to check");
+        return items.contains(item);
+    }
+
 
      *
      * @param item the item to add (must not be {@code null})
