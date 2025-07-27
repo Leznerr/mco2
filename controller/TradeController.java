@@ -53,6 +53,7 @@ public class TradeController implements ActionListener {
         InputValidator.requireNonNull(view, "view");
         this.view = view;
         view.setActionListener(this);
+        view.refresh();
     }
 
     @Override
@@ -62,6 +63,10 @@ public class TradeController implements ActionListener {
             handleTrade();
         } else if (TradeView.RETURN.equals(cmd)) {
             view.dispose();
+        } else if (TradeView.MERCHANT_SELECT.equals(cmd)) {
+            updateMerchantSelection();
+        } else if (TradeView.CLIENT_SELECT.equals(cmd)) {
+            updateClientSelection();
         }
     }
 
@@ -206,10 +211,14 @@ public class TradeController implements ActionListener {
     }
 
     private void handleTrade() {
-        Character merchant = view.getMerchant();
-        Character client = view.getClient();
+        Character merchant = view.getSelectedMerchantCharacter();
+        Character client = view.getSelectedClientCharacter();
         List<MagicItem> mItems = view.getSelectedMerchantItems();
         List<MagicItem> cItems = view.getSelectedClientItems();
+        if (merchant == null || client == null || merchant == client) {
+            view.showError("Select two different characters.");
+            return;
+        }
         if (mItems.isEmpty() && cItems.isEmpty()) {
             view.showError("Select at least one item to trade.");
             return;
@@ -223,6 +232,26 @@ public class TradeController implements ActionListener {
         } catch (GameException ex) {
             view.showError(ex.getMessage());
         }
+    }
+
+    private void updateMerchantSelection() {
+        Character c = view.getSelectedMerchantCharacter();
+        if (c != null) {
+            view.updateMerchantItems(c.getInventory().getAllItems());
+        } else {
+            view.updateMerchantItems(java.util.Collections.emptyList());
+        }
+        view.refresh();
+    }
+
+    private void updateClientSelection() {
+        Character c = view.getSelectedClientCharacter();
+        if (c != null) {
+            view.updateClientItems(c.getInventory().getAllItems());
+        } else {
+            view.updateClientItems(java.util.Collections.emptyList());
+        }
+        view.refresh();
     }
 
     private String buildLogMessage(Character m, List<MagicItem> mItems,

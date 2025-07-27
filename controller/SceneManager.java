@@ -250,12 +250,7 @@ public final class SceneManager {
         }
         stage.setVisible(false);
 
-        model.core.Character mChar = merchant.getCharacters().isEmpty()
-                ? null : merchant.getCharacters().getFirst();
-        model.core.Character cChar = client.getCharacters().isEmpty()
-                ? null : client.getCharacters().getFirst();
-
-        tradeView = new TradeView(merchant, mChar, client, cChar);
+        tradeView = new TradeView(merchant, client);
         try {
             tradeController = new TradeController(tradeView,
                     gameManagerController.getPlayers());
