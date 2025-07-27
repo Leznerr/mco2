@@ -1,239 +1,382 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import javax.swing.ListSelectionModel;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
-import model.core.Character;
-import model.core.Player;
-import model.item.MagicItem;
+// import controller._;
 
 /**
- * Simple GUI for trading magic items between two players.
- * <p>
- * Purely responsible for presenting item lists and collecting
- * user selections. All validation and persistence are handled
- * in the controller layer.
+ * The trading view for Fatal Fantasy: Tactics Game.
  */
-public class TradeView extends JFrame {
+public class TradingView extends JFrame {
 
-    public static final String TRADE = "TRADE";
-    /** Action command for cancelling/returning from the view. */
-    public static final String CANCEL = "Cancel";
+    // Button labels
+    public static final String TRADE = "Trade";
+    public static final String RETURN = "Return";
 
-    private final Player player1;
-    private final Player player2;
-
-    private final JComboBox<Character> charBox1;
-    private final JComboBox<Character> charBox2;
-
-    private final javax.swing.JList<MagicItem> itemList1;
-    private final javax.swing.JList<MagicItem> itemList2;
-
-    private final JButton btnTrade;
-    private final JButton btnCancel;
-
-    public TradeView(Player p1, Player p2) {
-        super("Trade Items");
-        this.player1 = p1;
-        this.player2 = p2;
-
-        charBox1 = new JComboBox<>(p1.getCharacters().toArray(new Character[0]));
-        charBox2 = new JComboBox<>(p2.getCharacters().toArray(new Character[0]));
-
-        itemList1 = new javax.swing.JList<>();
-        itemList2 = new javax.swing.JList<>();
-
-        itemList1.setCellRenderer(new ItemRenderer());
-        itemList2.setCellRenderer(new ItemRenderer());
-        itemList1.setVisibleRowCount(8);
-        itemList2.setVisibleRowCount(8);
-        itemList1.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        itemList2.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-
-        btnTrade = new RoundedButton("Trade");
-        btnCancel = new RoundedButton("Return");
+    // UI components
+    private JButton btnTrade, btnReturn;
+    private JComboBox<String> cmbP0Items = new JComboBox<>();
+    private JComboBox<String> cmbT0Items = new JComboBox<>();
+    private JTextArea p0NameArea, t0NameArea;
+    private JTextArea p0ItemsArea, t0ItemsArea, tradeLogArea;
+    
+    /**
+     * Constructs the Trading UI of Fatal Fantasy: Tactics Game.
+     */
+    public TradingView() {
+        super("Fatal Fantasy: Tactics | Trading");
 
         initUI();
-        configureWindow();
-        bindComboListeners();
-        refreshLists();
-    }
+        
+        setSize(1200, 700);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-    private void configureWindow() {
-        setSize(600, 400);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int choice = JOptionPane.showConfirmDialog(
+                    TradingView.this,
+                    "Are you sure you want to quit?",
+                    "Confirm Exit",
+                    JOptionPane.YES_NO_OPTION
+                );
+
+                if (choice == JOptionPane.YES_OPTION) {
+                    dispose(); // closes the window
+                }
+            }
+        });
+
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setResizable(false);
+        setVisible(true);
     }
 
+
+    /**
+     * Initializes the UI components and arranges them in the main layout.
+     */
     private void initUI() {
-        JPanel main = new JPanel(new BorderLayout());
-
-        JPanel lists = new JPanel(new GridLayout(1, 2, 10, 10));
-        lists.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        JPanel left = new JPanel();
-        left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
-        left.add(createDropdownPanel("Character", charBox1));
-        left.add(Box.createVerticalStrut(10));
-        left.add(createListPanel("Items", itemList1));
-        lists.add(left);
-
-        JPanel right = new JPanel();
-        right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
-        right.add(createDropdownPanel("Character", charBox2));
-        right.add(Box.createVerticalStrut(10));
-        right.add(createListPanel("Items", itemList2));
-        lists.add(right);
-
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        buttons.add(btnTrade);
-        buttons.add(btnCancel);
-
-        main.add(lists, BorderLayout.CENTER);
-        main.add(buttons, BorderLayout.SOUTH);
-
-        setContentPane(main);
-    }
-
-    private void bindComboListeners() {
-        charBox1.addItemListener(e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                refreshLists();
+        JPanel backgroundPanel = new JPanel() {
+            private Image bg = new ImageIcon("view/assets/TradingBG.jpg").getImage();
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                int panelWidth = getWidth();
+                int panelHeight = getHeight();
+                int imgWidth = bg.getWidth(this);
+                int imgHeight = bg.getHeight(this);
+                double scale = Math.max(
+                    panelWidth / (double) imgWidth,
+                    panelHeight / (double) imgHeight
+                );
+                int width = (int) (imgWidth * scale);
+                int height = (int) (imgHeight * scale);
+                int x = (panelWidth - width) / 2;
+                int y = (panelHeight - height) / 2 + 80;
+                g.drawImage(bg, x, y, width, height, this);
             }
-        });
-        charBox2.addItemListener(e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                refreshLists();
-            }
-        });
+        };
+        backgroundPanel.setLayout(new BorderLayout());
+
+        JPanel leftPanel = new JPanel();
+        JPanel rightPanel = new JPanel();
+        JPanel centerPanel = new JPanel();
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+        leftPanel.setOpaque(false);
+        rightPanel.setOpaque(false);
+        centerPanel.setOpaque(false);
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        bottomPanel.setOpaque(false);
+
+        centerPanel.add(Box.createVerticalStrut(100));
+
+        // Rounded display box for battle log
+        RoundedDisplayBox tradeLogPanel = new RoundedDisplayBox();
+        tradeLogPanel.setPreferredSize(new Dimension(400, 380));
+        tradeLogPanel.setMaximumSize(new Dimension(400, 380));
+        tradeLogPanel.setLayout(new BorderLayout());
+        tradeLogPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Text area for battle log
+        tradeLogArea = new JTextArea();
+        tradeLogArea.setFont(new Font("Serif", Font.PLAIN, 18));
+        tradeLogArea.setForeground(Color.WHITE);
+        tradeLogArea.setOpaque(false);
+        tradeLogArea.setEditable(false);
+        tradeLogArea.setLineWrap(true);
+        tradeLogArea.setWrapStyleWord(true);
+
+        // Scroll pane
+        JScrollPane scrollPane = new JScrollPane(tradeLogArea);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        tradeLogPanel.add(scrollPane, BorderLayout.CENTER);
+
+        centerPanel.add(tradeLogPanel);
+        centerPanel.add(Box.createVerticalStrut(30));
+
+        // Bottom Panel (buttons)
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 50));
+        buttonPanel.setOpaque(false);
+
+        btnTrade = new RoundedButton(TRADE);
+        btnReturn = new RoundedButton(RETURN);
+
+        buttonPanel.add(btnTrade);
+        buttonPanel.add(btnReturn);
+
+        // Left & Right Panels
+        setupPanel(leftPanel, 1);
+        setupPanel(rightPanel, 2);
+
+        backgroundPanel.add(leftPanel, BorderLayout.WEST);
+        backgroundPanel.add(centerPanel, BorderLayout.CENTER);
+        backgroundPanel.add(rightPanel, BorderLayout.EAST);
+        backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+
+        setContentPane(backgroundPanel);
     }
 
-    public void refreshLists() {
-        Character c1 = getSelectedChar1();
-        Character c2 = getSelectedChar2();
 
-        javax.swing.DefaultListModel<MagicItem> m1 = new javax.swing.DefaultListModel<>();
-        if (c1 != null) {
-            for (MagicItem m : c1.getInventory().getAllItems()) {
-                m1.addElement(m);
-            }
-        }
-        itemList1.setModel(m1);
-
-        javax.swing.DefaultListModel<MagicItem> m2 = new javax.swing.DefaultListModel<>();
-        if (c2 != null) {
-            for (MagicItem m : c2.getInventory().getAllItems()) {
-                m2.addElement(m);
-            }
-        }
-        itemList2.setModel(m2);
-    }
-
-    public Character getSelectedChar1() {
-        return (Character) charBox1.getSelectedItem();
-    }
-
-    public Character getSelectedChar2() {
-        return (Character) charBox2.getSelectedItem();
-    }
-
-    public java.util.List<MagicItem> getSelectedItems1() {
-        return itemList1.getSelectedValuesList();
-    }
-
-    public java.util.List<MagicItem> getSelectedItems2() {
-        return itemList2.getSelectedValuesList();
-    }
-
-    public void setActionListener(ActionListener l) {
-        btnTrade.setActionCommand(TRADE);
-        btnCancel.setActionCommand(CANCEL);
-        btnTrade.addActionListener(l);
-        btnCancel.addActionListener(l);
-    }
-
-    public void showInfo(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Info", JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    public void showError(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    private JPanel createDropdownPanel(String labelText, JComboBox<?> dropdown) {
-        JPanel panel = new JPanel();
+    /**
+     * Helper method to set up the player & trader panel with its components.
+     * 
+     * @param panel the panel to set up
+     * @param ID the ID of the player or trader
+     */
+    private void setupPanel(JPanel panel, int ID) {
         panel.setOpaque(false);
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        Dimension fixedPanelSize = new Dimension(320, 700);
+        panel.setPreferredSize(fixedPanelSize);
+        panel.setMinimumSize(fixedPanelSize);
+        panel.setMaximumSize(fixedPanelSize);
 
-        OutlinedLabel label = new OutlinedLabel(labelText);
-        Dimension labelSize = new Dimension(200, label.getPreferredSize().height);
-        label.setPreferredSize(labelSize);
-        label.setMinimumSize(labelSize);
-        label.setMaximumSize(labelSize);
-        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+        panel.add(Box.createVerticalStrut(60));
 
-        dropdown.setFont(new Font("Serif", Font.BOLD, 18));
-        Dimension ddSize = new Dimension(350, 40);
-        dropdown.setPreferredSize(ddSize);
-        dropdown.setMaximumSize(ddSize);
-        dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+        String headlineImagePath;
 
-        panel.add(label);
-        panel.add(dropdown);
-        return panel;
+        // Logo
+        if (ID == 1) {
+            headlineImagePath = String.format("view/assets/PlayerTradingLogo.png");
+        } else {
+            headlineImagePath = String.format("view/assets/TraderTradingLogo.png");
+
+        }
+        ImageIcon logoIcon = new ImageIcon(headlineImagePath);
+        Image logoImg = logoIcon.getImage().getScaledInstance(200, -1, Image.SCALE_SMOOTH);
+        JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
+        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(logoLabel);
+
+        panel.add(Box.createVerticalStrut(10));
+
+        // Name Area
+        RoundedDisplayBox namePanel = new RoundedDisplayBox();
+        namePanel.setPreferredSize(new Dimension(280, 40));
+        namePanel.setMaximumSize(new Dimension(280, 40));
+        namePanel.setMinimumSize(new Dimension(280, 40));
+        namePanel.setLayout(new BorderLayout());
+        namePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JTextArea nameArea;
+        if (ID == 1) {
+            if (p0NameArea == null) p0NameArea = new JTextArea();
+            nameArea = p0NameArea;
+        } else {
+            if (t0NameArea == null) t0NameArea = new JTextArea();
+            nameArea = t0NameArea;
+        }
+        nameArea.setFont(new Font("Serif", Font.PLAIN, 18));
+        nameArea.setForeground(Color.WHITE);
+        nameArea.setOpaque(false);
+        nameArea.setEditable(false);
+        nameArea.setLineWrap(true);
+        nameArea.setWrapStyleWord(true);
+        namePanel.add(nameArea, BorderLayout.CENTER);
+
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(namePanel);
+
+        // Abilities/Items Area
+        RoundedDisplayBox itemsPanel = new RoundedDisplayBox();
+        itemsPanel.setPreferredSize(new Dimension(280, 200));
+        itemsPanel.setMaximumSize(new Dimension(280, 200));
+        itemsPanel.setMinimumSize(new Dimension(280, 200));
+        itemsPanel.setLayout(new BorderLayout());
+        itemsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JTextArea itemsArea;
+        if (ID == 1) {
+            if (p0ItemsArea == null) {
+                p0ItemsArea = new JTextArea();
+            }
+            itemsArea = p0ItemsArea;
+        } else {
+            if (t0ItemsArea == null) {
+                t0ItemsArea = new JTextArea();
+            }
+            itemsArea = t0ItemsArea;
+        }
+        itemsArea.setFont(new Font("Serif", Font.PLAIN, 18));
+        itemsArea.setForeground(Color.WHITE);
+        itemsArea.setOpaque(false);
+        itemsArea.setEditable(false);
+        itemsArea.setLineWrap(true);
+        itemsArea.setWrapStyleWord(true);
+
+        JScrollPane scrollPane = new JScrollPane(itemsArea);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        itemsPanel.add(scrollPane, BorderLayout.CENTER);
+
+        panel.add(Box.createVerticalStrut(20));
+        panel.add(itemsPanel);
+
+        // Dropdown and Use Button
+        panel.add(Box.createVerticalStrut(30));
+        JComboBox<String> cmbItems;
+        if (ID == 1) {
+            cmbItems = cmbP0Items;
+        } else {
+            cmbItems = cmbT0Items;
+        }
+        panel.add(createDropdownPanel("Select magic item to trade:", cmbItems));
+
+        panel.add(Box.createVerticalGlue());
     }
 
-    private JPanel createListPanel(String labelText, javax.swing.JList<?> list) {
+
+    /**
+     * Helper method to create dropdown panels with outlined labels
+     * 
+     * @param labelText the text for the label
+     * @param dropdown the JComboBox to be added
+     * @return a JPanel containing the label and dropdown
+     */
+    private JPanel createDropdownPanel(String labelText, JComboBox<String> dropdown) {
         JPanel panel = new JPanel();
         panel.setOpaque(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         OutlinedLabel label = new OutlinedLabel(labelText);
-        label.setAlignmentX(Component.LEFT_ALIGNMENT);
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        label.setFont(new Font("Serif", Font.BOLD, 17));
 
-        javax.swing.JScrollPane scroll = new javax.swing.JScrollPane(list);
-        scroll.setAlignmentX(Component.LEFT_ALIGNMENT);
-        scroll.setPreferredSize(new Dimension(350, 150));
+        dropdown.setFont(new Font("Serif", Font.BOLD, 18));
+        dropdown.setMaximumSize(new Dimension(250, 35));
+        dropdown.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         panel.add(label);
-        panel.add(scroll);
+        panel.add(Box.createVerticalStrut(5));
+        panel.add(dropdown);
+
         return panel;
     }
 
-    /** Simple list cell renderer showing item details. */
-    private static class ItemRenderer extends javax.swing.DefaultListCellRenderer {
-        @Override
-        public Component getListCellRendererComponent(javax.swing.JList<?> list,
-                                                      Object value,
-                                                      int index,
-                                                      boolean isSelected,
-                                                      boolean cellHasFocus) {
-            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            if (value instanceof MagicItem m) {
-                String text = m.getName() + " [" + m.getItemType() + "]";
-                if (m instanceof model.item.SingleUseItem su) {
-                    text += " - " + su.getEffectType() + " " + su.getEffectValue();
-                }
-                setText(text);
-            }
-            return this;
+
+    /**
+     * Sets the action listener for the button click events.
+     * 
+     * @param listener The listener
+     */
+    public void setActionListener(ActionListener listener) {
+        // Bottom Panel Buttons
+        btnTrade.addActionListener(listener);
+        btnReturn.addActionListener(listener);
+    }
+
+
+    /**
+     * Sets the items options in the dropdown.
+     * 
+     * @param ID the ID of the player or trader
+     * @param options the list of item options to set
+     */
+    public void updateItemDropdown(int ID, java.util.List<String> options) {
+        JComboBox<String> combo;
+
+        if (ID == 1) {
+            combo = cmbP0Items;
+        } else {
+            combo = cmbT0Items;
+        }
+
+        combo.removeAllItems();
+
+        for (String option : options) {
+            combo.addItem(option);
         }
     }
-}
 
+
+    /**
+     * Sets the player name and trader name
+     * 
+     * @param ID the ID of the player or trader
+     * @param text the text to set
+     */
+    public void setPlayerTraderName(int ID, String text) {
+        switch (ID) {
+            case 1 -> p0NameArea.setText(text);
+            case 2 -> t0NameArea.setText(text);
+        }
+    }
+
+
+    /**
+     * Sets the items for the player and trader
+     * 
+     * @param ID the ID of the player or trader
+     * @param items the items text
+     */
+    public void setPlayerTraderItems(int ID, String items) {
+        switch (ID) {
+            case 1 -> p0ItemsArea.setText(items);
+            case 2 -> t0ItemsArea.setText(items);
+        }
+    }
+
+
+    /**
+     * Appends text to the trade log
+     * 
+     * @param text the text to append
+     */
+    public void appendTradeLog(String text) {
+        tradeLogArea.append(text + "\n");
+    }
+    
+
+    /**
+     * Resets all dropdown selections.
+     */
+    public void resetFields() {
+        cmbP0Items.setSelectedIndex(-1);
+        cmbT0Items.setSelectedIndex(-1);
+    }
+
+
+    public String getSelectedAbility(int ID) {
+        String selectedItem;
+
+        if (ID == 1) {
+            selectedItem = (String) cmbP0Items.getSelectedItem();
+        } else {
+            selectedItem = (String) cmbT0Items.getSelectedItem(); 
+        }
+
+        return selectedItem;
+    }
+
+}

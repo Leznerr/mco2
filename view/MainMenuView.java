@@ -16,35 +16,28 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import controller.GameManagerController;
+// import controller.____;
 
 /**
  * The main menu view for Fatal Fantasy: Tactics Game.
  */
 public class MainMenuView extends JFrame {
-    // Action commands for controller to respond to
-    public static final String ACTION_REGISTER_PLAYERS = "ACTION_REGISTER_PLAYERS";
-    public static final String ACTION_MANAGE_CHARACTERS = "ACTION_MANAGE_CHARACTERS";
-    public static final String ACTION_HALL_OF_FAME = "ACTION_HALL_OF_FAME";
-    public static final String ACTION_START_BATTLE = "ACTION_START_BATTLE";
-    public static final String ACTION_TRADING_HALL = "ACTION_TRADING_HALL";
-    public static final String ACTION_EXIT = "ACTION_EXIT";
-
-    // UI Labels
-    private static final String LABEL_REGISTER_PLAYERS = "Register Players";
-    private static final String LABEL_MANAGE_CHARACTERS = "Manage Characters";
-    private static final String LABEL_HALL_OF_FAME = "Hall Of Fame";
-    private static final String LABEL_TRADING_HALL = "Trading Hall";
-    private static final String LABEL_START_BATTLE = "Start Battle";
-    private static final String LABEL_EXIT = "Exit";
+    // Button labels
+    public static final String REGISTER_PLAYERS = "Register Players";
+    public static final String MANAGE_CHARACTERS = "Manage Characters";
+    public static final String START_BATTLE = "Start Battle";
+    public static final String TRADE = "Trading Hall";
+    public static final String HALL_OF_FAME = "Hall Of Fame";
+    public static final String EXIT = "Exit";
 
     // UI components
     private JButton btnRegisterPlayers;
     private JButton btnManageCharacters;
-    private JButton btnHallOfFame;
-    private JButton btnTradingHall;
     private JButton btnStartBattle;
+    private JButton btnTrade;
+    private JButton btnHallOfFame;
     private JButton btnExit;
+
 
     /**
      * Constructs the Main Menu UI of Fatal Fantasy: Tactics Game.
@@ -53,7 +46,7 @@ public class MainMenuView extends JFrame {
         super("Fatal Fantasy: Tactics | Main Menu");
 
         initUI();
-
+        
         setSize(800, 700);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -68,22 +61,23 @@ public class MainMenuView extends JFrame {
                 );
 
                 if (choice == JOptionPane.YES_OPTION) {
-                    dispose(); 
-                    System.exit(0);
+                    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // closes all windows
                 }
             }
         });
 
         setLocationRelativeTo(null);
         setResizable(false);
+        setVisible(true);
     }
+
 
     /**
      * Initializes the UI components and arranges them in the main layout.
      */
     private void initUI() {
         JPanel backgroundPanel = new JPanel() {
-            private final Image bg = new ImageIcon("view/assets/MainMenuBG.jpg").getImage();
+            private Image bg = new ImageIcon("view/assets/MainMenuBG.jpg").getImage();
 
             @Override
             protected void paintComponent(Graphics g) {
@@ -103,114 +97,70 @@ public class MainMenuView extends JFrame {
                 g.drawImage(bg, x, y, width, height, this);
             }
         };
-
         
-
         backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.Y_AXIS));
-        backgroundPanel.add(Box.createVerticalStrut(40));
 
-        // Logo
+        // Add vertical space at the top
+        backgroundPanel.add(Box.createVerticalStrut(30));
+
+        // Logo image centered and scaled
         ImageIcon logoIcon = new ImageIcon("view/assets/MainLogoBG2.png");
         Image logoImg = logoIcon.getImage().getScaledInstance(300, -1, Image.SCALE_SMOOTH);
         JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         backgroundPanel.add(logoLabel);
-        backgroundPanel.add(Box.createVerticalStrut(40));
 
+        // Add vertical space between logo and buttons
+        backgroundPanel.add(Box.createVerticalStrut(20));
+
+        // Panel for buttons, centered
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 
-        btnRegisterPlayers = new RoundedButton(LABEL_REGISTER_PLAYERS);
-        btnRegisterPlayers.setActionCommand(ACTION_REGISTER_PLAYERS);
+        btnRegisterPlayers = new RoundedButton(REGISTER_PLAYERS);
+        btnManageCharacters = new RoundedButton(MANAGE_CHARACTERS);
+        btnStartBattle = new RoundedButton(START_BATTLE);
+        btnTrade = new RoundedButton(TRADE);
+        btnHallOfFame = new RoundedButton(HALL_OF_FAME);
+        btnExit = new RoundedButton(EXIT);
 
-        btnManageCharacters = new RoundedButton(LABEL_MANAGE_CHARACTERS);
-        btnManageCharacters.setActionCommand(ACTION_MANAGE_CHARACTERS);
-
-        btnHallOfFame = new RoundedButton(LABEL_HALL_OF_FAME);
-        btnHallOfFame.setActionCommand(ACTION_HALL_OF_FAME);
-
-        btnTradingHall = new RoundedButton(LABEL_TRADING_HALL);
-        btnTradingHall.setActionCommand(ACTION_TRADING_HALL);
-
-        btnStartBattle = new RoundedButton(LABEL_START_BATTLE);
-        btnStartBattle.setActionCommand(ACTION_START_BATTLE);
-
-        btnExit = new RoundedButton(LABEL_EXIT);
-        btnExit.setActionCommand(ACTION_EXIT);
-
+        // Add buttons with vertical spacing (how they stack)
         buttonPanel.add(btnRegisterPlayers);
-        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(Box.createVerticalStrut(8));
         buttonPanel.add(btnManageCharacters);
-        buttonPanel.add(Box.createVerticalStrut(10));
-        buttonPanel.add(btnHallOfFame);
-        buttonPanel.add(Box.createVerticalStrut(10));
-        buttonPanel.add(btnTradingHall);
-        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(Box.createVerticalStrut(8));
         buttonPanel.add(btnStartBattle);
-        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(Box.createVerticalStrut(8));
+        buttonPanel.add(btnTrade);
+        buttonPanel.add(Box.createVerticalStrut(8));
+        buttonPanel.add(btnHallOfFame);
+        buttonPanel.add(Box.createVerticalStrut(8));
         buttonPanel.add(btnExit);
 
+        // Center the button panel horizontally
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         backgroundPanel.add(buttonPanel);
+
+        // Add vertical glue to push everything to the center
         backgroundPanel.add(Box.createVerticalGlue());
 
         setContentPane(backgroundPanel);
     }
 
+
     /**
      * Sets the action listener for the button click events.
      * 
-     * @param listener The ActionListener (usually a controller)
+     * @param listener The listener
      */
     public void setActionListener(ActionListener listener) {
         btnRegisterPlayers.addActionListener(listener);
         btnManageCharacters.addActionListener(listener);
         btnHallOfFame.addActionListener(listener);
-        btnTradingHall.addActionListener(listener);
+        btnTrade.addActionListener(listener);
         btnStartBattle.addActionListener(listener);
         btnExit.addActionListener(listener);
-    }
-
-    /**
-     * Delegates action handling to the controller.
-     */
-    public void setController(GameManagerController controller) {
-        setActionListener(controller); // Assumes controller implements ActionListener
-    }
-
-    /** Dialog helpers */
-    public void showInfoMessage(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Info", JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    public void showErrorMessage(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-       // Getter methods for each button
-    public JButton getRegisterPlayersButton() {
-        return btnRegisterPlayers;
-    }
-
-    public JButton getManageCharactersButton() {
-        return btnManageCharacters;
-    }
-
-    public JButton getHallOfFameButton() {
-        return btnHallOfFame;
-    }
-
-    public JButton getTradingHallButton() {
-        return btnTradingHall;
-    }
-
-    public JButton getStartBattleButton() {
-        return btnStartBattle;
-    }
-
-    public JButton getExitButton() {
-        return btnExit;
     }
     
 }

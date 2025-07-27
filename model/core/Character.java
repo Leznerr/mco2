@@ -1,7 +1,12 @@
 package model.core;
 
-import model.battle.LevelingSystem;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import model.battle.CombatLog;
+import model.battle.LevelingSystem;
 import model.item.Inventory;
 import model.item.MagicItem;
 import model.util.Constants;
@@ -9,11 +14,6 @@ import model.util.GameException;
 import model.util.InputValidator;
 import model.util.StatusEffect;
 import model.util.StatusEffectType;
-import java.io.Serializable;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Represents a combat-ready party member in Fatal Fantasy: Tactics.
