@@ -3,6 +3,7 @@ package view;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -29,6 +30,14 @@ public class MainMenuView extends JFrame {
     public static final String TRADE = "Trading Hall";
     public static final String HALL_OF_FAME = "Hall Of Fame";
     public static final String EXIT = "Exit";
+
+    // Action command constants
+    public static final String ACTION_REGISTER_PLAYERS = "ACTION_REGISTER_PLAYERS";
+    public static final String ACTION_MANAGE_CHARACTERS = "ACTION_MANAGE_CHARACTERS";
+    public static final String ACTION_HALL_OF_FAME = "ACTION_HALL_OF_FAME";
+    public static final String ACTION_TRADING_HALL = "ACTION_TRADING_HALL";
+    public static final String ACTION_START_BATTLE = "ACTION_START_BATTLE";
+    public static final String ACTION_EXIT = "ACTION_EXIT";
 
     // UI components
     private JButton btnRegisterPlayers;
@@ -124,6 +133,13 @@ public class MainMenuView extends JFrame {
         btnTrade = new RoundedButton(TRADE);
         btnHallOfFame = new RoundedButton(HALL_OF_FAME);
         btnExit = new RoundedButton(EXIT);
+
+        btnRegisterPlayers.setActionCommand(ACTION_REGISTER_PLAYERS);
+        btnManageCharacters.setActionCommand(ACTION_MANAGE_CHARACTERS);
+        btnHallOfFame.setActionCommand(ACTION_HALL_OF_FAME);
+        btnTrade.setActionCommand(ACTION_TRADING_HALL);
+        btnStartBattle.setActionCommand(ACTION_START_BATTLE);
+        btnExit.setActionCommand(ACTION_EXIT);
 
         // Add buttons with consistent vertical spacing
         buttonPanel.add(btnRegisterPlayers);

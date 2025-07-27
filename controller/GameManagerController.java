@@ -78,7 +78,6 @@ public final class GameManagerController implements ActionListener {
 
     /** Wires this controller to the main menu buttons. */
     private void bindUI() {
-        mainMenuView.setController(this);
         mainMenuView.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {

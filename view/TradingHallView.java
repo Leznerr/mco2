@@ -159,6 +159,9 @@ public class TradingHallView extends JFrame {
      * @param listener The listener
      */
     public void setActionListener(ActionListener listener) {
+        btnStartTrading.setActionCommand(START_TRADING);
+        btnReturnToMenu.setActionCommand(RETURN_TO_MENU);
+
         btnStartTrading.addActionListener(listener);
         btnReturnToMenu.addActionListener(listener);
         dropdown1.addActionListener(listener);
