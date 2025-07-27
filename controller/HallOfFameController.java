@@ -2,25 +2,26 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
-import java.util.stream.Collectors;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.swing.JOptionPane;
 
-import controller.SceneManager;
-
-import model.core.Player;
 import model.core.Character;
 import model.core.HallOfFameEntry;
+import model.core.Player;
 import model.util.GameException;
 import model.util.InputValidator;
-import persistence.SaveLoadService;
 import persistence.HallOfFameData;
+import persistence.SaveLoadService;
 import view.HallOfFameCharactersView;
-import view.HallOfFamePlayersView;
 import view.HallOfFameManagementView;
+import view.HallOfFamePlayersView;
 
 /**
  * Controller that manages the Hall of Fame leaderboard.

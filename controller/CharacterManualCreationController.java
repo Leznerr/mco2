@@ -1,5 +1,9 @@
 package controller;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import model.core.Ability;
 import model.core.Character;
 import model.core.ClassType;
@@ -10,10 +14,6 @@ import model.service.RaceService;
 import model.util.GameException;
 import model.util.InputValidator;
 import view.CharacterManualCreationView;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.Arrays;
 
 /**
  * Controller for Manual Character Creation screen in Fatal Fantasy: Tactics.

@@ -1,16 +1,36 @@
 package view;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.stream.Collectors;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 // import controller._;
 
 /**
  * The trading view for Fatal Fantasy: Tactics Game.
  */
-public class TradingView extends JFrame {
+public class TradeView extends JFrame {
 
     private model.core.Character merchant;
     private model.core.Character client;
@@ -29,7 +49,7 @@ public class TradingView extends JFrame {
     /**
      * Constructs the Trading UI of Fatal Fantasy: Tactics Game.
      */
-    public TradingView() {
+    public TradeView() {
         super("Fatal Fantasy: Tactics | Trading");
 
         initUI();
@@ -41,7 +61,7 @@ public class TradingView extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 int choice = JOptionPane.showConfirmDialog(
-                    TradingView.this,
+                    TradeView.this,
                     "Are you sure you want to quit?",
                     "Confirm Exit",
                     JOptionPane.YES_NO_OPTION
@@ -59,7 +79,7 @@ public class TradingView extends JFrame {
     }
 
     /** Convenience constructor wiring the merchant and client characters. */
-    public TradingView(model.core.Character merchant, model.core.Character client) {
+    public TradeView(model.core.Character merchant, model.core.Character client) {
         this();
         this.merchant = merchant;
         this.client = client;

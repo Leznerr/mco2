@@ -84,7 +84,6 @@ C:\Users\User\Downloads\mco2-main\mco2\view\MainMenuView.java
 C:\Users\User\Downloads\mco2-main\mco2\view\NewPlayersRegistrationView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\OutlinedLabel.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\PlayerCharacterManagementView.java 
-C:\Users\User\Downloads\mco2-main\mco2\view\PlayerCharManagementView (1).java 
 C:\Users\User\Downloads\mco2-main\mco2\view\PlayerCharManagementView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\PlayerDeleteView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\PlayerRegistrationView.java 
