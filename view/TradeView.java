@@ -31,7 +31,8 @@ import model.item.MagicItem;
 public class TradeView extends JFrame {
 
     public static final String TRADE = "TRADE";
-    public static final String RETURN = "RETURN";
+    /** Action command for cancelling/returning from the view. */
+    public static final String CANCEL = "Cancel";
 
     private final Player player1;
     private final Player player2;
@@ -151,9 +152,29 @@ public class TradeView extends JFrame {
         return (MagicItem) itemBox2.getSelectedItem();
     }
 
+    /**
+     * Returns the currently selected item(s) from the first character list.
+     * This view only allows a single selection, but the controller expects a
+     * list so we wrap the item in an immutable list for compatibility.
+     */
+    public java.util.List<MagicItem> getSelectedItems1() {
+        MagicItem item = getSelectedItem1();
+        return item == null ? java.util.List.of() : java.util.List.of(item);
+    }
+
+    /**
+     * Returns the currently selected item(s) from the second character list.
+     * Similar to {@link #getSelectedItems1()} this wraps the single selection
+     * in a list.
+     */
+    public java.util.List<MagicItem> getSelectedItems2() {
+        MagicItem item = getSelectedItem2();
+        return item == null ? java.util.List.of() : java.util.List.of(item);
+    }
+
     public void setActionListener(ActionListener l) {
         btnTrade.setActionCommand(TRADE);
-        btnCancel.setActionCommand(RETURN);
+        btnCancel.setActionCommand(CANCEL);
         btnTrade.addActionListener(l);
         btnCancel.addActionListener(l);
     }
