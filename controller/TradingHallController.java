@@ -46,6 +46,7 @@ public class TradingHallController implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
+        System.out.println("TradingHallController action: " + cmd);
         if (TradingHallView.RETURN_TO_MENU.equals(cmd)) {
             view.dispose();
             sceneManager.showMainMenu();
@@ -80,10 +81,10 @@ public class TradingHallController implements ActionListener {
                     "Invalid Selection", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        model.core.Character mChar = p1.getCharacters().get(0);
-        model.core.Character cChar = p2.getCharacters().get(0);
+        System.out.println("TradingHallController starting trade between "
+                + p1.getName() + " and " + p2.getName());
         view.dispose();
-        sceneManager.showTradeView(mChar, cChar, players);
+        sceneManager.showTradeView(p1, p2);
     }
 
     private Player findPlayerByName(String name) {
