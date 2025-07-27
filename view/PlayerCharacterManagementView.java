@@ -23,6 +23,7 @@ public class PlayerCharacterManagementView extends JFrame {
     private final JButton btnDeleteCharacter = new RoundedButton(DELETE_CHARACTER);
     private final JButton btnInventory = new RoundedButton(INVENTORY);
     private final JButton btnReturn = new RoundedButton(RETURN);
+    private final Dimension buttonSize = new Dimension(250, 50);
 
     private final int playerID;
 
@@ -50,7 +51,17 @@ public class PlayerCharacterManagementView extends JFrame {
             }
         };
         bgPanel.setLayout(new BoxLayout(bgPanel, BoxLayout.Y_AXIS));
-        bgPanel.add(Box.createVerticalStrut(60));
+
+        JButton[] buttons = {
+                btnViewCharacters, btnCreateCharacter, btnEditCharacter,
+                btnDeleteCharacter, btnInventory, btnReturn
+        };
+        for (JButton b : buttons) {
+            b.setPreferredSize(buttonSize);
+            b.setMaximumSize(buttonSize);
+        }
+
+        bgPanel.add(Box.createVerticalGlue());
 
         String logoPath = String.format("view/assets/Player%dCharManagLogo.png", playerID);
         ImageIcon logoIcon = new ImageIcon(logoPath);
@@ -58,12 +69,13 @@ public class PlayerCharacterManagementView extends JFrame {
         JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         bgPanel.add(logoLabel);
-        bgPanel.add(Box.createVerticalStrut(40));
+        bgPanel.add(Box.createVerticalStrut(30));
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        buttonPanel.add(Box.createVerticalGlue());
         buttonPanel.add(btnViewCharacters);
         buttonPanel.add(Box.createVerticalStrut(15));
         buttonPanel.add(btnCreateCharacter);
@@ -75,6 +87,7 @@ public class PlayerCharacterManagementView extends JFrame {
         buttonPanel.add(btnInventory);
         buttonPanel.add(Box.createVerticalStrut(15));
         buttonPanel.add(btnReturn);
+        buttonPanel.add(Box.createVerticalGlue());
         bgPanel.add(buttonPanel);
         bgPanel.add(Box.createVerticalGlue());
 
