@@ -418,12 +418,18 @@ public void actionPerformed(ActionEvent e) {
             }
 
             winner.incrementWins();
+            character.recordWin();
             hallOfFameController.addWinForPlayer(winner);
             hallOfFameController.addWinForCharacter(character);
 
-            if (winner.getCumulativeWins() % Constants.WINS_PER_REWARD == 0) {
-                MagicItem reward = MagicItemFactory.createRandomReward();
+            if (character.getWinCount() % Constants.WINS_PER_REWARD == 0) {
+                MagicItem reward = generateUniqueReward(character);
                 character.getInventory().addItem(reward);
+                javax.swing.JOptionPane.showMessageDialog(null,
+                        "New Magic Item awarded: " + reward.getName() +
+                        "\n" + reward.getDescription(),
+                        "Item Awarded",
+                        javax.swing.JOptionPane.INFORMATION_MESSAGE);
             }
 
             SaveLoadService.saveGame(new GameData(players,
@@ -433,5 +439,20 @@ public void actionPerformed(ActionEvent e) {
                     "Failed to record win: " + e.getMessage(),
                     "Win Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    /**
+     * Generates a random magic item not already held by the character, if
+     * possible. Falls back to any random item after several attempts.
+     */
+    private MagicItem generateUniqueReward(Character character) {
+        java.util.List<MagicItem> owned = character.getInventory().getAllItems();
+        MagicItem reward = MagicItemFactory.createRandomReward();
+        int attempts = 0;
+        while (owned.contains(reward) && attempts < 10) {
+            reward = MagicItemFactory.createRandomReward();
+            attempts++;
+        }
+        return reward;
     }
 }

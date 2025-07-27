@@ -120,6 +120,7 @@ public final class InventoryController implements ActionListener {
             if (sel != null) handleEquipItem(sel);
         } else if (InventoryView.UNEQUIP.equals(cmd)) {
             handleUnequipItem();
+
         }
     }
 }
