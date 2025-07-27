@@ -61,7 +61,7 @@ public class TradeController implements ActionListener {
         String cmd = e.getActionCommand();
         if (TradeView.TRADE.equals(cmd)) {
             handleTrade();
-        } else if (TradeView.CANCEL.equals(cmd)) {
+        } else if (TradeView.RETURN.equals(cmd)) {
             view.dispose();
         }
     }

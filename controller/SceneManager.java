@@ -240,6 +240,7 @@ public final class SceneManager {
         } else {
             tradingHallController.refresh();
         }
+        stage.setSize(800, 700);
         cards.show(root, CARD_TRADING_HALL);
     }
 
@@ -258,7 +259,7 @@ public final class SceneManager {
         tradeView.setActionListener(e -> {
             String cmd = e.getActionCommand();
             if (TradeView.RETURN.equals(cmd)) {
-                cards.show(root, CARD_TRADING_HALL);
+                showTradingHall(players);
             }
         });
         if (tradeView.getContentPane().getParent() == null) {
