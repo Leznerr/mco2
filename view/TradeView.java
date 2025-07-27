@@ -11,6 +11,8 @@ import java.awt.Image; // retained for background
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.ActionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -26,6 +28,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 
 // import controller._;
 
@@ -38,10 +42,14 @@ public class TradeView extends JFrame {
     private model.core.Player client;
     private model.core.Character merchantChar;
     private model.core.Character clientChar;
+    private java.util.List<model.core.Character> merchantChars = new java.util.ArrayList<>();
+    private java.util.List<model.core.Character> clientChars = new java.util.ArrayList<>();
 
     // Button labels
     public static final String TRADE = "Trade";
     public static final String RETURN = "Return";
+    public static final String MERCHANT_SELECT = "MerchantSelect";
+    public static final String CLIENT_SELECT = "ClientSelect";
 
     // UI components
     private JButton btnTrade, btnReturn;
@@ -49,7 +57,8 @@ public class TradeView extends JFrame {
     private final DefaultListModel<model.item.MagicItem> clientListModel = new DefaultListModel<>();
     private final JList<model.item.MagicItem> lstMerchantItems = new JList<>(merchantListModel);
     private final JList<model.item.MagicItem> lstClientItems = new JList<>(clientListModel);
-    private JTextArea clientNameArea, merchantNameArea;
+    private final JComboBox<String> merchantDropdown = new JComboBox<>();
+    private final JComboBox<String> clientDropdown = new JComboBox<>();
     private JTextArea tradeLogArea;
     
     /**
@@ -84,20 +93,15 @@ public class TradeView extends JFrame {
         System.out.println("TradingView default constructor");
     }
 
-    /** Convenience constructor wiring the merchant and client data. */
-    public TradeView(model.core.Player merchant,
-                     model.core.Character merchantChar,
-                     model.core.Player client,
-                     model.core.Character clientChar) {
+    /** Convenience constructor wiring the merchant and client players. */
+    public TradeView(model.core.Player merchant, model.core.Player client) {
         this();
         this.merchant = merchant;
         this.client = client;
-        this.merchantChar = merchantChar;
-        this.clientChar = clientChar;
-        System.out.println("TradingView created for merchant="
-                + (merchantChar != null ? merchantChar.getName() : "null") +
-                ", client=" + (clientChar != null ? clientChar.getName() : "null"));
+        System.out.println("TradingView created for merchant=" + merchant.getName() +
+                ", client=" + client.getName());
         populateInitialData();
+        updateTradeButtonState();
         setVisible(true);
     }
 
@@ -179,6 +183,7 @@ public class TradeView extends JFrame {
         buttonPanel.setOpaque(false);
 
         btnTrade = new RoundedButton(TRADE);
+        btnTrade.setEnabled(false);
         btnReturn = new RoundedButton(RETURN);
 
         buttonPanel.add(btnTrade);
@@ -214,50 +219,27 @@ public class TradeView extends JFrame {
 
         panel.add(Box.createVerticalStrut(40));
 
-        String headline = (ID == 1) ? "CLIENT" : "MERCHANT";
-        OutlinedLabel headerLabel = new OutlinedLabel(headline);
-        headerLabel.setFont(new Font("Serif", Font.BOLD, 26));
-        headerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(headerLabel);
+        String logoPath = (ID == 1)
+                ? "view/assets/PlayerTradingLogo.png"
+                : "view/assets/TraderTradingLogo.png";
+        ImageIcon logoIcon = new ImageIcon(logoPath);
+        Image logoImg = logoIcon.getImage().getScaledInstance(300, -1, Image.SCALE_SMOOTH);
+        JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
+        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(logoLabel);
 
         panel.add(Box.createVerticalStrut(15));
 
-        // Name Area
-        RoundedDisplayBox namePanel = new RoundedDisplayBox();
-        namePanel.setPreferredSize(new Dimension(280, 40));
-        namePanel.setMaximumSize(new Dimension(280, 40));
-        namePanel.setMinimumSize(new Dimension(280, 40));
-        namePanel.setLayout(new BorderLayout());
-        namePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JComboBox<String> dropdown = (ID == 1) ? clientDropdown : merchantDropdown;
+        dropdown.setFont(new Font("Serif", Font.BOLD, 18));
+        dropdown.setMaximumSize(new Dimension(250, 35));
+        dropdown.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(dropdown);
 
-        JTextArea nameArea;
-        if (ID == 1) {
-            if (clientNameArea == null) clientNameArea = new JTextArea();
-            nameArea = clientNameArea;
-        } else {
-            if (merchantNameArea == null) merchantNameArea = new JTextArea();
-            nameArea = merchantNameArea;
-        }
-        nameArea.setFont(new Font("Serif", Font.PLAIN, 18));
-        nameArea.setForeground(Color.WHITE);
-        nameArea.setOpaque(false);
-        nameArea.setEditable(false);
-        nameArea.setLineWrap(true);
-        nameArea.setWrapStyleWord(true);
-        namePanel.add(nameArea, BorderLayout.CENTER);
-
-        panel.add(Box.createVerticalStrut(10));
-        panel.add(namePanel);
-
-        panel.add(Box.createVerticalStrut(20));
+        panel.add(Box.createVerticalStrut(15));
 
         // Item selection list
-        JList<model.item.MagicItem> lst;
-        if (ID == 1) {
-            lst = lstClientItems;
-        } else {
-            lst = lstMerchantItems;
-        }
+        JList<model.item.MagicItem> lst = (ID == 1) ? lstClientItems : lstMerchantItems;
         panel.add(createListPanel("Select item(s) to trade:", lst));
 
         panel.add(Box.createVerticalGlue());
@@ -325,6 +307,13 @@ public class TradeView extends JFrame {
         btnReturn.addActionListener(listener);
         btnTrade.setActionCommand(TRADE);
         btnReturn.setActionCommand(RETURN);
+        merchantDropdown.setActionCommand(MERCHANT_SELECT);
+        clientDropdown.setActionCommand(CLIENT_SELECT);
+        merchantDropdown.addActionListener(listener);
+        clientDropdown.addActionListener(listener);
+
+        lstMerchantItems.addListSelectionListener(e -> updateTradeButtonState());
+        lstClientItems.addListSelectionListener(e -> updateTradeButtonState());
     }
 
 
@@ -339,31 +328,46 @@ public class TradeView extends JFrame {
         }
     }
 
+    /** Updates the merchant side item list. */
+    public void updateMerchantItems(java.util.List<model.item.MagicItem> items) {
+        updateItemList(2, items);
+    }
 
-    /**
-     * Sets the player name and trader name
-     * 
-     * @param ID the ID of the player or trader
-     * @param text the text to set
-     */
-    public void setPlayerTraderName(int ID, String text) {
-        switch (ID) {
-            case 1 -> clientNameArea.setText(text);
-            case 2 -> merchantNameArea.setText(text);
+    /** Updates the client side item list. */
+    public void updateClientItems(java.util.List<model.item.MagicItem> items) {
+        updateItemList(1, items);
+    }
+
+    public void setMerchantCharacters(java.util.List<model.core.Character> chars) {
+        merchantChars = new java.util.ArrayList<>(chars);
+        merchantDropdown.removeAllItems();
+        for (model.core.Character c : chars) {
+            merchantDropdown.addItem(c.getName());
         }
+        merchantDropdown.setSelectedIndex(chars.isEmpty() ? -1 : 0);
+        merchantChar = getSelectedMerchantCharacter();
+    }
+
+    public void setClientCharacters(java.util.List<model.core.Character> chars) {
+        clientChars = new java.util.ArrayList<>(chars);
+        clientDropdown.removeAllItems();
+        for (model.core.Character c : chars) {
+            clientDropdown.addItem(c.getName());
+        }
+        clientDropdown.setSelectedIndex(chars.isEmpty() ? -1 : 0);
+        clientChar = getSelectedClientCharacter();
     }
 
 
-    /** Populates UI fields with the merchant and client data. */
+    /** Populates dropdowns and item lists with the initial characters. */
     private void populateInitialData() {
-        if (clientChar != null) {
-            setPlayerTraderName(1, clientChar.getName());
-            updateItemList(1, clientChar.getInventory().getAllItems());
+        if (client != null) {
+            setClientCharacters(client.getCharacters());
         }
-        if (merchantChar != null) {
-            setPlayerTraderName(2, merchantChar.getName());
-            updateItemList(2, merchantChar.getInventory().getAllItems());
+        if (merchant != null) {
+            setMerchantCharacters(merchant.getCharacters());
         }
+        refresh();
     }
 
 
@@ -383,17 +387,37 @@ public class TradeView extends JFrame {
         lstClientItems.clearSelection();
     }
 
+    /** Enables or disables the trade button based on current selections. */
+    private void updateTradeButtonState() {
+        boolean hasChars = getSelectedMerchantCharacter() != null && getSelectedClientCharacter() != null
+                && getSelectedMerchantCharacter() != getSelectedClientCharacter();
+        boolean hasItems = !lstMerchantItems.isSelectionEmpty() || !lstClientItems.isSelectionEmpty();
+        btnTrade.setEnabled(hasChars && hasItems);
+    }
+
     // ------------------------------------------------------------------
     // Public API for controller
     // ------------------------------------------------------------------
 
-    /** Returns the currently active merchant character. */
-    public model.core.Character getMerchant() {
+    /** Returns the currently selected merchant character. */
+    public model.core.Character getSelectedMerchantCharacter() {
+        int idx = merchantDropdown.getSelectedIndex();
+        if (idx >= 0 && idx < merchantChars.size()) {
+            merchantChar = merchantChars.get(idx);
+        } else {
+            merchantChar = null;
+        }
         return merchantChar;
     }
 
-    /** Returns the currently active client character. */
-    public model.core.Character getClient() {
+    /** Returns the currently selected client character. */
+    public model.core.Character getSelectedClientCharacter() {
+        int idx = clientDropdown.getSelectedIndex();
+        if (idx >= 0 && idx < clientChars.size()) {
+            clientChar = clientChars.get(idx);
+        } else {
+            clientChar = null;
+        }
         return clientChar;
     }
 
@@ -419,13 +443,16 @@ public class TradeView extends JFrame {
 
     /** Refreshes inventory displays and item lists. */
     public void refresh() {
+        clientChar = getSelectedClientCharacter();
+        merchantChar = getSelectedMerchantCharacter();
         if (clientChar != null) {
-            updateItemList(1, clientChar.getInventory().getAllItems());
+            updateClientItems(clientChar.getInventory().getAllItems());
         }
         if (merchantChar != null) {
-            updateItemList(2, merchantChar.getInventory().getAllItems());
+            updateMerchantItems(merchantChar.getInventory().getAllItems());
         }
         resetFields();
+        updateTradeButtonState();
     }
 
 }
