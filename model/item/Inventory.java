@@ -34,17 +34,19 @@ public final class Inventory implements Serializable {
     private MagicItem equippedItem;
 
     /**
-     * Constructs an empty inventory.
+     * Constructs an empty inventory with no items and nothing equipped.
      */
     public Inventory() {
         this.equippedItem = null;
     }
 
     /**
-     * Constructs a deep copy of another inventory. All items are copied so the
-     * new inventory is independent of the original.
+     * Creates a new inventory that is a deep copy of the supplied one. Each
+     * contained {@link MagicItem} is cloned via {@link MagicItem#copy()} so the
+     * resulting inventory is completely independent of the original.  The
+     * equipped item state is preserved if applicable.
      *
-     * @param other the inventory to copy
+     * @param other the inventory to copy (must not be {@code null})
      */
     public Inventory(Inventory other) {
         this();
@@ -68,40 +70,35 @@ public final class Inventory implements Serializable {
     }
 
     /**
-     * Returns an unmodifiable view of all items in the inventory.
+     * Returns an unmodifiable snapshot of all items currently stored in this
+     * inventory.  The returned list is a defensive copy and cannot be modified
+     * by the caller.
      *
-     * @return a read-only list of all magic items.
+     * @return an unmodifiable list containing all magic items
      */
     public List<MagicItem> getAllItems() {
-        return Collections.unmodifiableList(items);
+        return Collections.unmodifiableList(new ArrayList<>(items));
     }
 
-    /**
-     * Checks if the inventory currently contains the given item.
-     *
-     * @param item the item to check for (non-null)
-     * @return {@code true} if present, otherwise {@code false}
-     */
-    public boolean hasItem(MagicItem item) {
-        InputValidator.requireNonNull(item, "Item to check");
-        return items.contains(item);
-    }
 
-    /**
-     * Adds a new magic item to the inventory.
      *
-     * @param item The non-null item to add.
+     * @param item the item to add (must not be {@code null})
      */
     public void addItem(MagicItem item) {
         InputValidator.requireNonNull(item, "Item to add");
+        if (items.contains(item)) {
+            return; // prevent duplicates
+        }
         items.add(item);
     }
 
     /**
-     * Removes a magic item from the inventory. If the item is equipped, it will also be unequipped.
+     * Removes a magic item from the inventory. If the removed item was
+     * currently equipped it will be automatically unequipped.  Attempting to
+     * remove an item that is not present has no effect.
      *
-     * @param item The non-null item to remove.
-     * @return {@code true} if the item was found and removed, {@code false} otherwise.
+     * @param item the item to remove (must not be {@code null})
+     * @return {@code true} if the item existed and was removed
      */
     public boolean removeItem(MagicItem item) {
         InputValidator.requireNonNull(item, "Item to remove");
@@ -112,10 +109,12 @@ public final class Inventory implements Serializable {
     }
 
     /**
-     * Equips an item from the inventory. Any previously equipped item will be unequipped first.
+     * Sets the provided item as this inventory's equipped item. Only one item
+     * may be equipped at any time; any previously equipped item will simply be
+     * replaced. The item must already exist within this inventory.
      *
-     * @param item The magic item to equip. It must be present in the inventory.
-     * @throws GameException if the item is null or not found in the inventory.
+     * @param item the item to equip (must not be {@code null})
+     * @throws GameException if the item is not currently held in the inventory
      */
     public void equipItem(MagicItem item) throws GameException {
         InputValidator.requireNonNull(item, "Item to equip");
@@ -126,25 +125,33 @@ public final class Inventory implements Serializable {
     }
 
     /**
-     * Unequips the currently equipped item. The item remains in the inventory.
+     * Clears the equipped item slot. The unequipped item remains in the
+     * inventory list.
      */
     public void unequipItem() {
         this.equippedItem = null;
     }
 
+    /**
+     * Consumes a {@link SingleUseItem} from the inventory. The item is removed
+     * and the equipped slot cleared if it was equipped. This method performs no
+     * activation logic; effect handling is expected elsewhere.
+     *
+     * @param item the single-use item to consume (must not be {@code null})
+     * @throws GameException if the item is not present in the inventory
+     */
     public void useSingleUseItem(SingleUseItem item) throws GameException {
-    InputValidator.requireNonNull(item, "Single-use item to use");
-    if (!items.contains(item)) {
-        throw new GameException("Cannot use item: not found in inventory.");
+        InputValidator.requireNonNull(item, "Single-use item to use");
+        if (!items.contains(item)) {
+            throw new GameException("Cannot use item: not found in inventory.");
+        }
+
+        items.remove(item);
+        if (item.equals(equippedItem)) {
+            equippedItem = null;
+        }
+        // Item effect application occurs in controller/battle logic
     }
-    // Remove from inventory (consume it)
-    items.remove(item);
-    if (item.equals(equippedItem)) {
-        equippedItem = null;
-    }
-    // NO call to item.activate(), as per your spec
-    // The controller or battle system should process the effect externally
-}
 
     /**
      * Ensures the items list is not null when deserialised.
