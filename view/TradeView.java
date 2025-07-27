@@ -264,6 +264,7 @@ public class TradeView extends JFrame {
         label.setFont(new Font("Serif", Font.BOLD, 17));
 
         list.setFont(new Font("Serif", Font.BOLD, 18));
+        list.setOpaque(false);
         list.setVisibleRowCount(6);
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         list.setCellRenderer(new DefaultListCellRenderer() {

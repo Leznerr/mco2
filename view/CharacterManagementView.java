@@ -114,7 +114,10 @@ public class CharacterManagementView extends JFrame {
         characterListArea = new JTextArea(12, 40);
         characterListArea.setEditable(false);
         characterListArea.setFont(new Font("Monospaced", Font.PLAIN, 15));
+        characterListArea.setOpaque(false);
         JScrollPane scrollPane = new JScrollPane(characterListArea);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
         scrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         centerPanel.add(scrollPane);

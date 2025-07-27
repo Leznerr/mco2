@@ -135,6 +135,7 @@ public class InventoryView extends JFrame{
         detailsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         itemList = new JList<>(listModel);
+        itemList.setOpaque(false);
         itemList.setFont(new Font("Serif", Font.BOLD, 18));
         itemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         itemList.setCellRenderer(new DefaultListCellRenderer() {
