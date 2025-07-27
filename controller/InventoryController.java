@@ -7,7 +7,6 @@ import java.util.List;
 
 import model.core.Character;
 import model.item.MagicItem;
-import model.item.SingleUseItem;
 import model.util.GameException;
 import model.util.InputValidator;
 import view.InventoryView;
@@ -16,7 +15,7 @@ import controller.GameManagerController;
 
 /**
  * Controller responsible for handling inventory-related actions
- * such as equipping magic items, unequipping, and using single-use items.
+ * such as equipping and unequipping magic items.
  * <p>
  * Acts as the intermediary between the GUI and the model layer's
  * inventory functionality, enforcing validation and encapsulation.
@@ -105,24 +104,6 @@ public final class InventoryController implements ActionListener {
         refreshInventoryDisplay();
     }
 
-    /**
-     * Handles a request to use a {@link SingleUseItem}.
-     * The item is consumed immediately upon use.
-     *
-     * @param itemToUse the single-use item to activate (non-null)
-     * @throws GameException if {@code itemToUse} is {@code null}
-     */
-    public void handleUseSingleUseItem(SingleUseItem itemToUse) {
-        try {
-            InputValidator.requireNonNull(itemToUse, "use item");
-            character.getInventory().useSingleUseItem(itemToUse);
-            persist();
-            refreshInventoryDisplay();
-        } catch (GameException e) {
-            if (view != null) view.showErrorMessage(e.getMessage());
-        }
-    }
-
     private void persist() {
         if (gameManagerController != null) {
             gameManagerController.handleSaveGameRequest();
@@ -139,13 +120,6 @@ public final class InventoryController implements ActionListener {
             if (sel != null) handleEquipItem(sel);
         } else if (InventoryView.UNEQUIP.equals(cmd)) {
             handleUnequipItem();
-        } else if (InventoryView.USE.equals(cmd)) {
-            MagicItem sel = view.getSelectedItem();
-            if (sel instanceof SingleUseItem sui) {
-                handleUseSingleUseItem(sui);
-            } else if (view != null) {
-                view.showErrorMessage("Selected item cannot be used.");
-            }
         }
     }
 }
