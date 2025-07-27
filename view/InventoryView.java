@@ -38,15 +38,13 @@ public class InventoryView extends JFrame{
     // Button labels
     public static final String EQUIP = "Equip";
     public static final String UNEQUIP = "Unequip";
-    public static final String USE = "Use";
-    public static final String VIEW = "View Magic Item";
+<<
     public static final String RETURN = "Return";
 
     // UI components
     private JButton btnEquip;
     private JButton btnUnequip;
-    private JButton btnUse;
-    private JButton btnView;
+
     private JButton btnReturn;
     private final DefaultListModel<model.item.MagicItem> listModel = new DefaultListModel<>();
     private JList<model.item.MagicItem> itemList;
@@ -160,6 +158,10 @@ public class InventoryView extends JFrame{
 
         detailsPanel.add(scrollPane, BorderLayout.CENTER);
 
+        JLabel tipLabel = new JLabel("Single-use items may only be used in battle.");
+        tipLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        detailsPanel.add(tipLabel, BorderLayout.SOUTH);
+
         centerPanel.add(detailsPanel);
         centerPanel.add(Box.createVerticalGlue());
 
@@ -171,14 +173,12 @@ public class InventoryView extends JFrame{
 
         btnEquip = new RoundedButton(EQUIP);
         btnUnequip = new RoundedButton(UNEQUIP);
-        btnUse = new RoundedButton(USE);
-        btnView = new RoundedButton(VIEW);
+
         btnReturn = new RoundedButton(RETURN);
 
         buttonPanel.add(btnEquip);
         buttonPanel.add(btnUnequip);
-        buttonPanel.add(btnUse);
-        buttonPanel.add(btnView);
+<<
         buttonPanel.add(btnReturn);
 
         backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -195,14 +195,7 @@ public class InventoryView extends JFrame{
     public void setActionListener(ActionListener listener) {
         btnEquip.setActionCommand(EQUIP);
         btnUnequip.setActionCommand(UNEQUIP);
-        btnUse.setActionCommand(USE);
-        btnView.setActionCommand(VIEW);
-        btnReturn.setActionCommand(RETURN);
-
-        btnEquip.addActionListener(listener);
-        btnUnequip.addActionListener(listener);
-        btnUse.addActionListener(listener);
-        btnView.addActionListener(listener);
+<<<<
         btnReturn.addActionListener(listener);
     }
 
