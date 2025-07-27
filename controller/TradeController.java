@@ -1,5 +1,11 @@
 package controller;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import model.core.Character;
 import model.core.Player;
 import model.item.Inventory;
@@ -9,13 +15,6 @@ import model.util.InputValidator;
 import persistence.GameData;
 import persistence.SaveLoadService;
 import view.TradeView;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Controller handling magic item trading between players.
