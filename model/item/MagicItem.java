@@ -84,6 +84,35 @@ public abstract class MagicItem implements Serializable {
     }
 
     /**
+     * Determines equality based on immutable item properties and concrete type.
+     * Two items are considered equal if they are of the same class and all
+     * core fields match.
+     *
+     * @param o the object to compare with
+     * @return {@code true} if the objects are logically equal
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MagicItem that = (MagicItem) o;
+        return name.equals(that.name)
+                && description.equals(that.description)
+                && itemType == that.itemType
+                && rarity.equals(that.rarity);
+    }
+
+    /**
+     * Computes a hash code consistent with {@link #equals(Object)}.
+     *
+     * @return hash code based on immutable fields
+     */
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(name, description, itemType, rarity);
+    }
+
+    /**
      * Returns a short display string including name and type.
      */
     @Override
