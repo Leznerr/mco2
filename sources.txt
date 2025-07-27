@@ -1,6 +1,9 @@
 C:\Users\User\Downloads\mco2-main\mco2\app\Main.java 
 C:\Users\User\Downloads\mco2-main\mco2\controller\AIController.java 
+C:\Users\User\Downloads\mco2-main\mco2\controller\BattleCharSelectionController.java 
 C:\Users\User\Downloads\mco2-main\mco2\controller\BattleController.java 
+C:\Users\User\Downloads\mco2-main\mco2\controller\BattleModesController.java 
+C:\Users\User\Downloads\mco2-main\mco2\controller\BattleSetupController.java 
 C:\Users\User\Downloads\mco2-main\mco2\controller\CharacterAutoCreationController.java 
 C:\Users\User\Downloads\mco2-main\mco2\controller\CharacterController.java 
 C:\Users\User\Downloads\mco2-main\mco2\controller\CharacterGeneratorController.java 
@@ -52,9 +55,13 @@ C:\Users\User\Downloads\mco2-main\mco2\model\util\StatusEffect.java
 C:\Users\User\Downloads\mco2-main\mco2\model\util\StatusEffectFactory.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\util\StatusEffectType.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\util\TradeOffer.java 
+C:\Users\User\Downloads\mco2-main\mco2\model\util\effects\DefenseUpEffect.java 
+C:\Users\User\Downloads\mco2-main\mco2\model\util\effects\EvadeEffect.java 
+C:\Users\User\Downloads\mco2-main\mco2\model\util\effects\ImmunityEffect.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\util\effects\PoisonEffect.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\util\effects\StunEffect.java 
 C:\Users\User\Downloads\mco2-main\mco2\persistence\GameData.java 
+C:\Users\User\Downloads\mco2-main\mco2\persistence\HallOfFameData.java 
 C:\Users\User\Downloads\mco2-main\mco2\persistence\SaveLoadService.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\BattleCharSelectionView.java 
 C:\Users\User\Downloads\mco2-main\mco2\view\BattleModesView.java 
