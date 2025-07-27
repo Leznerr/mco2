@@ -508,24 +508,29 @@ public class BattleView extends JFrame {
      * @return a JPanel containing the label and dropdown
      */
     private JPanel createDropdownPanel(String labelText, JComboBox<String> dropdown) {
-        JPanel panel = new JPanel();
-        panel.setOpaque(false);
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel dropdownPanel = new JPanel();
+        dropdownPanel.setOpaque(false);
+        dropdownPanel.setLayout(new BoxLayout(dropdownPanel, BoxLayout.X_AXIS));
+        dropdownPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         OutlinedLabel label = new OutlinedLabel(labelText);
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
-        label.setFont(new Font("Serif", Font.BOLD, 17));
+
+        int fixedWidth = 200;
+        Dimension labelSize = new Dimension(fixedWidth, label.getPreferredSize().height);
+        label.setPreferredSize(labelSize);
+        label.setMinimumSize(labelSize);
+        label.setMaximumSize(labelSize);
+
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
 
         dropdown.setFont(new Font("Serif", Font.BOLD, 18));
         dropdown.setMaximumSize(new Dimension(250, 35));
-        dropdown.setAlignmentX(Component.CENTER_ALIGNMENT);
+        dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 
-        panel.add(label);
-        panel.add(Box.createVerticalStrut(5));
-        panel.add(dropdown);
+        dropdownPanel.add(label);
+        dropdownPanel.add(dropdown);
 
-        return panel;
+        return dropdownPanel;
     }
 
 

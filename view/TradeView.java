@@ -231,10 +231,7 @@ public class TradeView extends JFrame {
         panel.add(Box.createVerticalStrut(15));
 
         JComboBox<String> dropdown = (ID == 1) ? clientDropdown : merchantDropdown;
-        dropdown.setFont(new Font("Serif", Font.BOLD, 18));
-        dropdown.setMaximumSize(new Dimension(250, 35));
-        dropdown.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(dropdown);
+        panel.add(createDropdownPanel("Select Character:", dropdown));
 
         panel.add(Box.createVerticalStrut(15));
 
@@ -293,6 +290,39 @@ public class TradeView extends JFrame {
         panel.add(box);
 
         return panel;
+    }
+
+    /**
+     * Helper method to create dropdown panels with outlined labels
+     *
+     * @param labelText the text for the label
+     * @param dropdown  the JComboBox to be added
+     * @return a JPanel containing the label and dropdown
+     */
+    private JPanel createDropdownPanel(String labelText, JComboBox<String> dropdown) {
+        JPanel dropdownPanel = new JPanel();
+        dropdownPanel.setOpaque(false);
+        dropdownPanel.setLayout(new BoxLayout(dropdownPanel, BoxLayout.X_AXIS));
+        dropdownPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        OutlinedLabel label = new OutlinedLabel(labelText);
+
+        int fixedWidth = 200;
+        Dimension labelSize = new Dimension(fixedWidth, label.getPreferredSize().height);
+        label.setPreferredSize(labelSize);
+        label.setMinimumSize(labelSize);
+        label.setMaximumSize(labelSize);
+
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+
+        dropdown.setFont(new Font("Serif", Font.BOLD, 18));
+        dropdown.setMaximumSize(new Dimension(250, 35));
+        dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+
+        dropdownPanel.add(label);
+        dropdownPanel.add(dropdown);
+
+        return dropdownPanel;
     }
 
 

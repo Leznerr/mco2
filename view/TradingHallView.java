@@ -152,14 +152,14 @@ public class TradingHallView extends JFrame {
         dropdownPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         OutlinedLabel label = new OutlinedLabel(labelText);
-        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
 
-        // Force all labels to same preferred width
-        int fixedLabelWidth = 140; // adjust as needed
-        Dimension labelSize = new Dimension(fixedLabelWidth, label.getPreferredSize().height);
+        int fixedWidth = 200;
+        Dimension labelSize = new Dimension(fixedWidth, label.getPreferredSize().height);
         label.setPreferredSize(labelSize);
         label.setMinimumSize(labelSize);
         label.setMaximumSize(labelSize);
+
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
 
         dropdown.setFont(new Font("Serif", Font.BOLD, 18));
         dropdown.setMaximumSize(new Dimension(250, 35));

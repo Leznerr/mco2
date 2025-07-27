@@ -155,27 +155,29 @@ public class CharacterEditView extends JFrame {
     }
 
     private JPanel createDropdownPanel(String labelText, JComboBox<String> dropdown) {
-        JPanel panel = new JPanel();
-        panel.setOpaque(false);
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel dropdownPanel = new JPanel();
+        dropdownPanel.setOpaque(false);
+        dropdownPanel.setLayout(new BoxLayout(dropdownPanel, BoxLayout.X_AXIS));
+        dropdownPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         OutlinedLabel label = new OutlinedLabel(labelText);
-        Dimension labelSize = new Dimension(170, label.getPreferredSize().height);
+
+        int fixedWidth = 200;
+        Dimension labelSize = new Dimension(fixedWidth, label.getPreferredSize().height);
         label.setPreferredSize(labelSize);
         label.setMinimumSize(labelSize);
         label.setMaximumSize(labelSize);
-        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 8));
 
-        dropdown.setFont(new Font("Serif", Font.BOLD, 16));
-        Dimension ddSize = new Dimension(300, 36);
-        dropdown.setPreferredSize(ddSize);
-        dropdown.setMaximumSize(ddSize);
-        dropdown.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
 
-        panel.add(label);
-        panel.add(dropdown);
-        return panel;
+        dropdown.setFont(new Font("Serif", Font.BOLD, 18));
+        dropdown.setMaximumSize(new Dimension(250, 35));
+        dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+
+        dropdownPanel.add(label);
+        dropdownPanel.add(dropdown);
+
+        return dropdownPanel;
     }
 
     public void setActionListener(ActionListener listener) {

@@ -127,27 +127,29 @@ public class SavedPlayersRegistrationView extends JFrame {
      * @return a JPanel containing the label and dropdown
      */
     private JPanel createDropdownPanel(String labelText, JComboBox<String> dropdown) {
-        JPanel panel = new JPanel();
-        panel.setOpaque(false);
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel dropdownPanel = new JPanel();
+        dropdownPanel.setOpaque(false);
+        dropdownPanel.setLayout(new BoxLayout(dropdownPanel, BoxLayout.X_AXIS));
+        dropdownPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         OutlinedLabel label = new OutlinedLabel(labelText);
-        Dimension labelSize = new Dimension(200, label.getPreferredSize().height);
+
+        int fixedWidth = 200;
+        Dimension labelSize = new Dimension(fixedWidth, label.getPreferredSize().height);
         label.setPreferredSize(labelSize);
         label.setMinimumSize(labelSize);
         label.setMaximumSize(labelSize);
+
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
 
         dropdown.setFont(new Font("Serif", Font.BOLD, 18));
-        Dimension ddSize = new Dimension(350, 40);
-        dropdown.setPreferredSize(ddSize);
-        dropdown.setMaximumSize(ddSize);
+        dropdown.setMaximumSize(new Dimension(250, 35));
         dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 
-        panel.add(label);
-        panel.add(dropdown);
-        return panel;
+        dropdownPanel.add(label);
+        dropdownPanel.add(dropdown);
+
+        return dropdownPanel;
     }
 
     /**
