@@ -2,6 +2,7 @@ package view;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.stream.Collectors;
 import javax.swing.*;
 
 // import controller._;
@@ -10,6 +11,9 @@ import javax.swing.*;
  * The trading view for Fatal Fantasy: Tactics Game.
  */
 public class TradingView extends JFrame {
+
+    private model.core.Character merchant;
+    private model.core.Character client;
 
     // Button labels
     public static final String TRADE = "Trade";
@@ -51,6 +55,18 @@ public class TradingView extends JFrame {
 
         setLocationRelativeTo(null);
         setResizable(false);
+        System.out.println("TradingView default constructor");
+    }
+
+    /** Convenience constructor wiring the merchant and client characters. */
+    public TradingView(model.core.Character merchant, model.core.Character client) {
+        this();
+        this.merchant = merchant;
+        this.client = client;
+        System.out.println("TradingView created for merchant="
+                + (merchant != null ? merchant.getName() : "null") +
+                ", client=" + (client != null ? client.getName() : "null"));
+        populateInitialData();
         setVisible(true);
     }
 
@@ -294,6 +310,8 @@ public class TradingView extends JFrame {
         // Bottom Panel Buttons
         btnTrade.addActionListener(listener);
         btnReturn.addActionListener(listener);
+        btnTrade.setActionCommand(TRADE);
+        btnReturn.setActionCommand(RETURN);
     }
 
 
@@ -345,6 +363,24 @@ public class TradingView extends JFrame {
             case 1 -> p0ItemsArea.setText(items);
             case 2 -> t0ItemsArea.setText(items);
         }
+    }
+
+    /** Populates UI fields with the merchant and client data. */
+    private void populateInitialData() {
+        if (merchant != null) {
+            setPlayerTraderName(1, merchant.getName());
+            setPlayerTraderItems(1, buildItemsList(merchant));
+        }
+        if (client != null) {
+            setPlayerTraderName(2, client.getName());
+            setPlayerTraderItems(2, buildItemsList(client));
+        }
+    }
+
+    private String buildItemsList(model.core.Character c) {
+        return c.getInventory().getAllItems().stream()
+                .map(model.item.MagicItem::getName)
+                .collect(java.util.stream.Collectors.joining(", "));
     }
 
 

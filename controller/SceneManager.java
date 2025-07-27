@@ -235,29 +235,48 @@ public final class SceneManager {
         cards.show(root, CARD_TRADING_HALL);
     }
 
-    /** Displays the full TradeView for two characters. */
-    public void showTradeView(model.core.Character merchant,
-                              model.core.Character client,
-                              List<Player> players) {
-        tradeView = new TradeView(merchant, client);
+    /**
+     * Opens a separate {@link TradeView} window for the two selected players.
+     * The Trading Hall view is disposed before launching the trade window.
+     * When the trade concludes the main stage size is reset and the user is
+     * returned to the Trading Hall.
+     */
+    public void showTradeView(Player merchant, Player client) {
+        System.out.println("SceneManager.showTradeView merchant="
+                + merchant.getName() + ", client=" + client.getName());
+
+        if (tradingHallView != null) {
+            tradingHallView.dispose();
+        }
+        stage.setVisible(false);
+
+        model.core.Character mChar = merchant.getCharacters().isEmpty()
+                ? null : merchant.getCharacters().getFirst();
+        model.core.Character cChar = client.getCharacters().isEmpty()
+                ? null : client.getCharacters().getFirst();
+
+        tradeView = new TradeView(mChar, cChar);
         try {
-            tradeController = new TradeController(tradeView, players);
+            tradeController = new TradeController(tradeView,
+                    gameManagerController.getPlayers());
         } catch (GameException e) {
-            JOptionPane.showMessageDialog(stage, "Unable to open trade view: " + e.getMessage(),
+            JOptionPane.showMessageDialog(stage,
+                    "Unable to open trade view: " + e.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
         tradeView.setActionListener(e -> {
             String cmd = e.getActionCommand();
             if (TradeView.RETURN.equals(cmd)) {
-                showTradingHall(players);
+                tradeView.dispose();
+                stage.setSize(800, 700);
+                stage.setVisible(true);
+                showTradingHall(gameManagerController.getPlayers());
             }
         });
-        if (tradeView.getContentPane().getParent() == null) {
-            root.add(tradeView.getContentPane(), CARD_TRADE_VIEW);
-        }
-        stage.setSize(990, 529);
-        cards.show(root, CARD_TRADE_VIEW);
+
+        tradeView.setVisible(true);
     }
 
     /** Shows the menu to pick which player's characters to manage. */
