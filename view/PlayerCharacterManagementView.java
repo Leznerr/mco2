@@ -14,12 +14,14 @@ public class PlayerCharacterManagementView extends JFrame {
     public static final String CREATE_CHARACTER = "Create Character";
     public static final String EDIT_CHARACTER = "Edit Character";
     public static final String DELETE_CHARACTER = "Delete Character";
+    public static final String INVENTORY = "Inventory";
     public static final String RETURN = "Return";
 
     private final JButton btnViewCharacters = new RoundedButton(VIEW_CHARACTERS);
     private final JButton btnCreateCharacter = new RoundedButton(CREATE_CHARACTER);
     private final JButton btnEditCharacter = new RoundedButton(EDIT_CHARACTER);
     private final JButton btnDeleteCharacter = new RoundedButton(DELETE_CHARACTER);
+    private final JButton btnInventory = new RoundedButton(INVENTORY);
     private final JButton btnReturn = new RoundedButton(RETURN);
 
     private final int playerID;
@@ -70,6 +72,8 @@ public class PlayerCharacterManagementView extends JFrame {
         buttonPanel.add(Box.createVerticalStrut(15));
         buttonPanel.add(btnDeleteCharacter);
         buttonPanel.add(Box.createVerticalStrut(15));
+        buttonPanel.add(btnInventory);
+        buttonPanel.add(Box.createVerticalStrut(15));
         buttonPanel.add(btnReturn);
         bgPanel.add(buttonPanel);
         bgPanel.add(Box.createVerticalGlue());
@@ -82,12 +86,14 @@ public class PlayerCharacterManagementView extends JFrame {
         btnCreateCharacter.setActionCommand(CREATE_CHARACTER);
         btnEditCharacter.setActionCommand(EDIT_CHARACTER);
         btnDeleteCharacter.setActionCommand(DELETE_CHARACTER);
+        btnInventory.setActionCommand(INVENTORY);
         btnReturn.setActionCommand(RETURN);
 
         btnViewCharacters.addActionListener(l);
         btnCreateCharacter.addActionListener(l);
         btnEditCharacter.addActionListener(l);
         btnDeleteCharacter.addActionListener(l);
+        btnInventory.addActionListener(l);
         btnReturn.addActionListener(l);
     }
 

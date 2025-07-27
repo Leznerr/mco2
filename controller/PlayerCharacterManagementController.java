@@ -8,6 +8,8 @@ import model.core.Ability;
 import model.core.Character;
 import model.core.Player;
 import model.item.MagicItem;
+import view.InventoryView;
+import controller.InventoryController;
 import model.service.ClassService;
 import model.util.GameException;
 import view.CharacterDeleteView;
@@ -40,6 +42,7 @@ public class PlayerCharacterManagementController {
                 case PlayerCharacterManagementView.CREATE_CHARACTER -> gameManagerController.handleNavigateToCharacterCreationManagement(player.getName());
                 case PlayerCharacterManagementView.EDIT_CHARACTER -> openEditCharacter();
                 case PlayerCharacterManagementView.DELETE_CHARACTER -> openDeleteCharacter();
+                case PlayerCharacterManagementView.INVENTORY -> openInventory();
                 case PlayerCharacterManagementView.RETURN -> {
                     view.dispose();
                     gameManagerController.navigateBackToMainMenu();
@@ -297,5 +300,30 @@ public class PlayerCharacterManagementController {
         });
         refreshCharacterList(delView);
         delView.setVisible(true);
+    }
+
+    /** Opens the inventory management view for a selected character. */
+    private void openInventory() {
+        java.util.List<Character> chars = player.getCharacters();
+        if (chars.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(view, "No characters available.",
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        String[] names = chars.stream().map(Character::getName).toArray(String[]::new);
+        String selected = (String) javax.swing.JOptionPane.showInputDialog(view,
+                "Select Character", "Inventory", javax.swing.JOptionPane.PLAIN_MESSAGE,
+                null, names, names[0]);
+        if (selected == null) return;
+        Character c = player.getCharacter(selected).orElse(null);
+        if (c == null) return;
+        InventoryView iv = new InventoryView(view.getPlayerID());
+        try {
+            new InventoryController(c, iv, gameManagerController);
+            iv.setVisible(true);
+        } catch (GameException ex) {
+            javax.swing.JOptionPane.showMessageDialog(view, ex.getMessage(),
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

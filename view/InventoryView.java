@@ -1,7 +1,6 @@
 package view;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -11,6 +10,11 @@ import java.awt.Image;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -22,7 +26,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 // import controller._;
 
@@ -33,11 +36,18 @@ public class InventoryView extends JFrame{
     private int playerID;
 
     // Button labels
+    public static final String EQUIP = "Equip";
+    public static final String UNEQUIP = "Unequip";
+    public static final String USE = "Use";
     public static final String RETURN = "Return";
 
     // UI components
+    private JButton btnEquip;
+    private JButton btnUnequip;
+    private JButton btnUse;
     private JButton btnReturn;
-    private JTextArea itemsListArea;
+    private final DefaultListModel<model.item.MagicItem> listModel = new DefaultListModel<>();
+    private JList<model.item.MagicItem> itemList;
 
 
     /**
@@ -124,17 +134,21 @@ public class InventoryView extends JFrame{
         detailsPanel.setLayout(new BorderLayout());
         detailsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Text area for character list
-        itemsListArea = new JTextArea();
-        itemsListArea.setFont(new Font("Serif", Font.PLAIN, 18));
-        itemsListArea.setForeground(Color.WHITE);
-        itemsListArea.setOpaque(false);
-        itemsListArea.setEditable(false);
-        itemsListArea.setLineWrap(true);
-        itemsListArea.setWrapStyleWord(true);
+        itemList = new JList<>(listModel);
+        itemList.setFont(new Font("Serif", Font.BOLD, 18));
+        itemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        itemList.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> l, Object val, int idx, boolean sel, boolean foc) {
+                super.getListCellRendererComponent(l, val, idx, sel, foc);
+                if (val instanceof model.item.MagicItem mi) {
+                    setText((idx + 1) + ". " + mi.getName());
+                }
+                return this;
+            }
+        });
 
-        // Scroll pane
-        JScrollPane scrollPane = new JScrollPane(itemsListArea);
+        JScrollPane scrollPane = new JScrollPane(itemList);
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -151,8 +165,14 @@ public class InventoryView extends JFrame{
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 50));
         buttonPanel.setOpaque(false);
 
+        btnEquip = new RoundedButton(EQUIP);
+        btnUnequip = new RoundedButton(UNEQUIP);
+        btnUse = new RoundedButton(USE);
         btnReturn = new RoundedButton(RETURN);
 
+        buttonPanel.add(btnEquip);
+        buttonPanel.add(btnUnequip);
+        buttonPanel.add(btnUse);
         buttonPanel.add(btnReturn);
 
         backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -167,17 +187,46 @@ public class InventoryView extends JFrame{
      * @param listener The listener
      */
     public void setActionListener(ActionListener listener) {
+        btnEquip.setActionCommand(EQUIP);
+        btnUnequip.setActionCommand(UNEQUIP);
+        btnUse.setActionCommand(USE);
+        btnReturn.setActionCommand(RETURN);
+
+        btnEquip.addActionListener(listener);
+        btnUnequip.addActionListener(listener);
+        btnUse.addActionListener(listener);
         btnReturn.addActionListener(listener);
     }
 
-
-    /**
-     * Updates the items list display area.
-     * 
-     * @param text The formatted items list string
-     */
-    public void updateItemsList(String text) {
-        itemsListArea.setText(text);
+    /** Updates the inventory list and highlights the equipped item. */
+    public void updateInventory(java.util.List<model.item.MagicItem> items,
+                                model.item.MagicItem equipped) {
+        listModel.clear();
+        for (model.item.MagicItem m : items) listModel.addElement(m);
+        itemList.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> l, Object val, int idx, boolean sel, boolean foc) {
+                super.getListCellRendererComponent(l, val, idx, sel, foc);
+                if (val instanceof model.item.MagicItem mi) {
+                    String name = mi.getName();
+                    if (mi.equals(equipped)) name += " (Equipped)";
+                    setText((idx + 1) + ". " + name);
+                }
+                return this;
+            }
+        });
     }
 
+    /** Returns the currently selected item or {@code null}. */
+    public model.item.MagicItem getSelectedItem() {
+        return itemList.getSelectedValue();
+    }
+
+    public void showInfoMessage(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void showErrorMessage(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+    }
 }
