@@ -83,6 +83,14 @@ public abstract class MagicItem implements Serializable {
         return itemType;
     }
 
+    /**
+     * Returns a short display string including name and type.
+     */
+    @Override
+    public String toString() {
+        return getName() + " (" + itemType + ")";
+    }
+
     /** @return rarity string (“COMMON”, “RARE”, etc.) */
     public String getRarity() {
         return rarity;

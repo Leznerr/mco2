@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import model.core.Character;
 import model.core.Player;
@@ -206,39 +207,42 @@ public class TradeController implements ActionListener {
     }
 
     private void handleTrade() {
-        boolean executed = false;
-        Character c1 = null;
-        Character c2 = null;
-        List<MagicItem> items1 = Collections.emptyList();
-        List<MagicItem> items2 = Collections.emptyList();
+        Character merchant = view.getMerchant();
+        Character client = view.getClient();
+        List<MagicItem> mItems = view.getSelectedMerchantItems();
+        List<MagicItem> cItems = view.getSelectedClientItems();
+        if (mItems.isEmpty() && cItems.isEmpty()) {
+            view.showError("Select at least one item to trade.");
+            return;
+        }
         try {
-            c1 = view.getSelectedChar1();
-            c2 = view.getSelectedChar2();
-            InputValidator.requireNonNull(c1, "Offering character");
-            InputValidator.requireNonNull(c2, "Receiving character");
-
-            items1 = view.getSelectedItems1();
-            items2 = view.getSelectedItems2();
-            if (items1.isEmpty() && items2.isEmpty()) {
-                view.showError("Select at least one item to trade.");
-                return;
-            }
-            executeTrade(c1, items1, c2, items2);
-            executed = true;
-
+            executeTrade(merchant, mItems, client, cItems);
             persist();
+            view.appendTradeLog(buildLogMessage(merchant, mItems, client, cItems));
             view.showInfo("Trade completed successfully.");
-            view.refreshLists();
+            view.refresh();
         } catch (GameException ex) {
-            if (executed) {
-                try {
-                    executeTrade(c1, items2, c2, items1);
-                } catch (GameException ignore) {
-                    // ignore to avoid masking original error
-                }
-            }
             view.showError(ex.getMessage());
         }
+    }
+
+    private String buildLogMessage(Character m, List<MagicItem> mItems,
+                                   Character c, List<MagicItem> cItems) {
+        StringBuilder sb = new StringBuilder();
+        if (!mItems.isEmpty()) {
+            sb.append(m.getName()).append(" -> ").append(c.getName()).append(": ");
+            sb.append(itemNames(mItems));
+        }
+        if (!cItems.isEmpty()) {
+            if (sb.length() > 0) sb.append(" | ");
+            sb.append(c.getName()).append(" -> ").append(m.getName()).append(": ");
+            sb.append(itemNames(cItems));
+        }
+        return sb.toString();
+    }
+
+    private String itemNames(List<MagicItem> items) {
+        return items.stream().map(MagicItem::getName).collect(java.util.stream.Collectors.joining(", "));
     }
 
     private Player findPlayerForCharacter(Character c) throws GameException {
