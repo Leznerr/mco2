@@ -25,7 +25,9 @@ import view.PlayerRegistrationView;
 import view.PlayerDeleteView;
 import view.SavedPlayersRegistrationView;
 import view.TradingHallView;
+import view.TradeView;
 import controller.TradingHallController;
+import controller.TradeController;
 import controller.PlayerDeleteController;
 import controller.CharacterManagementMenuController;
 import controller.BattleModesController;
@@ -52,6 +54,7 @@ public final class SceneManager {
     private static final String CARD_BATTLE_MODES = "battleModes";
     private static final String CARD_DELETE_PLAYER = "deletePlayer";
     private static final String CARD_TRADING_HALL = "tradingHall";
+    private static final String CARD_TRADE_VIEW = "tradeView";
 
     // ---------- Cached View Instances ----------
     private MainMenuView mainMenuView;
@@ -69,6 +72,8 @@ public final class SceneManager {
     private HallOfFameController hallOfFameController;
     private TradingHallView tradingHallView;
     private TradingHallController tradingHallController;
+    private TradeView tradeView;
+    private TradeController tradeController;
 
     private GameManagerController gameManagerController; // Keep the controller instance here
 
@@ -236,6 +241,29 @@ public final class SceneManager {
             tradingHallController.refresh();
         }
         cards.show(root, CARD_TRADING_HALL);
+    }
+
+    /** Displays the full TradeView for two players. */
+    public void showTradeView(Player merchant, Player client, List<Player> players) {
+        tradeView = new TradeView();
+        try {
+            tradeController = new TradeController(tradeView, players);
+        } catch (GameException e) {
+            JOptionPane.showMessageDialog(stage, "Unable to open trade view: " + e.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        tradeView.setActionListener(e -> {
+            String cmd = e.getActionCommand();
+            if (TradeView.RETURN.equals(cmd)) {
+                cards.show(root, CARD_TRADING_HALL);
+            }
+        });
+        if (tradeView.getContentPane().getParent() == null) {
+            root.add(tradeView.getContentPane(), CARD_TRADE_VIEW);
+        }
+        stage.setSize(1200, 700);
+        cards.show(root, CARD_TRADE_VIEW);
     }
 
     /** Shows the menu to pick which player's characters to manage. */
