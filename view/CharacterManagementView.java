@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -94,16 +95,20 @@ public class CharacterManagementView extends JFrame {
             }
         };
 
-        backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.Y_AXIS));
-        backgroundPanel.add(Box.createVerticalStrut(80));
+        backgroundPanel.setLayout(new BorderLayout());
+
+        JPanel centerPanel = new JPanel();
+        centerPanel.setOpaque(false);
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.add(Box.createVerticalStrut(80));
 
         ImageIcon logoIcon = new ImageIcon("view/assets/CharManagLogo.png");
         Image logoImg = logoIcon.getImage().getScaledInstance(500, -1, Image.SCALE_SMOOTH);
         JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        backgroundPanel.add(logoLabel);
+        centerPanel.add(logoLabel);
 
-        backgroundPanel.add(Box.createVerticalStrut(30));
+        centerPanel.add(Box.createVerticalStrut(30));
 
         // Character list area
         characterListArea = new JTextArea(12, 40);
@@ -112,9 +117,9 @@ public class CharacterManagementView extends JFrame {
         JScrollPane scrollPane = new JScrollPane(characterListArea);
         scrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        backgroundPanel.add(scrollPane);
+        centerPanel.add(scrollPane);
 
-        backgroundPanel.add(Box.createVerticalStrut(20));
+        centerPanel.add(Box.createVerticalStrut(20));
 
         // Instantiate all buttons
         btnViewCharacters   = new RoundedButton(VIEW_CHARACTERS);
@@ -123,24 +128,36 @@ public class CharacterManagementView extends JFrame {
         btnDeleteCharacter  = new RoundedButton(DELETE_CHARACTER);
         btnReturn           = new RoundedButton(RETURN);
 
-        // Arrange buttons vertically
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setOpaque(false);
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-        buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel buttonListPanel = new JPanel();
+        buttonListPanel.setOpaque(false);
+        buttonListPanel.setLayout(new BoxLayout(buttonListPanel, BoxLayout.Y_AXIS));
+        buttonListPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        buttonPanel.add(btnViewCharacters);
-        buttonPanel.add(Box.createVerticalStrut(15));
-        buttonPanel.add(btnCreateCharacter);
-        buttonPanel.add(Box.createVerticalStrut(15));
-        buttonPanel.add(btnEditCharacter);
-        buttonPanel.add(Box.createVerticalStrut(15));
-        buttonPanel.add(btnDeleteCharacter);
-        buttonPanel.add(Box.createVerticalStrut(15));
-        buttonPanel.add(btnReturn);
+        buttonListPanel.add(btnViewCharacters);
+        buttonListPanel.add(Box.createVerticalStrut(15));
+        buttonListPanel.add(btnCreateCharacter);
+        buttonListPanel.add(Box.createVerticalStrut(15));
+        buttonListPanel.add(btnEditCharacter);
+        buttonListPanel.add(Box.createVerticalStrut(15));
+        buttonListPanel.add(btnDeleteCharacter);
 
-        backgroundPanel.add(buttonPanel);
-        backgroundPanel.add(Box.createVerticalGlue());
+        JScrollPane buttonScroll = new JScrollPane(buttonListPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        buttonScroll.setOpaque(false);
+        buttonScroll.getViewport().setOpaque(false);
+        buttonScroll.setBorder(BorderFactory.createEmptyBorder());
+        buttonScroll.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        centerPanel.add(buttonScroll);
+        centerPanel.add(Box.createVerticalGlue());
+
+        backgroundPanel.add(centerPanel, BorderLayout.CENTER);
+
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setOpaque(false);
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+        bottomPanel.add(btnReturn);
+        bottomPanel.add(Box.createVerticalStrut(30));
+        backgroundPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         setContentPane(backgroundPanel);
     }
