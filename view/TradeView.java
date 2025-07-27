@@ -17,7 +17,10 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -32,8 +35,10 @@ import javax.swing.JTextArea;
  */
 public class TradeView extends JFrame {
 
-    private model.core.Character merchant;
-    private model.core.Character client;
+    private model.core.Player merchant;
+    private model.core.Player client;
+    private model.core.Character merchantChar;
+    private model.core.Character clientChar;
 
     // Button labels
     public static final String TRADE = "Trade";
@@ -41,8 +46,10 @@ public class TradeView extends JFrame {
 
     // UI components
     private JButton btnTrade, btnReturn;
-    private JComboBox<String> cmbP0Items = new JComboBox<>();
-    private JComboBox<String> cmbT0Items = new JComboBox<>();
+    private final DefaultListModel<model.item.MagicItem> merchantListModel = new DefaultListModel<>();
+    private final DefaultListModel<model.item.MagicItem> clientListModel = new DefaultListModel<>();
+    private final JList<model.item.MagicItem> lstMerchantItems = new JList<>(merchantListModel);
+    private final JList<model.item.MagicItem> lstClientItems = new JList<>(clientListModel);
     private JTextArea p0NameArea, t0NameArea;
     private JTextArea p0ItemsArea, t0ItemsArea, tradeLogArea;
     
@@ -78,14 +85,19 @@ public class TradeView extends JFrame {
         System.out.println("TradingView default constructor");
     }
 
-    /** Convenience constructor wiring the merchant and client characters. */
-    public TradeView(model.core.Character merchant, model.core.Character client) {
+    /** Convenience constructor wiring the merchant and client data. */
+    public TradeView(model.core.Player merchant,
+                     model.core.Character merchantChar,
+                     model.core.Player client,
+                     model.core.Character clientChar) {
         this();
         this.merchant = merchant;
         this.client = client;
+        this.merchantChar = merchantChar;
+        this.clientChar = clientChar;
         System.out.println("TradingView created for merchant="
-                + (merchant != null ? merchant.getName() : "null") +
-                ", client=" + (client != null ? client.getName() : "null"));
+                + (merchantChar != null ? merchantChar.getName() : "null") +
+                ", client=" + (clientChar != null ? clientChar.getName() : "null"));
         populateInitialData();
         setVisible(true);
     }
@@ -278,28 +290,28 @@ public class TradeView extends JFrame {
         panel.add(Box.createVerticalStrut(20));
         panel.add(itemsPanel);
 
-        // Dropdown and Use Button
+        // Item selection list
         panel.add(Box.createVerticalStrut(30));
-        JComboBox<String> cmbItems;
+        JList<model.item.MagicItem> lst;
         if (ID == 1) {
-            cmbItems = cmbP0Items;
+            lst = lstMerchantItems;
         } else {
-            cmbItems = cmbT0Items;
+            lst = lstClientItems;
         }
-        panel.add(createDropdownPanel("Select magic item to trade:", cmbItems));
+        panel.add(createListPanel("Select magic item(s) to trade:", lst));
 
         panel.add(Box.createVerticalGlue());
     }
 
 
     /**
-     * Helper method to create dropdown panels with outlined labels
-     * 
+     * Helper method to create item selection panels with outlined labels
+     *
      * @param labelText the text for the label
-     * @param dropdown the JComboBox to be added
-     * @return a JPanel containing the label and dropdown
+     * @param list      the JList component to embed
+     * @return a JPanel containing the label and list
      */
-    private JPanel createDropdownPanel(String labelText, JComboBox<String> dropdown) {
+    private JPanel createListPanel(String labelText, JList<model.item.MagicItem> list) {
         JPanel panel = new JPanel();
         panel.setOpaque(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -309,13 +321,27 @@ public class TradeView extends JFrame {
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
         label.setFont(new Font("Serif", Font.BOLD, 17));
 
-        dropdown.setFont(new Font("Serif", Font.BOLD, 18));
-        dropdown.setMaximumSize(new Dimension(250, 35));
-        dropdown.setAlignmentX(Component.CENTER_ALIGNMENT);
+        list.setFont(new Font("Serif", Font.BOLD, 18));
+        list.setVisibleRowCount(5);
+        list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        list.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> l, Object value, int index, boolean s, boolean f) {
+                super.getListCellRendererComponent(l, value, index, s, f);
+                if (value instanceof model.item.MagicItem mi) {
+                    setText(mi.getName());
+                }
+                return this;
+            }
+        });
+
+        JScrollPane pane = new JScrollPane(list);
+        pane.setMaximumSize(new Dimension(250, 100));
+        pane.setPreferredSize(new Dimension(250, 100));
 
         panel.add(label);
         panel.add(Box.createVerticalStrut(5));
-        panel.add(dropdown);
+        panel.add(pane);
 
         return panel;
     }
@@ -336,24 +362,13 @@ public class TradeView extends JFrame {
 
 
     /**
-     * Sets the items options in the dropdown.
-     * 
-     * @param ID the ID of the player or trader
-     * @param options the list of item options to set
+     * Updates the selectable item list for the given side.
      */
-    public void updateItemDropdown(int ID, java.util.List<String> options) {
-        JComboBox<String> combo;
-
-        if (ID == 1) {
-            combo = cmbP0Items;
-        } else {
-            combo = cmbT0Items;
-        }
-
-        combo.removeAllItems();
-
-        for (String option : options) {
-            combo.addItem(option);
+    public void updateItemList(int ID, java.util.List<model.item.MagicItem> items) {
+        DefaultListModel<model.item.MagicItem> model = (ID == 1) ? merchantListModel : clientListModel;
+        model.clear();
+        for (model.item.MagicItem m : items) {
+            model.addElement(m);
         }
     }
 
@@ -387,13 +402,15 @@ public class TradeView extends JFrame {
 
     /** Populates UI fields with the merchant and client data. */
     private void populateInitialData() {
-        if (merchant != null) {
-            setPlayerTraderName(1, merchant.getName());
-            setPlayerTraderItems(1, buildItemsList(merchant));
+        if (merchantChar != null) {
+            setPlayerTraderName(1, merchantChar.getName());
+            setPlayerTraderItems(1, buildItemsList(merchantChar));
+            updateItemList(1, merchantChar.getInventory().getAllItems());
         }
-        if (client != null) {
-            setPlayerTraderName(2, client.getName());
-            setPlayerTraderItems(2, buildItemsList(client));
+        if (clientChar != null) {
+            setPlayerTraderName(2, clientChar.getName());
+            setPlayerTraderItems(2, buildItemsList(clientChar));
+            updateItemList(2, clientChar.getInventory().getAllItems());
         }
     }
 
@@ -414,25 +431,57 @@ public class TradeView extends JFrame {
     }
     
 
-    /**
-     * Resets all dropdown selections.
-     */
+    /** Resets item selections. */
     public void resetFields() {
-        cmbP0Items.setSelectedIndex(-1);
-        cmbT0Items.setSelectedIndex(-1);
+        lstMerchantItems.clearSelection();
+        lstClientItems.clearSelection();
     }
 
+    // ------------------------------------------------------------------
+    // Public API for controller
+    // ------------------------------------------------------------------
 
-    public String getSelectedAbility(int ID) {
-        String selectedItem;
+    /** Returns the currently active merchant character. */
+    public model.core.Character getMerchant() {
+        return merchantChar;
+    }
 
-        if (ID == 1) {
-            selectedItem = (String) cmbP0Items.getSelectedItem();
-        } else {
-            selectedItem = (String) cmbT0Items.getSelectedItem(); 
+    /** Returns the currently active client character. */
+    public model.core.Character getClient() {
+        return clientChar;
+    }
+
+    /** All selected items from the merchant list. */
+    public java.util.List<model.item.MagicItem> getSelectedMerchantItems() {
+        return lstMerchantItems.getSelectedValuesList();
+    }
+
+    /** All selected items from the client list. */
+    public java.util.List<model.item.MagicItem> getSelectedClientItems() {
+        return lstClientItems.getSelectedValuesList();
+    }
+
+    /** Display an error dialog. */
+    public void showError(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    /** Display an info dialog. */
+    public void showInfo(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    /** Refreshes inventory displays and item lists. */
+    public void refresh() {
+        if (merchantChar != null) {
+            setPlayerTraderItems(1, buildItemsList(merchantChar));
+            updateItemList(1, merchantChar.getInventory().getAllItems());
         }
-
-        return selectedItem;
+        if (clientChar != null) {
+            setPlayerTraderItems(2, buildItemsList(clientChar));
+            updateItemList(2, clientChar.getInventory().getAllItems());
+        }
+        resetFields();
     }
 
 }
