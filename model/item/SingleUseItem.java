@@ -68,6 +68,31 @@ public final class SingleUseItem extends MagicItem {
         return effectValue;
     }
 
+    /**
+     * Two {@code SingleUseItem}s are equal when all base properties and the
+     * effect type/value match.
+     *
+     * @param o object to compare
+     * @return {@code true} when logically equivalent
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (!super.equals(o)) return false;
+        if (getClass() != o.getClass()) return false;
+        SingleUseItem that = (SingleUseItem) o;
+        return effectValue == that.effectValue && effectType == that.effectType;
+    }
+
+    /**
+     * Hash code consistent with {@link #equals(Object)} including effect fields.
+     *
+     * @return computed hash value
+     */
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(super.hashCode(), effectType, effectValue);
+    }
+
 
 
     /**
