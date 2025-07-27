@@ -77,6 +77,17 @@ public final class Inventory implements Serializable {
     }
 
     /**
+     * Checks if the inventory currently contains the given item.
+     *
+     * @param item the item to check for (non-null)
+     * @return {@code true} if present, otherwise {@code false}
+     */
+    public boolean hasItem(MagicItem item) {
+        InputValidator.requireNonNull(item, "Item to check");
+        return items.contains(item);
+    }
+
+    /**
      * Adds a new magic item to the inventory.
      *
      * @param item The non-null item to add.
