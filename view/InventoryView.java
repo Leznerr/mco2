@@ -39,12 +39,14 @@ public class InventoryView extends JFrame{
     public static final String EQUIP = "Equip";
     public static final String UNEQUIP = "Unequip";
     public static final String USE = "Use";
+    public static final String VIEW = "View Magic Item";
     public static final String RETURN = "Return";
 
     // UI components
     private JButton btnEquip;
     private JButton btnUnequip;
     private JButton btnUse;
+    private JButton btnView;
     private JButton btnReturn;
     private final DefaultListModel<model.item.MagicItem> listModel = new DefaultListModel<>();
     private JList<model.item.MagicItem> itemList;
@@ -144,6 +146,7 @@ public class InventoryView extends JFrame{
                 super.getListCellRendererComponent(l, val, idx, sel, foc);
                 if (val instanceof model.item.MagicItem mi) {
                     setText((idx + 1) + ". " + mi.getName());
+                    setToolTipText(mi.getDescription());
                 }
                 return this;
             }
@@ -169,11 +172,13 @@ public class InventoryView extends JFrame{
         btnEquip = new RoundedButton(EQUIP);
         btnUnequip = new RoundedButton(UNEQUIP);
         btnUse = new RoundedButton(USE);
+        btnView = new RoundedButton(VIEW);
         btnReturn = new RoundedButton(RETURN);
 
         buttonPanel.add(btnEquip);
         buttonPanel.add(btnUnequip);
         buttonPanel.add(btnUse);
+        buttonPanel.add(btnView);
         buttonPanel.add(btnReturn);
 
         backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -191,11 +196,13 @@ public class InventoryView extends JFrame{
         btnEquip.setActionCommand(EQUIP);
         btnUnequip.setActionCommand(UNEQUIP);
         btnUse.setActionCommand(USE);
+        btnView.setActionCommand(VIEW);
         btnReturn.setActionCommand(RETURN);
 
         btnEquip.addActionListener(listener);
         btnUnequip.addActionListener(listener);
         btnUse.addActionListener(listener);
+        btnView.addActionListener(listener);
         btnReturn.addActionListener(listener);
     }
 
@@ -212,6 +219,7 @@ public class InventoryView extends JFrame{
                     String name = mi.getName();
                     if (mi.equals(equipped)) name += " (Equipped)";
                     setText((idx + 1) + ". " + name);
+                    setToolTipText(mi.getDescription());
                 }
                 return this;
             }
@@ -221,6 +229,16 @@ public class InventoryView extends JFrame{
     /** Returns the currently selected item or {@code null}. */
     public model.item.MagicItem getSelectedItem() {
         return itemList.getSelectedValue();
+    }
+
+    /** Displays a dialog showing full details for the provided item. */
+    public void showMagicItemDetails(model.item.MagicItem item) {
+        if (item == null) return;
+        String msg = item.getName() + "\nType: " + item.getItemType() +
+                "\nRarity: " + item.getRarity() +
+                "\n\n" + item.getDescription();
+        JOptionPane.showMessageDialog(this, msg, "Magic Item Details",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void showInfoMessage(String msg) {

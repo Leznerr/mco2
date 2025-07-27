@@ -146,6 +146,11 @@ public final class InventoryController implements ActionListener {
             } else if (view != null) {
                 view.showErrorMessage("Selected item cannot be used.");
             }
+        } else if (InventoryView.VIEW.equals(cmd)) {
+            MagicItem sel = view.getSelectedItem();
+            if (sel != null) {
+                view.showMagicItemDetails(sel);
+            }
         }
     }
 }
