@@ -38,7 +38,6 @@ public class InventoryView extends JFrame{
     // Button labels
     public static final String EQUIP = "Equip";
     public static final String UNEQUIP = "Unequip";
-<<
     public static final String RETURN = "Return";
 
     // UI components
@@ -178,7 +177,6 @@ public class InventoryView extends JFrame{
 
         buttonPanel.add(btnEquip);
         buttonPanel.add(btnUnequip);
-<<
         buttonPanel.add(btnReturn);
 
         backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -195,7 +193,10 @@ public class InventoryView extends JFrame{
     public void setActionListener(ActionListener listener) {
         btnEquip.setActionCommand(EQUIP);
         btnUnequip.setActionCommand(UNEQUIP);
-<<<<
+        btnReturn.setActionCommand(RETURN);
+
+        btnEquip.addActionListener(listener);
+        btnUnequip.addActionListener(listener);
         btnReturn.addActionListener(listener);
     }
 
