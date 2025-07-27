@@ -15,25 +15,16 @@ import model.util.GameException;
 import persistence.GameData;
 import persistence.SaveLoadService;
 import view.BattleView;
-import view.BattleModesView;
 import view.CharacterManagementMenuView;
 import view.HallOfFameManagementView;
 import view.MainMenuView;
 import view.NewPlayersRegistrationView;
 import view.PlayerCharacterManagementView;
-import view.PlayerRegistrationView;
 import view.PlayerDeleteView;
+import view.PlayerRegistrationView;
 import view.SavedPlayersRegistrationView;
-import view.TradingHallView;
 import view.TradeView;
-import controller.TradingHallController;
-import controller.TradeController;
-import controller.PlayerDeleteController;
-import controller.CharacterManagementMenuController;
-import controller.BattleModesController;
-import controller.BattleController;
-import controller.HallOfFameController;
-import controller.AIController;
+import view.TradingHallView;
 
 public final class SceneManager {
 
