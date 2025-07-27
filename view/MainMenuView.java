@@ -113,7 +113,7 @@ public class MainMenuView extends JFrame {
         // Add vertical space between logo and buttons
         backgroundPanel.add(Box.createVerticalStrut(20));
 
-        // Panel for buttons, centered
+        // Panel for buttons, centered within a wrapper
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
@@ -125,22 +125,25 @@ public class MainMenuView extends JFrame {
         btnHallOfFame = new RoundedButton(HALL_OF_FAME);
         btnExit = new RoundedButton(EXIT);
 
-        // Add buttons with vertical spacing (how they stack)
+        // Add buttons with consistent vertical spacing
         buttonPanel.add(btnRegisterPlayers);
-        buttonPanel.add(Box.createVerticalStrut(8));
+        buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnManageCharacters);
-        buttonPanel.add(Box.createVerticalStrut(8));
+        buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnStartBattle);
-        buttonPanel.add(Box.createVerticalStrut(8));
+        buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnTrade);
-        buttonPanel.add(Box.createVerticalStrut(8));
+        buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnHallOfFame);
-        buttonPanel.add(Box.createVerticalStrut(8));
+        buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnExit);
 
-        // Center the button panel horizontally
+        // Wrap the button panel in a centered container
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        backgroundPanel.add(buttonPanel);
+        JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        wrapper.setOpaque(false);
+        wrapper.add(buttonPanel);
+        backgroundPanel.add(wrapper);
 
         // Add vertical glue to push everything to the center
         backgroundPanel.add(Box.createVerticalGlue());

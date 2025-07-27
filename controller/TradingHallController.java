@@ -9,13 +9,12 @@ import javax.swing.JOptionPane;
 import model.core.Player;
 import model.util.GameException;
 import model.util.InputValidator;
-import view.TradeView;
 import view.TradingHallView;
 import controller.SceneManager;
 
 /**
  * Controller for the Trading Hall screen. Handles player selection
- * and launches the {@link TradeView} for the chosen pair.
+ * and launches the trading view for the chosen pair via {@link SceneManager}.
  */
 public class TradingHallController implements ActionListener {
 
@@ -75,15 +74,7 @@ public class TradingHallController implements ActionListener {
         }
         Player p1 = findPlayerByName(mName);
         Player p2 = findPlayerByName(cName);
-        TradeView tv = new TradeView(p1, p2);
-        try {
-            new TradeController(tv, players);
-            tv.setVisible(true);
-        } catch (GameException ex) {
-            JOptionPane.showMessageDialog(view, ex.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            tv.dispose();
-        }
+        sceneManager.showTradeView(p1, p2, players);
     }
 
     private Player findPlayerByName(String name) {
