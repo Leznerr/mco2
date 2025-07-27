@@ -41,6 +41,24 @@ public final class Inventory implements Serializable {
     }
 
     /**
+     * Constructs a deep copy of another inventory. All items are copied so the
+     * new inventory is independent of the original.
+     *
+     * @param other the inventory to copy
+     */
+    public Inventory(Inventory other) {
+        this();
+        InputValidator.requireNonNull(other, "other inventory");
+        for (MagicItem item : other.items) {
+            MagicItem copy = item.copy();
+            items.add(copy);
+            if (item.equals(other.equippedItem)) {
+                equippedItem = copy;
+            }
+        }
+    }
+
+    /**
      * Returns the currently equipped magic item, if any.
      *
      * @return equipped {@link MagicItem}, or {@code null} if none.
