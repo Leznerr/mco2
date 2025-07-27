@@ -9,6 +9,7 @@ import model.battle.CombatLog;
 import model.battle.LevelingSystem;
 import model.item.Inventory;
 import model.item.MagicItem;
+import model.item.SingleUseItem;
 import model.util.Constants;
 import model.util.GameException;
 import model.util.InputValidator;
@@ -38,7 +39,6 @@ public class Character implements Serializable {
     private final Inventory inventory;
     /** Status effects currently affecting the character. Always initialized. Never null. */
     private transient List<StatusEffect> activeStatusEffects = new ArrayList<>();
-    private MagicItem equippedItem;
 
     // --- Dynamic Stats ---
     private int maxHp;
@@ -71,7 +71,6 @@ public class Character implements Serializable {
         this.inventory = new Inventory(other.inventory);
 
         this.activeStatusEffects = new ArrayList<>();
-        this.equippedItem = other.equippedItem != null ? other.equippedItem.copy() : null;
 
         this.maxHp = other.maxHp;
         this.currentHp = other.currentHp;
@@ -122,7 +121,6 @@ public class Character implements Serializable {
         this.abilities.addAll(abilities); // Defensive copy
 
         this.activeStatusEffects.clear();
-        this.equippedItem = null;
         this.isStunned = false;
 
         initializeStats();
@@ -161,7 +159,15 @@ public class Character implements Serializable {
     public ClassType getClassType() { return classType; }
     public List<Ability> getAbilities() { return Collections.unmodifiableList(abilities); }
     public Inventory getInventory() { return inventory; }
-    public MagicItem getEquippedItem() { return equippedItem; }
+
+    /**
+     * Shortcut to retrieve the item currently equipped by this character.
+     *
+     * @return the equipped {@link MagicItem}, or {@code null} if none
+     */
+    public MagicItem getEquippedItem() {
+        return inventory.getEquippedItem();
+    }
 
     // --- Getters for Dynamic Stats ---
 
@@ -272,13 +278,39 @@ public class Character implements Serializable {
 
     // --- Equipment & Ability Management ---
 
-    public void equipItem(MagicItem item) {
-        InputValidator.requireNonNull(item, "Item to equip");
-        this.equippedItem = item;
+    /**
+     * Equips the given item from this character's inventory.
+     *
+     * @param item the item to equip (non-null and must be in inventory)
+     * @throws GameException if validation fails
+     */
+    public void equipItem(MagicItem item) throws GameException {
+        inventory.equipItem(item);
     }
 
+    /** Unequips any currently equipped item. */
     public void unequipItem() {
-        this.equippedItem = null;
+        inventory.unequipItem();
+    }
+
+    /**
+     * Checks whether this character currently possesses the given item.
+     *
+     * @param item the item to check (non-null)
+     * @return {@code true} if present
+     */
+    public boolean hasItem(MagicItem item) {
+        return inventory.hasItem(item);
+    }
+
+    /**
+     * Consumes a single-use item from the inventory.
+     *
+     * @param item the item to use (non-null and owned by this character)
+     * @throws GameException if the item is invalid or not owned
+     */
+    public void useSingleUseItem(SingleUseItem item) throws GameException {
+        inventory.useSingleUseItem(item);
     }
 
     /**

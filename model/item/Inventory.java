@@ -80,9 +80,7 @@ public final class Inventory implements Serializable {
         return Collections.unmodifiableList(new ArrayList<>(items));
     }
 
-    /**
-     * Adds a new magic item to the inventory. Duplicate references are ignored
-     * so that each item appears at most once.
+
      *
      * @param item the item to add (must not be {@code null})
      */
