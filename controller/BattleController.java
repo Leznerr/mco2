@@ -298,15 +298,27 @@ public final class BattleController {
         view.updateAbilityDropdown(2, abilityNames(c2));
     }
 
+    /**
+     * Builds the list of actions shown in the ability/item dropdown.
+     * <p>
+     * Entries follow a strict format so the controller can later parse them
+     * back into the correct {@link model.core.Ability} or {@link SingleUseItem}:
+     * <ul>
+     *   <li>Abilities → {@code "Name (EP: cost)"}</li>
+     *   <li>Single-use items → {@code "Item: Item Name"}</li>
+     * </ul>
+     * Only the name and EP cost are included to keep parsing simple and to avoid
+     * accidental mismatches caused by descriptions or effects.
+     */
     private List<String> abilityNames(Character c) {
         List<String> names = new ArrayList<>();
 
-        // Abilities
+        // Abilities formatted as "Fireball (EP: 7)"
         for (var a : c.getAbilities()) {
             names.add(a.getName() + " (EP: " + a.getEpCost() + ")");
         }
 
-        // Include all single-use items held by the character
+        // Append all single-use items with an "Item:" prefix
         for (var item : c.getInventory().getAllItems()) {
             if (item instanceof SingleUseItem sui) {
                 names.add("Item: " + sui.getName());
@@ -319,7 +331,7 @@ public final class BattleController {
     private String buildAbilityList(Character c) {
         StringBuilder sb = new StringBuilder();
 
-        // Abilities listed with EP cost only
+        // Abilities with EP cost only (no descriptions)
         for (var a : c.getAbilities()) {
             sb.append(a.getName())
               .append(" (EP: ")
@@ -327,7 +339,7 @@ public final class BattleController {
               .append(")\n");
         }
 
-        // List all magic items without descriptions
+        // List all magic items with a label for type
         for (var item : c.getInventory().getAllItems()) {
             if (item instanceof SingleUseItem) {
                 sb.append("Item: ")
