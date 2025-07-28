@@ -33,6 +33,8 @@ import view.OutlinedLabel;
 
 /**
  * The battle view for Fatal Fantasy: Tactics Game.
+ * Both player panels are always created so controllers can
+ * update Player 1 and Player 2 fields regardless of battle mode.
  */
 public class BattleView extends JFrame {
     public static final int BATTLE_PVP = 1;
@@ -46,17 +48,15 @@ public class BattleView extends JFrame {
     // Button labels
     public static final String P1_USE = "Use Ability/Item";
     public static final String P2_USE = "Use Ability/Item";
-    public static final String P0_USE = "Use Ability/Item";
     public static final String REMATCH = "Rematch";
     public static final String RETURN = "Return";
 
     // UI components
-    private JButton btnP1Use, btnP2Use, btnP0Use, btnRematch, btnReturn;
+    private JButton btnP1Use, btnP2Use, btnRematch, btnReturn;
     private JComboBox<String> cmbP1Abilities = new JComboBox<>();
     private JComboBox<String> cmbP2Abilities = new JComboBox<>();
-    private JComboBox<String> cmbP0Abilities = new JComboBox<>();
-    private JTextArea p1NameCharNameArea, p2NameCharNameArea, p0NameCharNameArea, botNameCharNameArea, p1StatusArea, p2StatusArea, p0StatusArea, botStatusArea;
-    private JTextArea p1AbilitiesItemsArea, p2AbilitiesItemsArea, p0AbilitiesItemsArea, botAbilitiesItemsArea, battleLogArea, battleOutcomeArea;
+    private JTextArea p1NameCharNameArea, p2NameCharNameArea, p1StatusArea, p2StatusArea;
+    private JTextArea p1AbilitiesItemsArea, p2AbilitiesItemsArea, battleLogArea, battleOutcomeArea;
     private OutlinedLabel roundLabel;
     private int lastLogIndex = 0;
     
@@ -228,14 +228,8 @@ public class BattleView extends JFrame {
         buttonPanel.add(btnReturn);
 
         // Left & Right Panels
-        if (mode == BATTLE_PVP) {
-            setupPlayerPanel(leftPanel, 1);
-            setupPlayerPanel(rightPanel, 2);
-        } else {
-            // Player vs Bot shows the human controls on the left
-            setupPlayerPanel(leftPanel, 0);
-            setupBotPanel(rightPanel);
-        }
+        setupPlayerPanel(leftPanel, 1);
+        setupPlayerPanel(rightPanel, 2);
 
         backgroundPanel.add(leftPanel, BorderLayout.WEST);
         backgroundPanel.add(centerPanel, BorderLayout.CENTER);
@@ -263,7 +257,12 @@ public class BattleView extends JFrame {
         panel.add(Box.createVerticalStrut(20));
 
         // Logo
-        String headlineImagePath = String.format("view/assets/Player%dBattleLogo.png", playerID);
+        String headlineImagePath;
+        if (mode == BATTLE_PVB && playerID == 2) {
+            headlineImagePath = "view/assets/BotBattleLogo.png";
+        } else {
+            headlineImagePath = String.format("view/assets/Player%dBattleLogo.png", playerID);
+        }
         ImageIcon logoIcon = new ImageIcon(headlineImagePath);
         Image logoImg = logoIcon.getImage().getScaledInstance(180, -1, Image.SCALE_SMOOTH);
         JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
@@ -280,24 +279,17 @@ public class BattleView extends JFrame {
         nameCharNamePanel.setLayout(new BorderLayout());
         nameCharNamePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        int idForFields = (playerID == 0) ? 1 : playerID;
-
         JTextArea nameCharNameArea;
-        if (idForFields == 1) {
+        if (playerID == 1) {
             if (p1NameCharNameArea == null) {
                 p1NameCharNameArea = new JTextArea();
             }
             nameCharNameArea = p1NameCharNameArea;
-        } else if (idForFields == 2) {
+        } else {
             if (p2NameCharNameArea == null) {
                 p2NameCharNameArea = new JTextArea();
             }
             nameCharNameArea = p2NameCharNameArea;
-        } else {
-            if (p0NameCharNameArea == null) {
-                p0NameCharNameArea = new JTextArea();
-            }
-            nameCharNameArea = p0NameCharNameArea;
         }
         nameCharNameArea.setFont(new Font("Serif", Font.PLAIN, 18));
         nameCharNameArea.setForeground(Color.WHITE);
@@ -316,21 +308,16 @@ public class BattleView extends JFrame {
         statusPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JTextArea statusArea;
-        if (idForFields == 1) {
+        if (playerID == 1) {
             if (p1StatusArea == null) {
                 p1StatusArea = new JTextArea();
             }
             statusArea = p1StatusArea;
-        } else if (idForFields == 2) {
+        } else {
             if (p2StatusArea == null) {
                 p2StatusArea = new JTextArea();
             }
             statusArea = p2StatusArea;
-        } else {
-            if (p0StatusArea == null) {
-                p0StatusArea = new JTextArea();
-            }
-            statusArea = p0StatusArea;
         }
         statusArea.setFont(new Font("Serif", Font.PLAIN, 18));
         statusArea.setForeground(Color.WHITE);
@@ -353,21 +340,16 @@ public class BattleView extends JFrame {
         abilitiesItemsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JTextArea abilitiesItemsArea;
-        if (idForFields == 1) {
+        if (playerID == 1) {
             if (p1AbilitiesItemsArea == null) {
                 p1AbilitiesItemsArea = new JTextArea();
             }
             abilitiesItemsArea = p1AbilitiesItemsArea;
-        } else if (idForFields == 2) {
+        } else {
             if (p2AbilitiesItemsArea == null) {
                 p2AbilitiesItemsArea = new JTextArea();
             }
             abilitiesItemsArea = p2AbilitiesItemsArea;
-        } else {
-            if (p0AbilitiesItemsArea == null) {
-                p0AbilitiesItemsArea = new JTextArea();
-            }
-            abilitiesItemsArea = p0AbilitiesItemsArea;
         }
         abilitiesItemsArea.setFont(new Font("Serif", Font.PLAIN, 18));
         abilitiesItemsArea.setForeground(Color.WHITE);
@@ -389,24 +371,18 @@ public class BattleView extends JFrame {
         panel.add(Box.createVerticalStrut(10));
         JComboBox<String> cmbAbilities;
         JButton btnUse;
-        if (idForFields == 1) {
+        if (playerID == 1) {
             cmbAbilities = cmbP1Abilities;
             if (btnP1Use == null) {
                 btnP1Use = new RoundedButton(P1_USE);
             }
             btnUse = btnP1Use;
-        } else if (idForFields == 2) {
+        } else {
             cmbAbilities = cmbP2Abilities;
             if (btnP2Use == null) {
                 btnP2Use = new RoundedButton(P2_USE);
             }
             btnUse = btnP2Use;
-        } else {
-            cmbAbilities = cmbP0Abilities;
-            if (btnP0Use == null) {
-                btnP0Use = new RoundedButton(P0_USE);
-            }
-            btnUse = btnP0Use;
         }
         panel.add(createDropdownPanel("Select ability/magic item to use:", cmbAbilities));
 
@@ -418,94 +394,9 @@ public class BattleView extends JFrame {
 
         panel.add(Box.createVerticalGlue());
     }
-
-
-    /**
-     * Helper method to set up the bot panel with its components.
-     * 
-     * @param panel
-     */
-    private void setupBotPanel(JPanel panel) {
-        panel.setOpaque(false);
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        Dimension fixedPanelSize = new Dimension(320, 700);
-        panel.setPreferredSize(fixedPanelSize);
-        panel.setMinimumSize(fixedPanelSize);
-        panel.setMaximumSize(fixedPanelSize);
-
-        panel.add(Box.createVerticalStrut(20));
-
-        ImageIcon logoIcon = new ImageIcon("view/assets/BotBattleLogo.png");
-        Image logoImg = logoIcon.getImage().getScaledInstance(180, -1, Image.SCALE_SMOOTH);
-        JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
-        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(logoLabel);
-
-        panel.add(Box.createVerticalStrut(10));
-
-        RoundedDisplayBox nameCharNamePanel = new RoundedDisplayBox();
-        nameCharNamePanel.setPreferredSize(new Dimension(280, 40));
-        nameCharNamePanel.setMaximumSize(new Dimension(280, 40));
-        nameCharNamePanel.setLayout(new BorderLayout());
-        nameCharNamePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        if (botNameCharNameArea == null) botNameCharNameArea = new JTextArea();
-        botNameCharNameArea.setFont(new Font("Serif", Font.PLAIN, 18));
-        botNameCharNameArea.setForeground(Color.WHITE);
-        botNameCharNameArea.setOpaque(false);
-        botNameCharNameArea.setEditable(false);
-        botNameCharNameArea.setLineWrap(true);
-        botNameCharNameArea.setWrapStyleWord(true);
-        nameCharNamePanel.add(botNameCharNameArea, BorderLayout.CENTER);
-
-        RoundedDisplayBox statusPanel = new RoundedDisplayBox();
-        statusPanel.setPreferredSize(new Dimension(280, 40));
-        statusPanel.setMaximumSize(new Dimension(280, 40));
-        statusPanel.setLayout(new BorderLayout());
-        statusPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        if (botStatusArea == null) botStatusArea = new JTextArea();
-        botStatusArea.setFont(new Font("Serif", Font.PLAIN, 18));
-        botStatusArea.setForeground(Color.WHITE);
-        botStatusArea.setOpaque(false);
-        botStatusArea.setEditable(false);
-        botStatusArea.setLineWrap(true);
-        botStatusArea.setWrapStyleWord(true);
-        statusPanel.add(botStatusArea, BorderLayout.CENTER);
-
-        panel.add(nameCharNamePanel);
-        panel.add(Box.createVerticalStrut(5));
-        panel.add(statusPanel);
-
-        RoundedDisplayBox abilitiesItemsPanel = new RoundedDisplayBox();
-        abilitiesItemsPanel.setPreferredSize(new Dimension(280, 200));
-        abilitiesItemsPanel.setMaximumSize(new Dimension(280, 200));
-        abilitiesItemsPanel.setLayout(new BorderLayout());
-        abilitiesItemsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        if (botAbilitiesItemsArea == null) botAbilitiesItemsArea = new JTextArea();
-        botAbilitiesItemsArea.setFont(new Font("Serif", Font.PLAIN, 18));
-        botAbilitiesItemsArea.setForeground(Color.WHITE);
-        botAbilitiesItemsArea.setOpaque(false);
-        botAbilitiesItemsArea.setEditable(false);
-        botAbilitiesItemsArea.setLineWrap(true);
-        botAbilitiesItemsArea.setWrapStyleWord(true);
-
-        JScrollPane scrollPane = new JScrollPane(botAbilitiesItemsArea);
-        scrollPane.setOpaque(false);
-        scrollPane.getViewport().setOpaque(false);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        abilitiesItemsPanel.add(scrollPane, BorderLayout.CENTER);
-
-        panel.add(Box.createVerticalStrut(10));
-        panel.add(abilitiesItemsPanel);
-        panel.add(Box.createVerticalGlue());
-    }
-
-
     /**
      * Helper method to create dropdown panels with outlined labels
-     * 
+     *
      * @param labelText the text for the label
      * @param dropdown the JComboBox to be added
      * @return a JPanel containing the label and dropdown
@@ -546,12 +437,10 @@ public class BattleView extends JFrame {
         // Use Buttons
         btnP1Use.addActionListener(listener);
         btnP2Use.addActionListener(listener);
-        btnP0Use.addActionListener(listener);
 
         // Dropdowns
         cmbP1Abilities.addActionListener(listener);
         cmbP2Abilities.addActionListener(listener);
-        cmbP0Abilities.addActionListener(listener);
 
         // Bottom Panel Buttons
         btnRematch.addActionListener(listener);
@@ -570,10 +459,8 @@ public class BattleView extends JFrame {
 
         if (playerID == 1) {
             combo = cmbP1Abilities;
-        } else if (playerID == 2) {
-            combo = cmbP2Abilities;
         } else {
-            combo = cmbP0Abilities;
+            combo = cmbP2Abilities;
         }
 
         combo.removeAllItems();
@@ -594,7 +481,6 @@ public class BattleView extends JFrame {
         switch (playerID) {
             case 1 -> p1NameCharNameArea.setText(text);
             case 2 -> p2NameCharNameArea.setText(text);
-            case 0 -> p0NameCharNameArea.setText(text);
         }
     }
 
@@ -609,7 +495,6 @@ public class BattleView extends JFrame {
         switch (playerID) {
             case 1 -> p1StatusArea.setText(status);
             case 2 -> p2StatusArea.setText(status);
-            case 0 -> p0StatusArea.setText(status);
         }
     }
 
@@ -624,39 +509,9 @@ public class BattleView extends JFrame {
         switch (playerID) {
             case 1 -> p1AbilitiesItemsArea.setText(abilitiesItems);
             case 2 -> p2AbilitiesItemsArea.setText(abilitiesItems);
-            case 0 -> p0AbilitiesItemsArea.setText(abilitiesItems);
         }
     }
 
-
-    /**
-     * Sets the bot name and character name
-     * 
-     * @param text the text to set
-     */
-    public void setBotNameAndCharName(String text) {
-        botNameCharNameArea.setText(text);
-    }
-
-
-    /**
-     * Sets the bot status
-     * 
-     * @param status the status text to set
-     */
-    public void setBotStatus(String status) {
-        botStatusArea.setText(status);
-    }
-
-
-    /**
-     * Sets the abilities and items for the bot's character
-     * 
-     * @param abilitiesItems the abilities and items text
-     */
-    public void setBotAbilitiesItems(String abilitiesItems) {
-        botAbilitiesItemsArea.setText(abilitiesItems);
-    }
 
 
     /**
@@ -706,10 +561,8 @@ public class BattleView extends JFrame {
 
         if (playerID == 1) {
             selectedAbility = (String) cmbP1Abilities.getSelectedItem();
-        } else if (playerID == 2) {
-            selectedAbility = (String) cmbP2Abilities.getSelectedItem();
         } else {
-            selectedAbility = (String) cmbP0Abilities.getSelectedItem(); // For PvB
+            selectedAbility = (String) cmbP2Abilities.getSelectedItem();
         }
 
         return selectedAbility;
@@ -758,10 +611,8 @@ public class BattleView extends JFrame {
     public void setBattleControlsEnabled(boolean enabled) {
         cmbP1Abilities.setEnabled(enabled);
         cmbP2Abilities.setEnabled(enabled);
-        cmbP0Abilities.setEnabled(enabled);
         if (btnP1Use != null) btnP1Use.setEnabled(enabled);
         if (btnP2Use != null) btnP2Use.setEnabled(enabled);
-        if (btnP0Use != null) btnP0Use.setEnabled(enabled);
     }
 
     /** Enables or disables the rematch and return buttons. */
