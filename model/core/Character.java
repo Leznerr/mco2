@@ -199,6 +199,27 @@ public class Character implements Serializable {
     public int getAbilitySlots() { return abilitySlots; }
     public int getUnlockedAbilitySlots() { return unlockedAbilitySlots; }
 
+    /**
+     * Increases the total ability slot capacity by {@code n} and unlocks the
+     * same number of slots immediately. Negative values are ignored.
+     *
+     * @param n number of additional slots
+     */
+    public void increaseAbilitySlots(int n) {
+        if (n <= 0) return;
+        this.abilitySlots += n;
+        this.unlockedAbilitySlots = Math.min(this.unlockedAbilitySlots + n, this.abilitySlots);
+    }
+
+    /**
+     * Sets the number of unlocked ability slots, clamped to the current
+     * capacity. Values below zero are ignored.
+     */
+    public void setUnlockedAbilitySlots(int slots) {
+        if (slots < 0) return;
+        this.unlockedAbilitySlots = Math.min(slots, this.abilitySlots);
+    }
+
     // --- Combat State Management ---
 
     /**

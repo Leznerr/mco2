@@ -38,15 +38,7 @@ public class CharacterEditView extends JFrame {
     public static final String RETURN = "Return";
 
     private final JComboBox<String> dropdownCharacter = new JComboBox<>();
-    private final JComboBox<String> dropdownAbility1  = new JComboBox<>();
-    private final JComboBox<String> dropdownAbility2  = new JComboBox<>();
-    private final JComboBox<String> dropdownAbility3  = new JComboBox<>();
-    private final JComboBox<String> dropdownAbility4  = new JComboBox<>();
-
-    @SuppressWarnings("unchecked")
-    private final JComboBox<String>[] abilityDropdowns = new JComboBox[] {
-            dropdownAbility1, dropdownAbility2, dropdownAbility3, dropdownAbility4
-    };
+    private final List<JComboBox<String>> abilityDropdowns = new ArrayList<>();
     private final JComboBox<String> dropdownMagicItem = new JComboBox<>();
 
     private JPanel abilitiesPanel;
@@ -129,8 +121,11 @@ public class CharacterEditView extends JFrame {
         abilitiesPanel.setOpaque(false);
         abilitiesPanel.setLayout(new BoxLayout(abilitiesPanel, BoxLayout.Y_AXIS));
 
-        for (int i = 0; i < abilityDropdowns.length; i++) {
-            abilityPanels.add(createDropdownPanel("Select Ability " + (i + 1), abilityDropdowns[i]));
+        // create initial dropdowns
+        for (int i = 0; i < abilityCount; i++) {
+            JComboBox<String> dd = new JComboBox<>();
+            abilityDropdowns.add(dd);
+            abilityPanels.add(createDropdownPanel("Select Ability " + (i + 1), dd));
         }
 
         setAbilityCount(abilityCount);
@@ -184,10 +179,9 @@ public class CharacterEditView extends JFrame {
         btnEdit.addActionListener(listener);
         btnReturn.addActionListener(listener);
         dropdownCharacter.addActionListener(listener);
-        dropdownAbility1.addActionListener(listener);
-        dropdownAbility2.addActionListener(listener);
-        dropdownAbility3.addActionListener(listener);
-        dropdownAbility4.addActionListener(listener);
+        for (JComboBox<String> dd : abilityDropdowns) {
+            dd.addActionListener(listener);
+        }
         dropdownMagicItem.addActionListener(listener);
     }
 
@@ -197,10 +191,10 @@ public class CharacterEditView extends JFrame {
     }
 
     public void setAbilityOptions(int slot, String[] options) {
-        if (slot < 1 || slot > abilityDropdowns.length) {
+        if (slot < 1 || slot > abilityDropdowns.size()) {
             throw new IllegalArgumentException("Invalid slot: " + slot);
         }
-        JComboBox<String> target = abilityDropdowns[slot - 1];
+        JComboBox<String> target = abilityDropdowns.get(slot - 1);
         target.removeAllItems();
         for (String option : options) {
             target.addItem(option);
@@ -213,10 +207,10 @@ public class CharacterEditView extends JFrame {
     }
 
     public void setSelectedAbility(int slot, String abilityName) {
-        if (slot < 1 || slot > abilityDropdowns.length) {
+        if (slot < 1 || slot > abilityDropdowns.size()) {
             throw new IllegalArgumentException("Invalid slot: " + slot);
         }
-        abilityDropdowns[slot - 1].setSelectedItem(abilityName);
+        abilityDropdowns.get(slot - 1).setSelectedItem(abilityName);
     }
 
     public void setSelectedMagicItem(String itemName) {
@@ -258,16 +252,16 @@ public class CharacterEditView extends JFrame {
     public String[] getSelectedAbilities() {
         String[] selected = new String[abilityCount];
         for (int i = 0; i < abilityCount; i++) {
-            selected[i] = (String) abilityDropdowns[i].getSelectedItem();
+            selected[i] = (String) abilityDropdowns.get(i).getSelectedItem();
         }
         return selected;
     }
 
     public String getSelectedAbility(int slot) {
-        if (slot < 1 || slot > abilityDropdowns.length) {
+        if (slot < 1 || slot > abilityDropdowns.size()) {
             throw new IllegalArgumentException("Invalid slot: " + slot);
         }
-        return (String) abilityDropdowns[slot - 1].getSelectedItem();
+        return (String) abilityDropdowns.get(slot - 1).getSelectedItem();
     }
 
     public String getSelectedMagicItem() {
@@ -279,10 +273,15 @@ public class CharacterEditView extends JFrame {
     }
 
     public void setAbilityCount(int count) {
-        if (count < 3 || count > 4) {
-            throw new IllegalArgumentException("Ability count must be 3 or 4");
+        if (count < 1) {
+            throw new IllegalArgumentException("Ability count must be positive");
         }
         abilityCount = count;
+        while (abilityDropdowns.size() < count) {
+            JComboBox<String> dd = new JComboBox<>();
+            abilityDropdowns.add(dd);
+            abilityPanels.add(createDropdownPanel("Select Ability " + abilityDropdowns.size(), dd));
+        }
         abilitiesPanel.removeAll();
         abilitiesPanel.add(Box.createVerticalStrut(20));
         for (int i = 0; i < abilityCount; i++) {

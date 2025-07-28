@@ -13,6 +13,7 @@ import model.service.ClassService;
 import model.service.RaceService;
 import model.util.GameException;
 import model.util.InputValidator;
+import model.util.Constants;
 import view.CharacterManualCreationView;
 
 /**
@@ -78,10 +79,10 @@ public final class CharacterManualCreationController {
     }
 
     private void clearAbilityOptions() {
-        view.setAbilityOptions(1, new String[0]);
-        view.setAbilityOptions(2, new String[0]);
-        view.setAbilityOptions(3, new String[0]);
-        view.setAbilityOptions(4, new String[0]);
+        int slots = view.getAbilityCount();
+        for (int i = 1; i <= slots; i++) {
+            view.setAbilityOptions(i, new String[0]);
+        }
     }
 
     // --- UI Event Binding ---
@@ -113,7 +114,7 @@ public final class CharacterManualCreationController {
 
             RaceType race = RaceType.valueOf(raceStr);
 
-            int expectedAbilities = 3 + (race == RaceType.GNOME ? 1 : 0);
+            int expectedAbilities = Constants.NUM_ABILITIES_PER_CHAR + race.getExtraAbilitySlots();
 
             long count = Arrays.stream(selectedAbilityNames)
                     .filter(a -> a != null && !a.isBlank()).count();
@@ -170,9 +171,10 @@ public final class CharacterManualCreationController {
         String raceStr = view.getSelectedRace();
         if (raceStr != null && !raceStr.isBlank()) {
             RaceType race = RaceType.valueOf(raceStr);
-            view.setAbility4Visible(race == RaceType.GNOME);
+            int count = Constants.NUM_ABILITIES_PER_CHAR + race.getExtraAbilitySlots();
+            view.setAbilityCount(count);
         } else {
-            view.setAbility4Visible(false);
+            view.setAbilityCount(Constants.NUM_ABILITIES_PER_CHAR);
         }
         refreshAbilityOptions();
     }
@@ -188,13 +190,9 @@ public final class CharacterManualCreationController {
             List<String> abilityNames = classService.getAvailableAbilities(classType)
                     .stream().map(Ability::getName).collect(Collectors.toList());
             String[] options = abilityNames.toArray(new String[0]);
-            view.setAbilityOptions(1, options);
-            view.setAbilityOptions(2, options);
-            view.setAbilityOptions(3, options);
-
-            String raceStr = view.getSelectedRace();
-            if (raceStr != null && !raceStr.isBlank() && RaceType.valueOf(raceStr) == RaceType.GNOME) {
-                view.setAbilityOptions(4, options);
+            int slots = view.getAbilityCount();
+            for (int i = 1; i <= slots; i++) {
+                view.setAbilityOptions(i, options);
             }
         } catch (Exception e) {
             clearAbilityOptions();

@@ -169,22 +169,15 @@ public class PlayerCharacterManagementController {
             abilityNames = List.of();
         }
         String[] opts = abilityNames.toArray(new String[0]);
-        for (int i = 1; i <= 3; i++) {
+        int slots = c.getUnlockedAbilitySlots();
+        ev.setAbilityCount(slots);
+        for (int i = 1; i <= slots; i++) {
             ev.setAbilityOptions(i, opts);
         }
 
-        boolean allowFour = c.getUnlockedAbilitySlots() > 3;
-        ev.setAbility4Visible(allowFour);
-        if (allowFour) {
-            ev.setAbilityOptions(4, opts);
-        }
-
         List<Ability> current = c.getAbilities();
-        for (int i = 0; i < Math.min(current.size(), 3); i++) {
+        for (int i = 0; i < Math.min(current.size(), slots); i++) {
             ev.setSelectedAbility(i + 1, current.get(i).getName());
-        }
-        if (allowFour && current.size() >= 4) {
-            ev.setSelectedAbility(4, current.get(3).getName());
         }
 
         List<MagicItem> items = c.getInventory().getAllItems();
@@ -243,7 +236,7 @@ public class PlayerCharacterManagementController {
                 }
             }
 
-            int expected = Math.min(c.getUnlockedAbilitySlots(), 4);
+            int expected = c.getUnlockedAbilitySlots();
             if (abilityNames.length != expected) {
                 ev.showErrorMessage("Incorrect number of abilities selected.");
                 return;
