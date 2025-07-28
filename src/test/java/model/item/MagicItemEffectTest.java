@@ -5,7 +5,11 @@ import model.core.ClassType;
 import model.core.Character;
 import model.core.RaceType;
 import model.util.GameException;
+import model.util.StatusEffectFactory;
 import model.util.StatusEffectType;
+import model.item.BlazingCharm;
+import model.item.ElvenCloak;
+import model.item.PhoenixFeather;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -41,5 +45,38 @@ public class MagicItemEffectTest {
                 SingleUseEffectType.GRANT_IMMUNITY, 1);
         item.applyEffect(c, new CombatLog());
         assertTrue(c.hasStatusEffect(StatusEffectType.IMMUNITY));
+    }
+
+    @Test
+    public void testBlazingCharmDamage() throws GameException {
+        Character user = new Character("U", RaceType.HUMAN, ClassType.WARRIOR, List.of());
+        Character target = new Character("T", RaceType.HUMAN, ClassType.WARRIOR, List.of());
+        BlazingCharm charm = new BlazingCharm();
+        charm.applyEffect(user, target, new CombatLog());
+        assertEquals(target.getMaxHp() - 25, target.getCurrentHp());
+    }
+
+    @Test
+    public void testElvenCloakBlocksFirstStatus() throws GameException {
+        Character c = new Character("E", RaceType.HUMAN, ClassType.WARRIOR, List.of());
+        ElvenCloak cloak = new ElvenCloak();
+        c.getInventory().addItem(cloak);
+        c.getInventory().equipItem(cloak);
+        c.addStatusEffect(StatusEffectFactory.create(StatusEffectType.STUNNED));
+        assertFalse(c.hasStatusEffect(StatusEffectType.STUNNED));
+        c.addStatusEffect(StatusEffectFactory.create(StatusEffectType.POISONED));
+        assertTrue(c.hasStatusEffect(StatusEffectType.POISONED));
+    }
+
+    @Test
+    public void testPhoenixFeatherRevive() throws GameException {
+        Character c = new Character("P", RaceType.HUMAN, ClassType.WARRIOR, List.of());
+        PhoenixFeather feather = new PhoenixFeather();
+        c.getInventory().addItem(feather);
+        c.getInventory().equipItem(feather);
+        c.takeDamage(c.getMaxHp());
+        c.checkPhoenixFeather(new CombatLog());
+        assertEquals(40, c.getCurrentHp());
+        assertFalse(c.getInventory().getAllItems().contains(feather));
     }
 }

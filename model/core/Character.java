@@ -40,6 +40,12 @@ public class Character implements Serializable {
     /** Status effects currently affecting the character. Always initialized. Never null. */
     private transient List<StatusEffect> activeStatusEffects = new ArrayList<>();
 
+    /** Tracks if Elven Cloak has negated a status effect this battle. */
+    private transient boolean statusEffectImmuneUsed;
+
+    /** Tracks if Phoenix Feather has revived this battle. */
+    private transient boolean phoenixFeatherUsed;
+
     // --- Dynamic Stats ---
     private int maxHp;
     private int currentHp;
@@ -91,6 +97,8 @@ public class Character implements Serializable {
         this.abilitySlotCount = other.abilitySlotCount;
 
         this.isStunned = false;
+        this.statusEffectImmuneUsed = false;
+        this.phoenixFeatherUsed = false;
     }
 
     // --- Method to create a copy for battle ---
@@ -131,6 +139,8 @@ public class Character implements Serializable {
 
         this.activeStatusEffects.clear();
         this.isStunned = false;
+        this.statusEffectImmuneUsed = false;
+        this.phoenixFeatherUsed = false;
 
         initializeStats();
         if (!this.abilities.isEmpty()) {
@@ -381,6 +391,11 @@ public class Character implements Serializable {
         if (activeStatusEffects.size() >= Constants.MAX_STATUS_EFFECTS) {
             return; // Or throw exception
         }
+        MagicItem eq = inventory.getEquippedItem();
+        if (eq != null && "Elven Cloak".equals(eq.getName()) && !statusEffectImmuneUsed) {
+            statusEffectImmuneUsed = true;
+            return; // first status effect ignored
+        }
         activeStatusEffects.add(effect);
         effect.applyEffect(this);
     }
@@ -413,6 +428,7 @@ public class Character implements Serializable {
                     log.addEntry(this.name + " suffers " + dmg + " poison damage.");
                 }
             }
+            checkPhoenixFeather(log);
             if (effect.getDuration() <= 0) {
                 effect.remove(this);
                 iterator.remove();
@@ -435,6 +451,21 @@ public class Character implements Serializable {
                 effect.remove(this);
                 iterator.remove();
                 log.addEntry(this.name + " is no longer " + effect.getType() + ".");
+            }
+        }
+    }
+
+    /**
+     * Checks and triggers the Phoenix Feather revive effect if applicable.
+     */
+    public void checkPhoenixFeather(CombatLog log) throws GameException {
+        MagicItem eq = inventory.getEquippedItem();
+        if (eq != null && "Phoenix Feather".equals(eq.getName()) && !phoenixFeatherUsed && currentHp <= 0) {
+            currentHp = Math.min(maxHp, 40);
+            phoenixFeatherUsed = true;
+            inventory.removeItem(eq);
+            if (log != null) {
+                log.addEntry(name + " is revived by Phoenix Feather!");
             }
         }
     }
@@ -485,5 +516,7 @@ public class Character implements Serializable {
         if (abilitySlotCount == 0) {
             abilitySlotCount = unlockedAbilitySlots;
         }
+        statusEffectImmuneUsed = false;
+        phoenixFeatherUsed = false;
     }
 }

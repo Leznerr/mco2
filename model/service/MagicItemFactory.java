@@ -5,10 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-import model.item.MagicItem;
-import model.item.PassiveItem;
-import model.item.SingleUseItem;
-import model.item.SingleUseEffectType;
+import model.item.*;
 
 /**
  * <h2>MagicItemFactory</h2>
@@ -47,7 +44,8 @@ public final class MagicItemFactory {
                 "Envelops the bearer in a barrier, negating all damage for one turn.",
                 "Common",
                 SingleUseEffectType.GRANT_IMMUNITY,
-                1)
+                1),
+        new BlazingCharm()
     );
 
     private static final List<MagicItem> UNCOMMON_ITEMS = List.of(
@@ -58,7 +56,8 @@ public final class MagicItemFactory {
         new PassiveItem(
                 "Ring of Focus",
                 "Favored by Arcane College scholars. Grants +2 EP each turn.",
-                "Uncommon")
+                "Uncommon"),
+        new ElvenCloak()
     );
 
     private static final List<MagicItem> RARE_ITEMS = List.of(
@@ -69,7 +68,8 @@ public final class MagicItemFactory {
         new PassiveItem(
                 "Ancient Tome of Power",
                 "Dusty pages filled with forgotten spells. Gain +5 EP each turn.",
-                "Rare")
+                "Rare"),
+        new PhoenixFeather()
     );
 
     /* -------------------------------------------------------------

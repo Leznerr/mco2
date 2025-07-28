@@ -283,7 +283,8 @@ Optional<Ability> abilityOpt = user.getAbilities().stream()
         }
 
         CombatLog log = battle.getCombatLog();
-        item.applyEffect(user, log);
+        Character target = (user == battle.getCharacter1()) ? battle.getCharacter2() : battle.getCharacter1();
+        item.applyEffect(user, target, log);
         user.getInventory().useSingleUseItem(item);
         updatePlayerPanels();
     }
