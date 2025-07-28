@@ -34,6 +34,12 @@ public class PlayerCharManagementView extends JFrame {
     public static final String RETURN = "Return";
 
     // UI components
+    // Panels and labels used in the layout
+    private JPanel backgroundPanel;
+    private JPanel buttonPanel;
+    private JLabel logoLabel;
+
+    // Buttons
     private JButton btnViewChar;
     private JButton btnCreateChar;
     private JButton btnEditChar;
@@ -81,8 +87,8 @@ public class PlayerCharManagementView extends JFrame {
      * Initializes the GUI layout and components.
      */
     private void initUI() {
-        JPanel backgroundPanel = new JPanel() {
-            private Image bg = new ImageIcon("view/assets/CharAndPlayerCharManagBG.jpg").getImage();
+        backgroundPanel = new JPanel() {
+            private final Image bg = new ImageIcon("view/assets/CharAndPlayerCharManagBG.jpg").getImage();
 
             @Override
             protected void paintComponent(Graphics g) {
@@ -109,13 +115,13 @@ public class PlayerCharManagementView extends JFrame {
         String headlineImagePath = String.format("view/assets/Player%dCharManagLogo.png", playerID);
         ImageIcon logoIcon = new ImageIcon(headlineImagePath);
         Image logoImg = logoIcon.getImage().getScaledInstance(500, -1, Image.SCALE_SMOOTH);
-        JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
+        logoLabel = new JLabel(new ImageIcon(logoImg));
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         backgroundPanel.add(logoLabel);
 
         backgroundPanel.add(Box.createVerticalStrut(10));
 
-        JPanel buttonPanel = new JPanel();
+        buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 
