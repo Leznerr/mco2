@@ -23,6 +23,7 @@ import javax.swing.JPanel;
  * </p>
  */
 public class CharacterCreationManagementView extends JFrame {
+    private final int playerID;
     private final String playerName;
 
     // Button labels
@@ -37,11 +38,14 @@ public class CharacterCreationManagementView extends JFrame {
 
     /**
      * Constructs the Character Creation Management UI for the given player.
+     *
      * @param playerName the unique player name
+     * @param playerID   numeric ID of the player (1 or 2)
      */
-    public CharacterCreationManagementView(String playerName) {
+    public CharacterCreationManagementView(String playerName, int playerID) {
         super("Fatal Fantasy: Tactics | " + playerName + " Character Creation Modes");
         this.playerName = playerName;
+        this.playerID = playerID;
 
         initUI();
 
@@ -102,8 +106,8 @@ public class CharacterCreationManagementView extends JFrame {
         backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.Y_AXIS));
         backgroundPanel.add(Box.createVerticalStrut(60));
 
-        // Logo image centered and scaled (use player name in asset path or as subtitle as needed)
-        String logoPath = String.format("view/assets/%sCharCreationModesLogo.png", playerName);
+        // Logo image centered and scaled (uses playerID-specific logo)
+        String logoPath = String.format("view/assets/Player%dCharCreationModesLogo.png", playerID);
         ImageIcon logoIcon = new ImageIcon(logoPath);
         Image logoImg = logoIcon.getImage().getScaledInstance(500, -1, Image.SCALE_SMOOTH);
         JLabel logoLabel = new JLabel(new ImageIcon(logoImg));

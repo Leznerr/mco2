@@ -39,7 +39,7 @@ public class PlayerCharacterManagementController {
             String cmd = e.getActionCommand();
             switch (cmd) {
                 case PlayerCharacterManagementView.VIEW_CHARACTERS -> openCharacterList();
-                case PlayerCharacterManagementView.CREATE_CHARACTER -> gameManagerController.handleNavigateToCharacterCreationManagement(player.getName());
+                case PlayerCharacterManagementView.CREATE_CHARACTER -> gameManagerController.handleNavigateToCharacterCreationManagement(player.getName(), view.getPlayerID());
                 case PlayerCharacterManagementView.EDIT_CHARACTER -> openEditCharacter();
                 case PlayerCharacterManagementView.DELETE_CHARACTER -> openDeleteCharacter();
                 case PlayerCharacterManagementView.INVENTORY -> openInventory();
