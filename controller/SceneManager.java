@@ -82,8 +82,6 @@ public final class SceneManager {
     public void showMainMenu() {
         if (mainMenuView == null) {
             mainMenuView = new MainMenuView();
-
-            }
             mainMenuView.setActionListener(gameManagerController);
             root.add(mainMenuView, CARD_MAIN_MENU);
         }
@@ -194,7 +192,8 @@ public final class SceneManager {
     public void showHallOfFameManagement() {
         if (hallOfFameView == null) {
             hallOfFameView = new HallOfFameManagementView();
-<<<
+            hallOfFameController = new HallOfFameController(hallOfFameView, this);
+            root.add(hallOfFameView, CARD_HALL_OF_FAME);
         }
         cards.show(root, CARD_HALL_OF_FAME);
     }
