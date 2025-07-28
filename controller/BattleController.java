@@ -353,9 +353,7 @@ Optional<Ability> abilityOpt = user.getAbilities().stream()
                         log.addEntry(persistentWinner.getName() + " is awarded a magic item: " + reward.getName());
                         javax.swing.JOptionPane.showMessageDialog(
                                 null,
-                                persistentWinner.getName() + " has been awarded a magic item!\n\n" +
-                                        reward.getName() + " (" + reward.getRarity() + ")\n" +
-                                        reward.getDescription(),
+                                buildAwardMessage(reward),
                                 "Magic Item Awarded!",
                                 javax.swing.JOptionPane.INFORMATION_MESSAGE
                         );
@@ -613,5 +611,28 @@ Optional<Ability> abilityOpt = user.getAbilities().stream()
             return base + " | " + statuses;
         }
         return base;
+    }
+
+    private String buildAwardMessage(MagicItem item) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Congratulations! You received a ")
+          .append(item.getRarityType()).append(' ')
+          .append(item.getItemType()).append(" Item: ")
+          .append(item.getName()).append('!');
+        if (item instanceof SingleUseItem su) {
+            sb.append("\nEffect: ").append(describeEffect(su));
+        } else {
+            sb.append("\nEffect: ").append(item.getDescription());
+        }
+        return sb.toString();
+    }
+
+    private String describeEffect(SingleUseItem item) {
+        return switch (item.getEffectType()) {
+            case HEAL_HP -> "Heals " + item.getEffectValue() + " HP";
+            case RESTORE_EP -> "Restores " + item.getEffectValue() + " EP";
+            case REVIVE -> "Revives with " + item.getEffectValue() + "% HP";
+            case GRANT_IMMUNITY -> "Grants immunity for " + item.getEffectValue() + " turn(s)";
+        };
     }
 }

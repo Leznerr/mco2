@@ -40,12 +40,12 @@ public final class SingleUseItem extends MagicItem {
      *
      * @param name        display name (non-blank)
      * @param description tooltip or flavour text (non-blank)
-     * @param rarity      rarity label (non-blank)
+     * @param rarity      rarity tier (non-null)
      * @param effectType  type of effect when used (non-null)
      * @param effectValue numeric value of the effect (1..MAX_EFFECT_VALUE)
      * @throws GameException if any argument fails validation
      */
-    public SingleUseItem(String name, String description, String rarity,
+    public SingleUseItem(String name, String description, RarityType rarity,
                          SingleUseEffectType effectType, int effectValue)
             throws GameException {
         super(name, description, ItemType.SINGLE_USE, rarity);
@@ -102,7 +102,7 @@ public final class SingleUseItem extends MagicItem {
      */
     @Override
     public MagicItem copy() {
-        return new SingleUseItem(getName(), getDescription(), getRarity(),
+        return new SingleUseItem(getName(), getDescription(), getRarityType(),
                 effectType, effectValue);
     }
 

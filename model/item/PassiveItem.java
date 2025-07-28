@@ -27,10 +27,10 @@ public final class PassiveItem extends MagicItem {
      *
      * @param name        the item's display name (non-blank)
      * @param description tooltip text / effect blurb (non-blank)
-     * @param rarity      rarity label (e.g., "Common", "Legendary")
+     * @param rarity      item rarity tier
      * @throws GameException if any parameter fails validation
      */
-    public PassiveItem(String name, String description, String rarity) throws GameException {
+    public PassiveItem(String name, String description, RarityType rarity) throws GameException {
         super(name, description, ItemType.PASSIVE, rarity);
     }
 
@@ -41,6 +41,6 @@ public final class PassiveItem extends MagicItem {
      */
     @Override
     public MagicItem copy() {
-        return new PassiveItem(getName(), getDescription(), getRarity());
+        return new PassiveItem(getName(), getDescription(), getRarityType());
     }
 }

@@ -6,6 +6,7 @@ import model.core.Player;
 import model.core.RaceType;
 import model.item.PassiveItem;
 import model.item.MagicItem;
+import model.item.RarityType;
 import model.util.GameException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,8 +32,8 @@ public class TradeControllerTest {
         p2 = new Player("Bob");
         c1 = new Character("A", RaceType.HUMAN, ClassType.WARRIOR, List.of());
         c2 = new Character("B", RaceType.ELF, ClassType.MAGE, List.of());
-        item1 = new PassiveItem("Ring", "", "Common");
-        item2 = new PassiveItem("Amulet", "", "Common");
+        item1 = new PassiveItem("Ring", "", RarityType.COMMON);
+        item2 = new PassiveItem("Amulet", "", RarityType.COMMON);
         c1.getInventory().addItem(item1);
         c2.getInventory().addItem(item2);
         p1.addCharacter(c1);
@@ -55,7 +56,7 @@ public class TradeControllerTest {
 
     @Test
     public void testTradeNonOwnedItemFails() {
-        PassiveItem other = new PassiveItem("Other", "", "Common");
+        PassiveItem other = new PassiveItem("Other", "", RarityType.COMMON);
         assertThrows(GameException.class, () ->
                 controller.executeTrade(c1, List.of(other), c2, List.of(item2)));
 

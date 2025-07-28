@@ -425,9 +425,9 @@ public void actionPerformed(ActionEvent e) {
             if (character.getBattlesWon() % Constants.WINS_PER_REWARD == 0) {
                 MagicItem reward = generateUniqueReward(character);
                 character.getInventory().addItem(reward);
-                javax.swing.JOptionPane.showMessageDialog(null,
-                        "New Magic Item awarded: " + reward.getName() +
-                        "\n" + reward.getDescription(),
+                javax.swing.JOptionPane.showMessageDialog(
+                        null,
+                        formatAwardMessage(reward),
                         "Item Awarded",
                         javax.swing.JOptionPane.INFORMATION_MESSAGE);
             }
@@ -454,5 +454,30 @@ public void actionPerformed(ActionEvent e) {
             attempts++;
         }
         return reward;
+    }
+
+    /** Formats a popup message describing the awarded item. */
+    private String formatAwardMessage(MagicItem item) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Congratulations! You received a ")
+          .append(item.getRarityType()).append(' ')
+          .append(item.getItemType()).append(" Item: ")
+          .append(item.getName()).append('!');
+        if (item instanceof model.item.SingleUseItem su) {
+            sb.append("\nEffect: ").append(describeEffect(su));
+        } else {
+            sb.append("\nEffect: ").append(item.getDescription());
+        }
+        return sb.toString();
+    }
+
+    private String describeEffect(model.item.SingleUseItem item) {
+        return switch (item.getEffectType()) {
+            case HEAL_HP -> "Heals " + item.getEffectValue() + " HP";
+            case RESTORE_EP -> "Restores " + item.getEffectValue() + " EP";
+            case REVIVE -> "Revives with " + item.getEffectValue() + "% HP";
+            case GRANT_IMMUNITY ->
+                    "Grants immunity for " + item.getEffectValue() + " turn(s)";
+        };
     }
 }

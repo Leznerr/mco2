@@ -2,6 +2,7 @@ package model.item;
 
 import model.service.MagicItemFactory;
 import org.junit.jupiter.api.Test;
+import model.item.RarityType;
 
 import java.util.Random;
 
@@ -22,10 +23,10 @@ public class MagicItemFactoryTest {
     @Test
     public void testRarityBoundaries() {
         MagicItem common = MagicItemFactory.createRandomReward(new FixedRandom(10,0));
-        assertEquals("Common", common.getRarity());
+        assertEquals(RarityType.COMMON, common.getRarityType());
         MagicItem uncommon = MagicItemFactory.createRandomReward(new FixedRandom(60,0));
-        assertEquals("Uncommon", uncommon.getRarity());
+        assertEquals(RarityType.UNCOMMON, uncommon.getRarityType());
         MagicItem rare = MagicItemFactory.createRandomReward(new FixedRandom(98,0));
-        assertEquals("Rare", rare.getRarity());
+        assertEquals(RarityType.RARE, rare.getRarityType());
     }
 }
