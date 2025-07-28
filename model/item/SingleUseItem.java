@@ -27,7 +27,7 @@ import model.util.InputValidator;
  * @see PassiveItem
  * @see Inventory
  */
-public final class SingleUseItem extends MagicItem {
+public class SingleUseItem extends MagicItem {
 
     /** Specific effect this item triggers when consumed. */
     private final SingleUseEffectType effectType;
@@ -114,7 +114,19 @@ public final class SingleUseItem extends MagicItem {
      * @throws GameException if the effect cannot be applied
      */
     public void applyEffect(Character user, CombatLog log) throws GameException {
+        applyEffect(user, user, log);
+    }
+
+    /**
+     * Applies this item's effect, optionally targeting another character.
+     *
+     * @param user   the character consuming the item (non-null)
+     * @param target the character affected by the item (non-null)
+     * @param log    combat log to record actions (non-null)
+     */
+    public void applyEffect(Character user, Character target, CombatLog log) throws GameException {
         InputValidator.requireNonNull(user, "item user");
+        InputValidator.requireNonNull(target, "item target");
         InputValidator.requireNonNull(log,  "combat log");
 
         switch (effectType) {
@@ -145,6 +157,13 @@ public final class SingleUseItem extends MagicItem {
                                 model.util.StatusEffectType.IMMUNITY));
                 log.addEntry(user.getName() + " uses " + getName()
                         + " and becomes immune to damage!");
+            }
+            case DAMAGE -> {
+                target.takeDamage(effectValue);
+                log.addEntry(user.getName() + " uses " + getName()
+                        + " and deals " + effectValue + " damage to "
+                        + target.getName() + "!");
+                target.checkPhoenixFeather(log);
             }
             default -> throw new GameException("Unhandled single-use effect: "
                     + effectType);

@@ -20,7 +20,7 @@ import model.util.GameException;
  * @see SingleUseItem
  * @see Inventory
  */
-public final class PassiveItem extends MagicItem {
+public class PassiveItem extends MagicItem {
 
     /**
      * Constructs a new passive magic item.

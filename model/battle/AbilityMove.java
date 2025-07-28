@@ -54,6 +54,7 @@ public final class AbilityMove implements Move {
             case DAMAGE -> {
                 target.takeDamage(ability.getEffectValue());
                 log.addEntry(target.getName() + " takes " + ability.getEffectValue() + " damage.");
+                target.checkPhoenixFeather(log);
             }
             case HEAL -> {
                 user.heal(ability.getEffectValue());
