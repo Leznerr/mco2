@@ -468,6 +468,7 @@ public class BattleView extends JFrame {
         for (String option : options) {
             combo.addItem(option);
         }
+        combo.setMaximumRowCount(options.size());
     }
 
 

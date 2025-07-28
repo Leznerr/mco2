@@ -173,7 +173,7 @@ public class PlayerCharacterManagementController {
             ev.setAbilityOptions(i, opts);
         }
 
-        boolean allowFour = c.getAbilitySlots() > 3;
+        boolean allowFour = c.getUnlockedAbilitySlots() > 3;
         ev.setAbility4Visible(allowFour);
         if (allowFour) {
             ev.setAbilityOptions(4, opts);
@@ -243,7 +243,7 @@ public class PlayerCharacterManagementController {
                 }
             }
 
-            int expected = 3 + (c.getRaceType() == model.core.RaceType.GNOME ? 1 : 0);
+            int expected = Math.min(c.getUnlockedAbilitySlots(), 4);
             if (abilityNames.length != expected) {
                 ev.showErrorMessage("Incorrect number of abilities selected.");
                 return;

@@ -535,7 +535,9 @@ public final class BattleController {
     private List<String> abilityNames(Character c) {
         List<String> names = new ArrayList<>();
 
-        for (Ability a : c.getAbilities()) {
+        int limit = Math.min(c.getUnlockedAbilitySlots(), c.getAbilities().size());
+        for (int i = 0; i < limit; i++) {
+            Ability a = c.getAbilities().get(i);
             String entry = String.format(
                     "%s (EP: %d, Effect: %s)",
                     a.getName(), a.getEpCost(), a.getDescription());
@@ -563,7 +565,9 @@ public final class BattleController {
     private String buildAbilityList(Character c) {
         StringBuilder sb = new StringBuilder();
 
-        for (Ability a : c.getAbilities()) {
+        int limit = Math.min(c.getUnlockedAbilitySlots(), c.getAbilities().size());
+        for (int i = 0; i < limit; i++) {
+            Ability a = c.getAbilities().get(i);
             sb.append(a.getName())
               .append(" (EP: ")
               .append(a.getEpCost())

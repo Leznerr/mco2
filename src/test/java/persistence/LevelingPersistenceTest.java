@@ -34,5 +34,6 @@ public class LevelingPersistenceTest {
         assertEquals(c.getExperience(), loadedChar.getExperience());
         assertEquals(c.getBattlesWon(), loadedChar.getBattlesWon());
         assertEquals(c.getNextLevelMilestone(), loadedChar.getNextLevelMilestone());
+        assertEquals(c.getUnlockedAbilitySlots(), loadedChar.getUnlockedAbilitySlots());
     }
 }
