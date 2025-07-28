@@ -162,6 +162,7 @@ public class InventoryView extends JFrame{
                 if (val instanceof model.item.MagicItem mi) {
                     setText((idx + 1) + ". " + mi.getName());
                     setToolTipText(mi.getDescription());
+                    setForeground(Color.WHITE);
                 }
                 return this;
             }
@@ -305,6 +306,7 @@ public class InventoryView extends JFrame{
                     if (mi.equals(equipped)) name += " (Equipped)";
                     setText((idx + 1) + ". " + name);
                     setToolTipText(mi.getDescription());
+                    setForeground(Color.WHITE);
                 }
                 return this;
             }
