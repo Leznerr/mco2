@@ -48,7 +48,13 @@ public final class MagicItemFactory {
                 "Envelops the bearer in a barrier, negating all damage for one turn.",
                 RarityType.COMMON,
                 SingleUseEffectType.GRANT_IMMUNITY,
-                1)
+                1),
+        new SingleUseItem(
+                "Blazing Charm",
+                "A fiery charm that scorches a foe for 25 damage.",
+                RarityType.COMMON,
+                SingleUseEffectType.DAMAGE,
+                25)
     );
 
     private static final List<MagicItem> UNCOMMON_ITEMS = List.of(
@@ -59,6 +65,10 @@ public final class MagicItemFactory {
         new PassiveItem(
                 "Ring of Focus",
                 "Favored by Arcane College scholars. Grants +2 EP each turn.",
+                RarityType.UNCOMMON),
+        new PassiveItem(
+                "Elven Cloak",
+                "A shimmering cloak that blocks the first status effect each battle.",
                 RarityType.UNCOMMON)
     );
 
@@ -70,6 +80,10 @@ public final class MagicItemFactory {
         new PassiveItem(
                 "Ancient Tome of Power",
                 "Dusty pages filled with forgotten spells. Gain +5 EP each turn.",
+                RarityType.RARE),
+        new PassiveItem(
+                "Phoenix Feather",
+                "A legendary feather that revives the wearer once per battle.",
                 RarityType.RARE)
     );
 
