@@ -122,8 +122,20 @@ public class PlayerCharacterManagementController {
                     return;
                 }
                 Character c = player.getCharacter(name).orElse(null);
-                String details = (c == null) ? "Character not found." : c.toString() + "\nAbilities:\n" +
-                        c.getAbilities().stream().map(Ability::getName).collect(Collectors.joining("\n"));
+                String details;
+                if (c == null) {
+                    details = "Character not found.";
+                } else {
+                    java.util.List<String> abilityNames = new java.util.ArrayList<>();
+                    for (int i = 0; i < c.getAbilitySlots(); i++) {
+                        if (i < c.getAbilities().size()) {
+                            abilityNames.add(c.getAbilities().get(i).getName());
+                        } else {
+                            abilityNames.add("Empty Slot");
+                        }
+                    }
+                    details = c.toString() + "\nAbilities:\n" + String.join("\n", abilityNames);
+                }
                 specView.updateCharacterDetails(details);
             }
         });
@@ -169,22 +181,15 @@ public class PlayerCharacterManagementController {
             abilityNames = List.of();
         }
         String[] opts = abilityNames.toArray(new String[0]);
-        for (int i = 1; i <= 3; i++) {
+        int slots = c.getAbilitySlots();
+        ev.setAbilityCount(slots);
+        for (int i = 1; i <= slots; i++) {
             ev.setAbilityOptions(i, opts);
         }
 
-        boolean allowFour = c.getUnlockedAbilitySlots() > 3;
-        ev.setAbility4Visible(allowFour);
-        if (allowFour) {
-            ev.setAbilityOptions(4, opts);
-        }
-
         List<Ability> current = c.getAbilities();
-        for (int i = 0; i < Math.min(current.size(), 3); i++) {
+        for (int i = 0; i < Math.min(current.size(), slots); i++) {
             ev.setSelectedAbility(i + 1, current.get(i).getName());
-        }
-        if (allowFour && current.size() >= 4) {
-            ev.setSelectedAbility(4, current.get(3).getName());
         }
 
         List<MagicItem> items = c.getInventory().getAllItems();
@@ -243,7 +248,7 @@ public class PlayerCharacterManagementController {
                 }
             }
 
-            int expected = Math.min(c.getUnlockedAbilitySlots(), 4);
+            int expected = ev.getAbilityCount();
             if (abilityNames.length != expected) {
                 ev.showErrorMessage("Incorrect number of abilities selected.");
                 return;
