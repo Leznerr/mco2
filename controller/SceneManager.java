@@ -242,19 +242,23 @@ public final class SceneManager {
                 if (BattleView.P1_USE.equals(cmd)) {
                     String selection = battleView.getSelectedAbility(1);
                     if (selection != null) {
-                        var item = human.getInventory().getEquippedItem();
-                        if (item != null && selection.startsWith("Use Magic Item:")) {
-                            if (item instanceof model.item.SingleUseItem sui) {
-                                try {
-                                    battleController.submitMove(human, new model.battle.ItemMove(sui));
-                                } catch (GameException ex) {
-                                    DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
+                        selection = selection.trim();
+
+                        if (selection.startsWith("Item: ")) {
+                            String itemName = selection.substring(6).trim();
+                            for (var mi : human.getInventory().getAllItems()) {
+                                if (mi instanceof model.item.SingleUseItem sui && mi.getName().equals(itemName)) {
+                                    try {
+                                        battleController.submitMove(human, new model.battle.ItemMove(sui));
+                                    } catch (GameException ex) {
+                                        DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
+                                    }
+                                    break;
                                 }
                             }
-                        } else if (item != null && selection.startsWith("Magic Item:")) {
-                            DialogUtils.showInformationDialog("Magic Item", "Passive item effects are always active and do not require use.");
                         } else {
-                            String abilityName = selection.split(" \\\(EP:")[0];
+                            int idx = selection.indexOf(" (EP:");
+                            String abilityName = idx >= 0 ? selection.substring(0, idx).trim() : selection.trim();
                             for (var ab : human.getAbilities()) {
                                 if (ab.getName().equals(abilityName)) {
                                     try {
