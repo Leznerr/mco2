@@ -241,16 +241,30 @@ public final class SceneManager {
             battleView.setActionListener(e -> {
                 String cmd = e.getActionCommand();
                 if (BattleView.P1_USE.equals(cmd)) {
-                    String ability = battleView.getSelectedAbility(1);
-                    if (ability != null) {
-                        for (var ab : human.getAbilities()) {
-                            if (ab.getName().equals(ability)) {
+                    String selection = battleView.getSelectedAbility(1);
+                    if (selection != null) {
+                        var item = human.getInventory().getEquippedItem();
+                        if (item != null && selection.startsWith("Use Magic Item:")) {
+                            if (item instanceof model.item.SingleUseItem sui) {
                                 try {
-                                    battleController.submitMove(human, new model.battle.AbilityMove(ab));
+                                    battleController.submitMove(human, new model.battle.ItemMove(sui));
                                 } catch (GameException ex) {
                                     DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
                                 }
-                                break;
+                            }
+                        } else if (item != null && selection.startsWith("Magic Item:")) {
+                            DialogUtils.showInformationDialog("Magic Item", "Passive item effects are always active and do not require use.");
+                        } else {
+                            String abilityName = selection.split(" \\\(EP:")[0];
+                            for (var ab : human.getAbilities()) {
+                                if (ab.getName().equals(abilityName)) {
+                                    try {
+                                        battleController.submitMove(human, new model.battle.AbilityMove(ab));
+                                    } catch (GameException ex) {
+                                        DialogUtils.showErrorDialog("Battle Error", ex.getMessage());
+                                    }
+                                    break;
+                                }
                             }
                         }
                     }
