@@ -114,7 +114,7 @@ public class CharacterEditView extends JFrame {
         JPanel centerPanel = new JPanel();
         centerPanel.setOpaque(false);
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-        centerPanel.add(Box.createVerticalStrut(40));
+        centerPanel.add(Box.createVerticalStrut(30));
 
         String logoPath = String.format("view/assets/Player%dCharEditLogo.png", playerID);
         ImageIcon logoIcon = new ImageIcon(new ImageIcon(logoPath).getImage().getScaledInstance(550, -1, Image.SCALE_SMOOTH));
@@ -137,10 +137,9 @@ public class CharacterEditView extends JFrame {
 
         centerPanel.add(abilitiesPanel);
 
-        abilitiesToItemSpacer = Box.createVerticalStrut(20);
+        abilitiesToItemSpacer = Box.createVerticalStrut(5);
         centerPanel.add(abilitiesToItemSpacer);
-
-        centerPanel.add(createDropdownPanel("Un/Equip Magic Item (includes N/A)", dropdownMagicItem));
+        centerPanel.add(createDropdownPanel("Un/Equip Magic Item:", dropdownMagicItem));
         centerPanel.add(Box.createVerticalGlue());
 
         backgroundPanel.add(centerPanel, BorderLayout.CENTER);
