@@ -25,6 +25,12 @@ public enum ClassType {
     /** Heavily armoured front-liner with strong physical defence. */
     WARRIOR("Resilient melee fighter boasting superior HP and defence.", 100, 50),
 
+    /** Masters of summoning spirits and protective magic. */
+    SUMMONER("Mystic who commands conjured allies and arcane pacts.", 100, 50),
+
+    /** Inventive tinkerer armed with mechanical gadgets. */
+    ENGINEER("Tech-savvy combatant deploying machines and tools.", 100, 50),
+
     /**
      * Devout knight combining martial prowess with protective holy magic.
      */

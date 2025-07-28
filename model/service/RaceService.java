@@ -37,7 +37,9 @@ public final class RaceService {
             RaceType.HUMAN , "Versatile adventurers equally at home with blade or spell.",
             RaceType.ELF   , "Graceful folk attuned to nature and the arcane.",
             RaceType.GNOME , "Inventive tinkers whose wit outshines their stature.",
-            RaceType.DWARF , "Stalwart warriors tempered in stone-forged halls."
+            RaceType.DWARF , "Stalwart warriors tempered in stone-forged halls.",
+            RaceType.VAMPIRE, "Cursed beings who regenerate from dealing damage.",
+            RaceType.ORC   , "Savage fighters empowered by their own pain."
         );
 
     /** Singleton instance – race data is static and immutable. */
@@ -95,6 +97,8 @@ public final class RaceService {
         map.put(RaceType.ELF   , new RaceBonus(0 , 15, 0));
         map.put(RaceType.GNOME , new RaceBonus(0 , 0, 1));
         map.put(RaceType.DWARF , new RaceBonus(30, 0, 0));
+        map.put(RaceType.VAMPIRE, new RaceBonus(0 , 0 , 0));
+        map.put(RaceType.ORC   , new RaceBonus(10, 0 , 0));
         return map;
     }
 }

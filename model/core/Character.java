@@ -216,17 +216,30 @@ public class Character implements Serializable {
 
         int finalDamage = damage;
 
-        // Passive item mitigation reserved for future items
-
         if (hasStatusEffect(StatusEffectType.IMMUNITY)) {
             finalDamage = 0;
         } else {
             if (hasStatusEffect(StatusEffectType.DEFENSE_UP)) {
                 finalDamage = (int) Math.ceil(finalDamage / 2.0);
             }
+
+            if (hasStatusEffect(StatusEffectType.SHIELDED)) {
+                for (StatusEffect se : activeStatusEffects) {
+                    if (se.getType() == StatusEffectType.SHIELDED && se instanceof model.util.effects.ShieldEffect s) {
+                        finalDamage = s.absorb(finalDamage);
+                        break;
+                    }
+                }
+                removeStatusEffect(StatusEffectType.SHIELDED);
+            }
+
             if (hasStatusEffect(StatusEffectType.EVADING) && new java.util.Random().nextBoolean()) {
                 finalDamage = 0;
             }
+        }
+
+        if (hasStatusEffect(StatusEffectType.MARKED)) {
+            finalDamage += 5;
         }
 
         this.currentHp = Math.max(0, this.currentHp - finalDamage);
