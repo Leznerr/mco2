@@ -64,10 +64,9 @@ public final class SimpleBot implements AIMoveStrategy {
             }
         }
 
-        for (MagicItem item : botCharacter.getInventory().getAllItems()) {
-            if (item instanceof SingleUseItem su) {
-                options.add(new ItemMove(su));
-            }
+        MagicItem eq = botCharacter.getInventory().getEquippedItem();
+        if (eq instanceof SingleUseItem su) {
+            options.add(new ItemMove(su));
         }
 
         if (options.isEmpty()) {

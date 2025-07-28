@@ -58,14 +58,13 @@ public final class SmartBot implements AIMoveStrategy {
             }
         }
 
-        for (MagicItem item : bot.getInventory().getAllItems()) {
-            if (item instanceof SingleUseItem su) {
-                switch (su.getEffectType()) {
-                    case HEAL_HP -> healingMoves.add(new ItemMove(su));
-                    case RESTORE_EP -> energyMoves.add(new ItemMove(su));
-                    case GRANT_IMMUNITY -> defensiveMoves.add(new ItemMove(su));
-                    default -> {}
-                }
+        MagicItem eq = bot.getInventory().getEquippedItem();
+        if (eq instanceof SingleUseItem su) {
+            switch (su.getEffectType()) {
+                case HEAL_HP -> healingMoves.add(new ItemMove(su));
+                case RESTORE_EP -> energyMoves.add(new ItemMove(su));
+                case GRANT_IMMUNITY -> defensiveMoves.add(new ItemMove(su));
+                default -> {}
             }
         }
 
