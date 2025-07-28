@@ -300,45 +300,48 @@ public final class BattleController {
 
     private List<String> abilityNames(Character c) {
         List<String> names = new ArrayList<>();
+
+        // Abilities
         for (var a : c.getAbilities()) {
-            names.add(a.getName() + " (EP: " + a.getEpCost() + ", Effect: " + a.getDescription() + ")");
+            names.add(a.getName() + " (EP: " + a.getEpCost() + ")");
         }
-        var item = c.getInventory().getEquippedItem();
-        if (item != null) {
+
+        // Include all single-use items held by the character
+        for (var item : c.getInventory().getAllItems()) {
             if (item instanceof SingleUseItem sui) {
-                names.add("Use Magic Item: " + sui.getName() + " (Single-Use, Effect: " + sui.getDescription() + ")");
-            } else {
-                names.add("Magic Item: " + item.getName() + " (Passive, Effect: " + item.getDescription() + ", Always Active)");
+                names.add("Item: " + sui.getName());
             }
         }
+
         return names;
     }
 
     private String buildAbilityList(Character c) {
         StringBuilder sb = new StringBuilder();
+
+        // Abilities listed with EP cost only
         for (var a : c.getAbilities()) {
             sb.append(a.getName())
-              .append(" (EP: ").append(a.getEpCost())
-              .append(", Effect: ").append(a.getDescription())
+              .append(" (EP: ")
+              .append(a.getEpCost())
               .append(")\n");
         }
-        var item = c.getInventory().getEquippedItem();
-        if (item != null) {
-            if (item instanceof SingleUseItem sui) {
-                sb.append("Magic Item: ")
-                  .append(sui.getName())
-                  .append(" (Single-Use, Effect: ")
-                  .append(sui.getDescription())
-                  .append(")");
-            } else {
-                sb.append("Magic Item: ")
+
+        // List all magic items without descriptions
+        for (var item : c.getInventory().getAllItems()) {
+            if (item instanceof SingleUseItem) {
+                sb.append("Item: ")
                   .append(item.getName())
-                  .append(" (Passive, Effect: ")
-                  .append(item.getDescription())
-                  .append(", Always Active)");
+                  .append(" (Single-Use)\n");
+            } else {
+                sb.append("Item: ")
+                  .append(item.getName())
+                  .append(" (Passive)\n");
             }
         }
-        return sb.toString();
+
+        // Remove trailing newline if present
+        return sb.toString().trim();
     }
 
     private String formatStatus(Character c) {
