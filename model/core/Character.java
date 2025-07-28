@@ -427,6 +427,8 @@ public class Character implements Serializable {
         if (activeStatusEffects.size() >= Constants.MAX_STATUS_EFFECTS) {
             return; // Or throw exception
         }
+        // Avoid stacking duplicate status types; refresh the effect instead
+        activeStatusEffects.removeIf(se -> se.getType() == effect.getType());
         activeStatusEffects.add(effect);
         effect.applyEffect(this);
     }

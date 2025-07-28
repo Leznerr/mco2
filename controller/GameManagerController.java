@@ -422,7 +422,7 @@ public void actionPerformed(ActionEvent e) {
             hallOfFameController.addWinForPlayer(winner);
             hallOfFameController.addWinForCharacter(character);
 
-            if (character.getBattlesWon() % Constants.WINS_PER_REWARD == 0) {
+            if (winner.getCumulativeWins() % Constants.WINS_PER_REWARD == 0) {
                 MagicItem reward = generateUniqueReward(character);
                 character.getInventory().addItem(reward);
                 javax.swing.JOptionPane.showMessageDialog(
