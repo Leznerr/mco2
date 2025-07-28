@@ -121,9 +121,11 @@ public final class CharacterManualCreationController {
                     "You must choose exactly " + expectedAbilities + " abilities.");
 
             // Validate abilities are unique
-            if (!areDistinct(selectedAbilityNames)) {
-                throw new GameException("All selected abilities must be unique.");
-            }
+            InputValidator.requireDistinct(
+                    Arrays.stream(selectedAbilityNames)
+                            .filter(a -> a != null && !a.isBlank())
+                            .collect(Collectors.toList()),
+                    "All selected abilities must be unique.");
 
             // Convert to enums/objects
             ClassType classType = ClassType.valueOf(classStr);
@@ -209,13 +211,4 @@ public final class CharacterManualCreationController {
                 .orElseThrow(() -> new IllegalArgumentException("Player not found: " + playerName));
     }
 
-    // --- Helper: Ensure all abilities selected are unique ---
-    private static boolean areDistinct(String[] items) {
-        return Arrays.stream(items)
-                .filter(item -> item != null)
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .distinct()
-                .count() == items.length;
-    }
 }
