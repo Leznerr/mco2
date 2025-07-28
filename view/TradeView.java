@@ -268,6 +268,7 @@ public class TradeView extends JFrame {
             @Override
             public Component getListCellRendererComponent(JList<?> l, Object value, int index, boolean s, boolean f) {
                 super.getListCellRendererComponent(l, value, index, s, f);
+                setOpaque(false);
                 if (value instanceof model.item.MagicItem mi) {
                     setText((index + 1) + ". " + mi.getName());
                 }

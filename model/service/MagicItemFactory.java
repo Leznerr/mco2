@@ -30,22 +30,46 @@ public final class MagicItemFactory {
      * ----------------------------------------------------------- */
 
     private static final List<MagicItem> COMMON_ITEMS = List.of(
-        new SingleUseItem("Potion of Minor Healing", "Heals 40 HP.", "Common",
-                SingleUseEffectType.HEAL_HP, 40),
-        new SingleUseItem("Scroll of Minor Energy", "Restores 20 EP.", "Common",
-                SingleUseEffectType.RESTORE_EP, 20),
-        new SingleUseItem("Defender's Aegis", "Negates all damage for one turn.", "Common",
-                SingleUseEffectType.GRANT_IMMUNITY, 1)
+        new SingleUseItem(
+                "Potion of Minor Healing",
+                "Drink to instantly restore 40 HP. Brewed by caravan apprentices.",
+                "Common",
+                SingleUseEffectType.HEAL_HP,
+                40),
+        new SingleUseItem(
+                "Scroll of Minor Energy",
+                "A hastily scribed scroll that replenishes 20 EP when read aloud.",
+                "Common",
+                SingleUseEffectType.RESTORE_EP,
+                20),
+        new SingleUseItem(
+                "Defender's Aegis",
+                "Envelops the bearer in a barrier, negating all damage for one turn.",
+                "Common",
+                SingleUseEffectType.GRANT_IMMUNITY,
+                1)
     );
 
     private static final List<MagicItem> UNCOMMON_ITEMS = List.of(
-        new PassiveItem("Amulet of Vitality", "Max HP +20 while equipped.", "Uncommon"),
-        new PassiveItem("Ring of Focus", "+2 EP each turn.", "Uncommon")
+        new PassiveItem(
+                "Amulet of Vitality",
+                "An emerald charm that raises maximum HP by 20 while worn.",
+                "Uncommon"),
+        new PassiveItem(
+                "Ring of Focus",
+                "Favored by Arcane College scholars. Grants +2 EP each turn.",
+                "Uncommon")
     );
 
     private static final List<MagicItem> RARE_ITEMS = List.of(
-        new PassiveItem("Orb of Resilience", "Heal +5 HP each turn.", "Rare"),
-        new PassiveItem("Ancient Tome of Power", "+5 EP each turn.", "Rare")
+        new PassiveItem(
+                "Orb of Resilience",
+                "A mysterious sphere that heals 5 HP at the start of each turn.",
+                "Rare"),
+        new PassiveItem(
+                "Ancient Tome of Power",
+                "Dusty pages filled with forgotten spells. Gain +5 EP each turn.",
+                "Rare")
     );
 
     /* -------------------------------------------------------------
