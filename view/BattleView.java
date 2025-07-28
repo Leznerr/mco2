@@ -301,9 +301,9 @@ public class BattleView extends JFrame {
 
         // Status Area
         RoundedDisplayBox statusPanel = new RoundedDisplayBox();
-        statusPanel.setPreferredSize(new Dimension(280, 40));
-        statusPanel.setMaximumSize(new Dimension(280, 40));
-        statusPanel.setMinimumSize(new Dimension(280, 40));
+        statusPanel.setPreferredSize(new Dimension(280, 60));
+        statusPanel.setMaximumSize(new Dimension(280, 60));
+        statusPanel.setMinimumSize(new Dimension(280, 60));
         statusPanel.setLayout(new BorderLayout());
         statusPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
