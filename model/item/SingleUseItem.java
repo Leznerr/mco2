@@ -113,8 +113,9 @@ public final class SingleUseItem extends MagicItem {
      * @param log  combat log to record actions (non-null)
      * @throws GameException if the effect cannot be applied
      */
-    public void applyEffect(Character user, CombatLog log) throws GameException {
+    public void applyEffect(Character user, Character target, CombatLog log) throws GameException {
         InputValidator.requireNonNull(user, "item user");
+        InputValidator.requireNonNull(target, "target");
         InputValidator.requireNonNull(log,  "combat log");
 
         switch (effectType) {
@@ -145,6 +146,14 @@ public final class SingleUseItem extends MagicItem {
                                 model.util.StatusEffectType.IMMUNITY));
                 log.addEntry(user.getName() + " uses " + getName()
                         + " and becomes immune to damage!");
+            }
+            case DAMAGE -> {
+                int before = target.getCurrentHp();
+                target.takeDamage(effectValue);
+                int dealt = before - target.getCurrentHp();
+                log.addEntry(user.getName() + " uses " + getName()
+                        + " and deals " + dealt + " damage to "
+                        + target.getName() + "!");
             }
             default -> throw new GameException("Unhandled single-use effect: "
                     + effectType);

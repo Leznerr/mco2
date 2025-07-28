@@ -283,7 +283,9 @@ Optional<Ability> abilityOpt = user.getAbilities().stream()
         }
 
         CombatLog log = battle.getCombatLog();
-        item.applyEffect(user, log);
+        Character target = (user == battle.getCharacter1())
+                ? battle.getCharacter2() : battle.getCharacter1();
+        item.applyEffect(user, target, log);
         user.getInventory().useSingleUseItem(item);
         updatePlayerPanels();
     }
@@ -313,7 +315,14 @@ Optional<Ability> abilityOpt = user.getAbilities().stream()
             } else if (t.target.isAlive()) {
                 t.move.execute(t.actor, t.target, log);
                 if (!t.target.isAlive()) {
-                    log.addEntry(t.target.getName() + " has fallen!");
+                    if (!t.target.checkPhoenixFeather(log)) {
+                        log.addEntry(t.target.getName() + " has fallen!");
+                    }
+                }
+                if (!t.actor.isAlive()) {
+                    if (!t.actor.checkPhoenixFeather(log)) {
+                        log.addEntry(t.actor.getName() + " has fallen!");
+                    }
                 }
             }
 
@@ -438,7 +447,9 @@ Optional<Ability> abilityOpt = user.getAbilities().stream()
         }
         c.processStartOfTurnEffects(log);
         if (!c.isAlive()) {
-            log.addEntry(c.getName() + " has fallen!");
+            if (!c.checkPhoenixFeather(log)) {
+                log.addEntry(c.getName() + " has fallen!");
+            }
         }
     }
 
@@ -454,6 +465,8 @@ Optional<Ability> abilityOpt = user.getAbilities().stream()
                 log.addEntry(c.getName() + " gains 5 HP from " + name + ".");
             }
             case "Golden Dragon Scale" -> log.addEntry(c.getName() + " is shielded by " + name + ".");
+            case "Elven Cloak" -> log.addEntry(c.getName() + " feels nimble under the " + name + ".");
+            case "Phoenix Feather" -> log.addEntry(name + " is ready to revive " + c.getName() + ".");
             default -> log.addEntry("Item effect for " + name + " not implemented.");
         }
     }
@@ -633,6 +646,7 @@ Optional<Ability> abilityOpt = user.getAbilities().stream()
             case RESTORE_EP -> "Restores " + item.getEffectValue() + " EP";
             case REVIVE -> "Revives with " + item.getEffectValue() + "% HP";
             case GRANT_IMMUNITY -> "Grants immunity for " + item.getEffectValue() + " turn(s)";
+            case DAMAGE -> "Deals " + item.getEffectValue() + " damage";
         };
     }
 }

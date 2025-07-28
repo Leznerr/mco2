@@ -350,6 +350,7 @@ public class InventoryView extends JFrame{
             case RESTORE_EP -> "Restores " + item.getEffectValue() + " EP";
             case REVIVE -> "Revives with " + item.getEffectValue() + "% HP";
             case GRANT_IMMUNITY -> "Grants immunity for " + item.getEffectValue() + " turn(s)";
+            case DAMAGE -> "Deals " + item.getEffectValue() + " damage";
         };
     }
 

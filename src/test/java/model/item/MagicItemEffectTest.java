@@ -21,7 +21,7 @@ public class MagicItemEffectTest {
         c.takeDamage(30);
         SingleUseItem item = new SingleUseItem("Potion of Minor Healing", "Heals", RarityType.COMMON,
                 SingleUseEffectType.HEAL_HP, 40);
-        item.applyEffect(c, new CombatLog());
+        item.applyEffect(c, c, new CombatLog());
         assertEquals(c.getMaxHp(), c.getCurrentHp());
     }
 
@@ -31,7 +31,7 @@ public class MagicItemEffectTest {
         c.spendEp(c.getCurrentEp());
         SingleUseItem item = new SingleUseItem("Scroll of Minor Energy", "EP", RarityType.COMMON,
                 SingleUseEffectType.RESTORE_EP, 20);
-        item.applyEffect(c, new CombatLog());
+        item.applyEffect(c, c, new CombatLog());
         assertEquals(20, c.getCurrentEp());
     }
 
@@ -40,7 +40,7 @@ public class MagicItemEffectTest {
         Character c = new Character("C", RaceType.HUMAN, ClassType.WARRIOR, List.of());
         SingleUseItem item = new SingleUseItem("Defender's Aegis", "Immune", RarityType.COMMON,
                 SingleUseEffectType.GRANT_IMMUNITY, 1);
-        item.applyEffect(c, new CombatLog());
+        item.applyEffect(c, c, new CombatLog());
         assertTrue(c.hasStatusEffect(StatusEffectType.IMMUNITY));
     }
 }

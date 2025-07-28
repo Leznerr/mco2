@@ -61,6 +61,8 @@ public class Character implements Serializable {
 
     // --- Temporary Battle State ---
     private boolean isStunned;
+    private boolean statusEffectImmunityUsed;
+    private boolean phoenixReviveUsed;
 
     // --- Copy constructor for deep copy ---
     public Character(Character other) throws GameException {
@@ -91,6 +93,8 @@ public class Character implements Serializable {
         this.abilitySlotCount = other.abilitySlotCount;
 
         this.isStunned = false;
+        this.statusEffectImmunityUsed = false;
+        this.phoenixReviveUsed = false;
     }
 
     // --- Method to create a copy for battle ---
@@ -246,6 +250,29 @@ public class Character implements Serializable {
     }
 
     /**
+     * Checks for an equipped Phoenix Feather and revives the character if
+     * conditions are met.
+     *
+     * @param log combat log for messaging
+     * @return {@code true} if the feather triggered
+     */
+    public boolean checkPhoenixFeather(CombatLog log) throws GameException {
+        if (!isAlive()
+                && !phoenixReviveUsed
+                && inventory.getEquippedItem() instanceof model.item.PassiveItem p
+                && "Phoenix Feather".equals(p.getName())) {
+            this.currentHp = Math.min(40, this.maxHp);
+            phoenixReviveUsed = true;
+            inventory.removeItem(p);
+            if (log != null) {
+                log.addEntry(name + " is revived by Phoenix Feather!");
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Restores a specified amount of HP, ensuring it does not exceed max HP.
      * @param healingAmount The non-negative amount of HP to restore.
      */
@@ -391,6 +418,12 @@ public class Character implements Serializable {
 
     public void addStatusEffect(StatusEffect effect) {
         InputValidator.requireNonNull(effect, "Status effect");
+        if (inventory.getEquippedItem() instanceof model.item.PassiveItem p
+                && "Elven Cloak".equals(p.getName())
+                && !statusEffectImmunityUsed) {
+            statusEffectImmunityUsed = true;
+            return;
+        }
         if (activeStatusEffects.size() >= Constants.MAX_STATUS_EFFECTS) {
             return; // Or throw exception
         }
@@ -498,5 +531,8 @@ public class Character implements Serializable {
         if (abilitySlotCount == 0) {
             abilitySlotCount = unlockedAbilitySlots;
         }
+        // ensure booleans are initialised
+        statusEffectImmunityUsed = false;
+        phoenixReviveUsed = false;
     }
 }

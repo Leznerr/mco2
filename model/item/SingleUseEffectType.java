@@ -11,5 +11,7 @@ public enum SingleUseEffectType {
     /** Revives the user from KO with a percentage of max HP. */
     REVIVE,
     /** Grants temporary immunity from all damage. */
-    GRANT_IMMUNITY
+    GRANT_IMMUNITY,
+    /** Deals damage to the target. */
+    DAMAGE
 }
