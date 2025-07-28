@@ -182,9 +182,8 @@ public final class BattleController {
      * Choices come directly from {@link #abilityNames(Character)} so the
      * format is predictable:
      * <ul>
-     *   <li><code>{Ability Name} (EP: n, Effect: desc)</code></li>
-     *   <li><code>Use Magic Item: {Name} (Single-Use, ...)</code></li>
-     *   <li><code>Item: {Name} (Passive, ...)</code></li>
+     *   <li><code>{Ability Name}</code></li>
+     *   <li><code>{Magic Item Name}</code></li>
      * </ul>
      */
     public void handlePlayerChoice(Character user, String choice) throws GameException {
@@ -196,49 +195,20 @@ public final class BattleController {
             throw new GameException("Character is not part of the current battle.");
         }
 
-        if (choice.startsWith("Use Magic Item: ")) {
-            String itemName = choice.substring("Use Magic Item: ".length());
-            int idx = itemName.indexOf(" (");
-            if (idx > 0) itemName = itemName.substring(0, idx);
-
-            MagicItem eq = user.getInventory().getEquippedItem();
-            if (eq instanceof SingleUseItem su && eq.getName().equals(itemName)) {
+        MagicItem equipped = user.getInventory().getEquippedItem();
+        if (equipped != null && equipped.getName().equals(choice)) {
+            if (equipped instanceof SingleUseItem su) {
                 submitMove(user, new ItemMove(su));
                 return;
             } else {
-                battle.getCombatLog().addEntry("This item is not equipped or already used.");
-                view.displayTurnResults(battle.getCombatLog());
-                return;
-            }
-        }
-
-        if (choice.startsWith("Item: ")) {
-            String itemName = choice.substring(6);
-            int idx = itemName.indexOf(" (");
-            if (idx > 0) itemName = itemName.substring(0, idx);
-
-            MagicItem eq = user.getInventory().getEquippedItem();
-            if (eq instanceof SingleUseItem su && eq.getName().equals(itemName)) {
-                submitMove(user, new ItemMove(su));
-                return;
-            } else if (eq instanceof PassiveItem && eq.getName().equals(itemName)) {
                 battle.getCombatLog().addEntry("Passive items are always active; cannot be used.");
                 view.displayTurnResults(battle.getCombatLog());
                 return;
-            } else {
-                battle.getCombatLog().addEntry("This item is not equipped or already used.");
-                view.displayTurnResults(battle.getCombatLog());
-                return;
             }
         }
 
-     String abilityName = choice;
-int idx = abilityName.indexOf(" (EP:");
-if (idx > 0) {
-    abilityName = abilityName.substring(0, idx);
-}
-abilityName = abilityName.trim();
-final String finalAbilityName = abilityName;
+        String abilityName = choice.trim();
+        final String finalAbilityName = abilityName;
 
 Optional<Ability> abilityOpt = user.getAbilities().stream()
     .filter(a -> a.getName().equals(finalAbilityName))
@@ -451,6 +421,13 @@ Optional<Ability> abilityOpt = user.getAbilities().stream()
                 c.heal(5);
                 log.addEntry(c.getName() + " gains 5 HP from " + name + ".");
             }
+            case "Amulet of Vitality" -> {
+                if (!c.isVitalityBonusApplied()) {
+                    c.increaseMaxHp(20);
+                    c.setVitalityBonusApplied(true);
+                    log.addEntry(c.getName() + " gains 20 max HP from " + name + ".");
+                }
+            }
             case "Golden Dragon Scale" -> log.addEntry(c.getName() + " is shielded by " + name + ".");
             case "Elven Cloak" -> log.addEntry(c.getName() + " feels nimble under the " + name + ".");
             case "Phoenix Feather" -> log.addEntry(name + " is ready to revive " + c.getName() + ".");
@@ -554,21 +531,12 @@ Optional<Ability> abilityOpt = user.getAbilities().stream()
         int limit = Math.min(c.getAbilitySlotCount(), c.getAbilities().size());
         for (int i = 0; i < limit; i++) {
             Ability a = c.getAbilities().get(i);
-            String entry = String.format(
-                    "%s (EP: %d, Effect: %s)",
-                    a.getName(), a.getEpCost(), a.getDescription());
-            names.add(entry);
+            names.add(a.getName());
         }
 
         MagicItem eq = c.getInventory().getEquippedItem();
-        if (eq instanceof SingleUseItem su) {
-            names.add(String.format(
-                    "Use Magic Item: %s (Single-Use, Effect: %s)",
-                    su.getName(), su.getDescription()));
-        } else if (eq instanceof PassiveItem p) {
-            names.add(String.format(
-                    "Item: %s (Passive, Effect: %s, Always Active)",
-                    p.getName(), p.getDescription()));
+        if (eq != null) {
+            names.add(eq.getName());
         }
 
         return names;

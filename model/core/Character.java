@@ -63,6 +63,7 @@ public class Character implements Serializable {
     private boolean isStunned;
     private boolean statusEffectImmunityUsed;
     private boolean phoenixReviveUsed;
+    private boolean vitalityBonusApplied;
 
     // --- Copy constructor for deep copy ---
     public Character(Character other) throws GameException {
@@ -95,6 +96,7 @@ public class Character implements Serializable {
         this.isStunned = false;
         this.statusEffectImmunityUsed = false;
         this.phoenixReviveUsed = false;
+        this.vitalityBonusApplied = false;
     }
 
     // --- Method to create a copy for battle ---
@@ -135,6 +137,7 @@ public class Character implements Serializable {
 
         this.activeStatusEffects.clear();
         this.isStunned = false;
+        this.vitalityBonusApplied = false;
 
         initializeStats();
         if (!this.abilities.isEmpty()) {
@@ -442,6 +445,9 @@ public class Character implements Serializable {
     public boolean isStunned() { return this.isStunned; }
     public void setStunned(boolean stunned) { this.isStunned = stunned; }
 
+    public boolean isVitalityBonusApplied() { return vitalityBonusApplied; }
+    public void setVitalityBonusApplied(boolean applied) { this.vitalityBonusApplied = applied; }
+
     /**
      * Processes all active status effects at the start of this character's turn.
      * Effects are updated and removed when their duration expires.
@@ -534,5 +540,6 @@ public class Character implements Serializable {
         // ensure booleans are initialised
         statusEffectImmunityUsed = false;
         phoenixReviveUsed = false;
+        vitalityBonusApplied = false;
     }
 }
