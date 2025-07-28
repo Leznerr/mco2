@@ -51,8 +51,10 @@ public class Character implements Serializable {
 
     // --- Progression ---
     private int level;
-    private int xp;
-    private int winCount;
+    private int experience;
+    private int battlesWon;
+    private int nextLevelMilestone;
+    private int abilitySlots;
 
     // --- Temporary Battle State ---
     private boolean isStunned;
@@ -78,8 +80,10 @@ public class Character implements Serializable {
         this.currentEp = other.currentEp;
 
         this.level = other.level;
-        this.xp = other.xp;
-        this.winCount = other.winCount;
+        this.experience = other.experience;
+        this.battlesWon = other.battlesWon;
+        this.nextLevelMilestone = other.nextLevelMilestone;
+        this.abilitySlots = other.abilitySlots;
 
         this.isStunned = false;
     }
@@ -148,8 +152,10 @@ public class Character implements Serializable {
 
         // Initialize progression
         this.level = 1;
-        this.xp = 0;
-        this.winCount = 0;
+        this.experience = 0;
+        this.battlesWon = 0;
+        this.nextLevelMilestone = 5;
+        this.abilitySlots = Constants.NUM_ABILITIES_PER_CHAR + race.getExtraAbilitySlots();
     }
 
     // --- Getters for Core Attributes ---
@@ -180,8 +186,11 @@ public class Character implements Serializable {
     // --- Getters for Progression ---
 
     public int getLevel() { return level; }
-    public int getXp() { return xp; }
-    public int getWinCount() { return winCount; }
+    public int getXp() { return experience; }
+    public int getExperience() { return experience; }
+    public int getBattlesWon() { return battlesWon; }
+    public int getNextLevelMilestone() { return nextLevelMilestone; }
+    public int getAbilitySlots() { return abilitySlots; }
 
     // --- Combat State Management ---
 
@@ -254,14 +263,13 @@ public class Character implements Serializable {
     // --- Progression Management ---
 
     /**
-     * Adds experience points and checks for a level-up.
-     * Note: Delegates the level-up logic to the LevelingSystem service.
+     * Adds experience points.
+     *
      * @param amount The non-negative amount of XP to add.
      */
-    public void addXp(int amount) {
+    public void addExperience(int amount) {
         if (amount < 0) return;
-        this.xp += amount;
-        LevelingSystem.processLevelUp(this); // External service handles the logic
+        this.experience += amount;
     }
     
     // Internal state modification for progression; should only be called by trusted services like LevelingSystem.
@@ -274,7 +282,28 @@ public class Character implements Serializable {
         this.currentEp = newMaxEp;
     }
 
-    public void recordWin() { this.winCount++; }
+    public void incrementBattlesWon() { this.battlesWon++; }
+
+    public boolean canLevelUp() { return battlesWon >= nextLevelMilestone; }
+
+    /**
+     * Levels up the character, increasing stats and unlocking ability slots when applicable.
+     */
+    public void levelUp() {
+        if (!canLevelUp()) return;
+        this.level++;
+        this.battlesWon -= nextLevelMilestone;
+        this.nextLevelMilestone += 5;
+        LevelingSystem.processLevelUp(this);
+        unlockAbilitySlot();
+    }
+
+    /** Unlocks an additional ability slot at specific level thresholds. */
+    public void unlockAbilitySlot() {
+        if (level == 2 || level == 4) {
+            this.abilitySlots++;
+        }
+    }
 
     // --- Equipment & Ability Management ---
 
@@ -319,10 +348,9 @@ public class Character implements Serializable {
      */
     public void setAbilities(List<Ability> newAbilities) {
         InputValidator.requireNonNull(newAbilities, "New abilities list");
-        int expected = Constants.NUM_ABILITIES_PER_CHAR + race.getExtraAbilitySlots();
-        InputValidator.requireSize(newAbilities.size(),
-                expected,
-                "A character must have exactly " + expected + " abilities.");
+        if (newAbilities.size() > abilitySlots) {
+            throw new IllegalArgumentException("A character can equip at most " + abilitySlots + " abilities.");
+        }
         this.abilities.clear();
         this.abilities.addAll(newAbilities);
     }
@@ -401,9 +429,10 @@ public class Character implements Serializable {
     @Override
     public String toString() {
         return String.format(
-            "%s (Lvl %d %s %s, HP: %d/%d, EP: %d/%d)",
+            "%s (Lvl %d %s %s, HP: %d/%d, EP: %d/%d, XP: %d, Wins: %d/%d)",
             name, level, race.name(), classType.name(),
-            currentHp, maxHp, currentEp, maxEp
+            currentHp, maxHp, currentEp, maxEp,
+            experience, battlesWon, nextLevelMilestone
         );
     }
 
@@ -428,6 +457,12 @@ public class Character implements Serializable {
         in.defaultReadObject();
         if (activeStatusEffects == null) {
             activeStatusEffects = new ArrayList<>();
+        }
+        if (nextLevelMilestone == 0) {
+            nextLevelMilestone = 5;
+        }
+        if (abilitySlots == 0) {
+            abilitySlots = Constants.NUM_ABILITIES_PER_CHAR + race.getExtraAbilitySlots();
         }
     }
 }

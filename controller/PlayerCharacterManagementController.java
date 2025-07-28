@@ -173,9 +173,9 @@ public class PlayerCharacterManagementController {
             ev.setAbilityOptions(i, opts);
         }
 
-        boolean isGnome = c.getRaceType() == model.core.RaceType.GNOME;
-        ev.setAbility4Visible(isGnome);
-        if (isGnome) {
+        boolean allowFour = c.getAbilitySlots() > 3;
+        ev.setAbility4Visible(allowFour);
+        if (allowFour) {
             ev.setAbilityOptions(4, opts);
         }
 
@@ -183,7 +183,7 @@ public class PlayerCharacterManagementController {
         for (int i = 0; i < Math.min(current.size(), 3); i++) {
             ev.setSelectedAbility(i + 1, current.get(i).getName());
         }
-        if (isGnome && current.size() >= 4) {
+        if (allowFour && current.size() >= 4) {
             ev.setSelectedAbility(4, current.get(3).getName());
         }
 
