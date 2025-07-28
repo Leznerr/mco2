@@ -602,8 +602,11 @@ Optional<Ability> abilityOpt = user.getAbilities().stream()
     }
 
     private String formatStatus(Character c) {
-        String base = String.format("HP %d/%d | EP %d/%d", c.getCurrentHp(), c.getMaxHp(),
-                c.getCurrentEp(), c.getMaxEp());
+        String base = String.format(
+                "HP %d/%d | EP %d/%d | XP %d | Level %d",
+                c.getCurrentHp(), c.getMaxHp(),
+                c.getCurrentEp(), c.getMaxEp(),
+                c.getXp(), c.getLevel());
         if (!c.getActiveStatusEffects().isEmpty()) {
             String statuses = c.getActiveStatusEffects().stream()
                     .map(se -> se.getType().name())
