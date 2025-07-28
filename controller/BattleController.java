@@ -144,6 +144,7 @@ public final class BattleController {
         InputValidator.requireNonNull(ai, "aiController");
 
         startBattle(human, bot);
+        view.setPlayer2ControlsEnabled(false);
         this.aiController = ai;
         // battleC1/battleC2 now reference the copies created in startBattle
         this.aiCharacter = battleC2;
@@ -203,9 +204,15 @@ public final class BattleController {
             }
         }
 
-        // Otherwise treat as ability name
+        // Otherwise treat as ability name (strip details if present)
+        String abilityName = choice;
+        int idx = abilityName.indexOf(" (EP:");
+        if (idx > 0) {
+            abilityName = abilityName.substring(0, idx);
+        }
+
         Optional<Ability> abilityOpt = user.getAbilities().stream()
-                .filter(a -> a.getName().equals(choice))
+                .filter(a -> a.getName().equals(abilityName))
                 .findFirst();
         if (abilityOpt.isPresent()) {
             Ability a = abilityOpt.get();
@@ -480,7 +487,9 @@ public final class BattleController {
     private List<String> abilityNames(Character c) {
         List<String> names = new ArrayList<>();
         for (Ability a : c.getAbilities()) {
-            names.add(a.getName());
+            String entry = String.format("%s (EP: %d, Effect: %s)",
+                    a.getName(), a.getEpCost(), a.getDescription());
+            names.add(entry);
         }
         c.getInventory().getAllItems().stream()
                 .filter(i -> i instanceof SingleUseItem)
@@ -491,7 +500,12 @@ public final class BattleController {
     private String buildAbilityList(Character c) {
         StringBuilder sb = new StringBuilder();
         for (var a : c.getAbilities()) {
-            sb.append(a.getName()).append(" (").append(a.getEpCost()).append(" EP)").append("\n");
+            sb.append(a.getName())
+              .append(" (EP: ")
+              .append(a.getEpCost())
+              .append(", Effect: ")
+              .append(a.getDescription())
+              .append(")\n");
         }
         for (var item : c.getInventory().getAllItems()) {
             sb.append("Item: ").append(item.getName()).append("\n");
