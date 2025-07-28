@@ -13,7 +13,6 @@ import model.battle.Battle;
 import model.battle.CombatLog;
 import model.battle.Defend;
 import model.battle.ItemMove;
-import model.battle.LevelingSystem;
 import model.battle.Move;
 import model.battle.Recharge;
 import model.core.Ability;
@@ -233,16 +232,18 @@ public final class BattleController {
             }
         }
 
-        String abilityName = choice;
-        int idx = abilityName.indexOf(" (EP:");
-        if (idx > 0) {
-            abilityName = abilityName.substring(0, idx);
-        }
-        abilityName = abilityName.trim();
+     String abilityName = choice;
+int idx = abilityName.indexOf(" (EP:");
+if (idx > 0) {
+    abilityName = abilityName.substring(0, idx);
+}
+abilityName = abilityName.trim();
+final String finalAbilityName = abilityName;
 
-        Optional<Ability> abilityOpt = user.getAbilities().stream()
-                .filter(a -> a.getName().equals(abilityName))
-                .findFirst();
+Optional<Ability> abilityOpt = user.getAbilities().stream()
+    .filter(a -> a.getName().equals(finalAbilityName))
+    .findFirst();
+
         if (abilityOpt.isPresent()) {
             Ability a = abilityOpt.get();
             if (a.getEpCost() > user.getCurrentEp()) {

@@ -52,6 +52,7 @@ C:\Users\User\Downloads\mco2-main\mco2\model\util\GameException.java
 C:\Users\User\Downloads\mco2-main\mco2\model\util\InputValidator.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\util\RandomCharacterGenerator.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\util\SimpleBot.java 
+C:\Users\User\Downloads\mco2-main\mco2\model\util\SmartBot.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\util\StatusEffect.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\util\StatusEffectFactory.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\util\StatusEffectType.java 
