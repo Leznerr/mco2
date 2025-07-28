@@ -196,10 +196,25 @@ public final class BattleController {
             throw new GameException("Character is not part of the current battle.");
         }
 
+        if (choice.startsWith("Item: ")) {
+            String itemName = choice.substring(6);
+            int idx = itemName.indexOf(" (");
+            if (idx > 0) itemName = itemName.substring(0, idx);
+
+            MagicItem eq = user.getInventory().getEquippedItem();
+            if (eq instanceof SingleUseItem su && eq.getName().equals(itemName)) {
+                submitMove(user, new ItemMove(su));
+                return;
+            } else if (eq instanceof PassiveItem && eq.getName().equals(itemName)) {
+                battle.getCombatLog().addEntry("Passive items are always active; cannot be used.");
+                view.displayTurnResults(battle.getCombatLog());
+                return;
+            } else {
+                battle.getCombatLog().addEntry("This item is not equipped or already used.");
+                view.displayTurnResults(battle.getCombatLog());
                 return;
             }
         }
-
 
         String abilityName = choice;
         int idx = abilityName.indexOf(" (EP:");
@@ -498,6 +513,13 @@ public final class BattleController {
             names.add(entry);
         }
 
+        MagicItem eq = c.getInventory().getEquippedItem();
+        if (eq instanceof SingleUseItem) {
+            names.add("Item: " + eq.getName());
+        } else if (eq instanceof PassiveItem) {
+            names.add("Item: " + eq.getName() + " (Passive)");
+        }
+
         return names;
     }
 
@@ -508,14 +530,19 @@ public final class BattleController {
     private String buildAbilityList(Character c) {
         StringBuilder sb = new StringBuilder();
 
-        // Abilities listed as "{Name} (EP: {cost})" one per line
-        for (var a : c.getAbilities()) {
+        for (Ability a : c.getAbilities()) {
             sb.append(a.getName())
               .append(" (EP: ")
               .append(a.getEpCost())
               .append(")\n");
         }
-<<<<<<
+
+        MagicItem eq = c.getInventory().getEquippedItem();
+        if (eq != null) {
+            sb.append("Equipped Item: ").append(eq.getName());
+            if (eq instanceof PassiveItem) sb.append(" (Passive)");
+            if (eq instanceof SingleUseItem) sb.append(" (Single-Use)");
+            sb.append("\n");
         }
 
         return sb.toString();
