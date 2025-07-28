@@ -4,6 +4,7 @@ import model.core.Character;
 import model.item.SingleUseItem;
 import model.util.GameException;
 import model.util.InputValidator;
+import model.battle.CombatLog;
 
 /**
  * Wraps the use of a {@link SingleUseItem} as a {@link Move} so it can
@@ -42,8 +43,7 @@ public final class ItemMove implements Move {
             throw new GameException("Item not found in inventory.");
         }
 
-        log.addEntry(user.getName() + " uses " + item.getName() + ".");
-        user.getInventory().removeItem(item);
-        // Actual item effects would be handled elsewhere
+        item.applyEffect(user, log);
+        user.getInventory().useSingleUseItem(item);
     }
 }

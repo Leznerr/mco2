@@ -1,9 +1,12 @@
 package model.util;
 
 import model.battle.AbilityMove;
+import model.battle.ItemMove;
 import model.battle.Move;
 import model.core.Ability;
 import model.core.Character;
+import model.item.SingleUseItem;
+import model.util.InputValidator;
 
 import java.util.List;
 import java.util.Random;
@@ -51,12 +54,18 @@ public final class SimpleBot implements AIMoveStrategy {
         InputValidator.requireNonNull(botCharacter, "botCharacter");
         InputValidator.requireNonNull(opponentCharacter, "opponentCharacter");
 
-        List<Ability> abilities = botCharacter.getAbilities();
-        if (abilities.isEmpty()) {
-            throw new GameException("Bot has no available abilities to use.");
+        List<Move> options = new java.util.ArrayList<>();
+        for (Ability ab : botCharacter.getAbilities()) {
+            options.add(new AbilityMove(ab));
         }
-
-        int index = random.nextInt(abilities.size());
-        return new AbilityMove(abilities.get(index));
+        var item = botCharacter.getInventory().getEquippedItem();
+        if (item instanceof SingleUseItem sui) {
+            options.add(new ItemMove(sui));
+        }
+        if (options.isEmpty()) {
+            throw new GameException("Bot has no available moves to use.");
+        }
+        int index = random.nextInt(options.size());
+        return options.get(index);
     }
 }

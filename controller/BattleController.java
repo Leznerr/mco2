@@ -299,16 +299,44 @@ public final class BattleController {
     }
 
     private List<String> abilityNames(Character c) {
-        return c.getAbilities().stream().map(a -> a.getName()).toList();
+        List<String> names = new ArrayList<>();
+        for (var a : c.getAbilities()) {
+            names.add(a.getName() + " (EP: " + a.getEpCost() + ", Effect: " + a.getDescription() + ")");
+        }
+        var item = c.getInventory().getEquippedItem();
+        if (item != null) {
+            if (item instanceof SingleUseItem sui) {
+                names.add("Use Magic Item: " + sui.getName() + " (Single-Use, Effect: " + sui.getDescription() + ")");
+            } else {
+                names.add("Magic Item: " + item.getName() + " (Passive, Effect: " + item.getDescription() + ", Always Active)");
+            }
+        }
+        return names;
     }
 
     private String buildAbilityList(Character c) {
         StringBuilder sb = new StringBuilder();
         for (var a : c.getAbilities()) {
-            sb.append(a.getName()).append(" (").append(a.getEpCost()).append(" EP)").append("\n");
+            sb.append(a.getName())
+              .append(" (EP: ").append(a.getEpCost())
+              .append(", Effect: ").append(a.getDescription())
+              .append(")\n");
         }
-        if (c.getInventory().getEquippedItem() != null) {
-            sb.append("Equipped: ").append(c.getInventory().getEquippedItem().getName());
+        var item = c.getInventory().getEquippedItem();
+        if (item != null) {
+            if (item instanceof SingleUseItem sui) {
+                sb.append("Magic Item: ")
+                  .append(sui.getName())
+                  .append(" (Single-Use, Effect: ")
+                  .append(sui.getDescription())
+                  .append(")");
+            } else {
+                sb.append("Magic Item: ")
+                  .append(item.getName())
+                  .append(" (Passive, Effect: ")
+                  .append(item.getDescription())
+                  .append(", Always Active)");
+            }
         }
         return sb.toString();
     }
