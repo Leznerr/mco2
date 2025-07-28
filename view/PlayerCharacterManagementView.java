@@ -61,7 +61,8 @@ public class PlayerCharacterManagementView extends JFrame {
             b.setMaximumSize(buttonSize);
         }
 
-        bgPanel.add(Box.createVerticalGlue());
+        // Match PlayerCharManagementView spacing
+        bgPanel.add(Box.createVerticalStrut(50));
 
         String logoPath = String.format("view/assets/Player%dCharManagLogo.png", playerID);
         ImageIcon logoIcon = new ImageIcon(logoPath);
@@ -69,25 +70,23 @@ public class PlayerCharacterManagementView extends JFrame {
         JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         bgPanel.add(logoLabel);
-        bgPanel.add(Box.createVerticalStrut(30));
+        bgPanel.add(Box.createVerticalStrut(10));
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        buttonPanel.add(Box.createVerticalGlue());
         buttonPanel.add(btnViewCharacters);
-        buttonPanel.add(Box.createVerticalStrut(15));
+        buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnCreateCharacter);
-        buttonPanel.add(Box.createVerticalStrut(15));
+        buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnEditCharacter);
-        buttonPanel.add(Box.createVerticalStrut(15));
+        buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnDeleteCharacter);
-        buttonPanel.add(Box.createVerticalStrut(15));
+        buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnInventory);
-        buttonPanel.add(Box.createVerticalStrut(15));
+        buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnReturn);
-        buttonPanel.add(Box.createVerticalGlue());
         bgPanel.add(buttonPanel);
         bgPanel.add(Box.createVerticalGlue());
 
