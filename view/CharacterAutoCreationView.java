@@ -16,11 +16,12 @@ import java.awt.event.WindowEvent;
  */
 public final class CharacterAutoCreationView extends JFrame {
 
+    private final int playerID;
     private final String playerName;
 
-    public static final String RANDOMIZE = "RANDOMIZE";
-    public static final String CREATE    = "CREATE";
-    public static final String RETURN    = "RETURN";
+    public static final String RANDOMIZE = "Randomize";
+    public static final String CREATE    = "Create";
+    public static final String RETURN    = "Return";
 
     private CharacterAutoCreationController controller;
 
@@ -35,9 +36,10 @@ public final class CharacterAutoCreationView extends JFrame {
      *
      * @param playerName the name of the current player
      */
-    public CharacterAutoCreationView(String playerName) {
+    public CharacterAutoCreationView(String playerName, int playerID) {
         super("Fatal Fantasy: Tactics | Player " + playerName + " Auto Character Creation");
         this.playerName = playerName;
+        this.playerID = playerID;
 
         nameField        = new RoundedTextField("Enter character name", 20);
         charDetailsArea  = new JTextArea();
@@ -89,9 +91,9 @@ public final class CharacterAutoCreationView extends JFrame {
         centre.setLayout(new BoxLayout(centre, BoxLayout.Y_AXIS));
         centre.add(Box.createVerticalStrut(40));
 
-        String logoPath = "view/assets/Player" + playerName + "AutoCharCreationLogo.png";
+        String logoPath = String.format("view/assets/Player%dCharCreationModesLogo.png", playerID);
         ImageIcon logoIcon = new ImageIcon(
-                new ImageIcon(logoPath).getImage().getScaledInstance(550, -1, Image.SCALE_SMOOTH));
+                new ImageIcon(logoPath).getImage().getScaledInstance(300, -1, Image.SCALE_SMOOTH));
         JLabel logo = new JLabel(logoIcon);
         logo.setAlignmentX(Component.CENTER_ALIGNMENT);
         centre.add(logo);

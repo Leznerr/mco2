@@ -190,12 +190,22 @@ public void actionPerformed(ActionEvent e) {
 
     private void handleNavigateToAutoCreation(String playerName) {
         SwingUtilities.invokeLater(() -> {
-            CharacterAutoCreationView autoView = new CharacterAutoCreationView(playerName);
+            int playerID = getPlayerIndex(playerName);
+            CharacterAutoCreationView autoView = new CharacterAutoCreationView(playerName, playerID);
             CharacterAutoCreationController controller =
                 new CharacterAutoCreationController(autoView, playerName, this);
             autoView.setController(controller);
             autoView.setVisible(true);
         });
+    }
+
+    private int getPlayerIndex(String name) {
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).getName().equalsIgnoreCase(name)) {
+                return i + 1;
+            }
+        }
+        return 1;
     }
 
     public void handleNavigateToCharacterManagement(Player player) {
