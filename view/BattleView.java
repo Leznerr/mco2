@@ -161,12 +161,12 @@ public class BattleView extends JFrame {
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         bottomPanel.setOpaque(false);
 
-        centerPanel.add(Box.createVerticalStrut(20));
+        centerPanel.add(Box.createVerticalStrut(40));
         roundLabel = new OutlinedLabel("Round 1");
         roundLabel.setFont(new Font("Serif", Font.BOLD, 22));
         roundLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         centerPanel.add(roundLabel);
-        centerPanel.add(Box.createVerticalStrut(60));
+        centerPanel.add(Box.createVerticalStrut(40));
 
         // Rounded display box for battle log
         RoundedDisplayBox battleLogPanel = new RoundedDisplayBox();
@@ -301,9 +301,9 @@ public class BattleView extends JFrame {
 
         // Status Area
         RoundedDisplayBox statusPanel = new RoundedDisplayBox();
-        statusPanel.setPreferredSize(new Dimension(280, 60));
-        statusPanel.setMaximumSize(new Dimension(280, 60));
-        statusPanel.setMinimumSize(new Dimension(280, 60));
+        statusPanel.setPreferredSize(new Dimension(280, 40));
+        statusPanel.setMaximumSize(new Dimension(280, 40));
+        statusPanel.setMinimumSize(new Dimension(280, 40));
         statusPanel.setLayout(new BorderLayout());
         statusPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -402,29 +402,24 @@ public class BattleView extends JFrame {
      * @return a JPanel containing the label and dropdown
      */
     private JPanel createDropdownPanel(String labelText, JComboBox<String> dropdown) {
-        JPanel dropdownPanel = new JPanel();
-        dropdownPanel.setOpaque(false);
-        dropdownPanel.setLayout(new BoxLayout(dropdownPanel, BoxLayout.X_AXIS));
-        dropdownPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel panel = new JPanel();
+        panel.setOpaque(false);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         OutlinedLabel label = new OutlinedLabel(labelText);
-
-        int fixedWidth = 200;
-        Dimension labelSize = new Dimension(fixedWidth, label.getPreferredSize().height);
-        label.setPreferredSize(labelSize);
-        label.setMinimumSize(labelSize);
-        label.setMaximumSize(labelSize);
-
-        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        label.setFont(new Font("Serif", Font.BOLD, 17));
 
         dropdown.setFont(new Font("Serif", Font.BOLD, 18));
         dropdown.setMaximumSize(new Dimension(250, 35));
-        dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+        dropdown.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        dropdownPanel.add(label);
-        dropdownPanel.add(dropdown);
+        panel.add(label);
+        panel.add(Box.createVerticalStrut(5));
+        panel.add(dropdown);
 
-        return dropdownPanel;
+        return panel;
     }
 
 
