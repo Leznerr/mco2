@@ -338,9 +338,17 @@ public final class BattleController {
             if (gameManagerController != null) {
                 Player winPlayer = (winner == battleC1) ? player1 : player2;
                 if (winPlayer != null) {
-                    int xp = LevelingSystem.calculateXpGained(persistentWinner, persistentLoser);
-                    persistentWinner.addXp(xp);
-                    log.addEntry(persistentWinner.getName() + " gains " + xp + " XP.");
+                    persistentWinner.addExperience(50);
+                    persistentLoser.addExperience(20);
+                    log.addEntry(persistentWinner.getName() + " gains 50 XP.");
+                    log.addEntry(persistentLoser.getName() + " gains 20 XP.");
+                    persistentWinner.incrementBattlesWon();
+                    if (persistentWinner.canLevelUp()) {
+                        persistentWinner.levelUp();
+                        javax.swing.JOptionPane.showMessageDialog(null,
+                                persistentWinner.getName() + " reached Level " + persistentWinner.getLevel() + "!",
+                                "Level Up", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                    }
                     gameManagerController.handlePlayerWin(winPlayer, persistentWinner);
                 }
             }

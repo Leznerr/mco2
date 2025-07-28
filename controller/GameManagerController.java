@@ -418,11 +418,11 @@ public void actionPerformed(ActionEvent e) {
             }
 
             winner.incrementWins();
-            character.recordWin();
+            character.incrementBattlesWon();
             hallOfFameController.addWinForPlayer(winner);
             hallOfFameController.addWinForCharacter(character);
 
-            if (character.getWinCount() % Constants.WINS_PER_REWARD == 0) {
+            if (character.getBattlesWon() % Constants.WINS_PER_REWARD == 0) {
                 MagicItem reward = generateUniqueReward(character);
                 character.getInventory().addItem(reward);
                 javax.swing.JOptionPane.showMessageDialog(null,
