@@ -83,8 +83,8 @@ public class PlayerCharacterManagementController {
             for (int i = 0; i < chars.size(); i++) {
                 Character c = chars.get(i);
                 sb.append(String.format(
-                        "Char %d %s (%s & %s) - HP: %d, EP: %d",
-                        i + 1,
+                        "Player %d %s (%s & %s) - HP: %d, EP: %d",
+                        dv.getPlayerID(),
                         c.getName(),
                         c.getRaceType(),
                         c.getClassType(),
@@ -296,9 +296,17 @@ public class PlayerCharacterManagementController {
                 } else {
                     delView.showErrorMessage("Character not found");
                 }
+            } else if (e.getSource() == delView.getCharacterDropdown()) {
+                String selected = delView.getSelectedCharacter();
+                String label = "Player " + delView.getPlayerID();
+                if (selected != null && !selected.isBlank()) {
+                    label += " - " + selected;
+                }
+                delView.setCharacterInfoLabel(label);
             }
         });
         refreshCharacterList(delView);
+        delView.setCharacterInfoLabel("Player " + delView.getPlayerID());
         delView.setVisible(true);
     }
 

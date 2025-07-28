@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import view.OutlinedLabel;
+
 /**
  * The character delete view for Fatal Fantasy: Tactics Game.
  * <p>This class is responsible for rendering the UI that allows
@@ -21,6 +23,7 @@ public class CharacterDeleteView extends JFrame {
     private final JButton btnReturn;
     private final JComboBox<String> charDropdown;
     private final JTextArea charListArea;
+    private final OutlinedLabel infoLabel;
 
     /**
      * Constructs the Specific Character Deletion UI of Fatal Fantasy: Tactics Game.
@@ -35,6 +38,7 @@ public class CharacterDeleteView extends JFrame {
         btnReturn = new RoundedButton(RETURN);
         charDropdown = new JComboBox<>();
         charListArea = new JTextArea();
+        infoLabel = new OutlinedLabel("Player " + playerID);
 
         initUI();
         configureWindow();
@@ -94,6 +98,10 @@ public class CharacterDeleteView extends JFrame {
         JLabel logoLabel = new JLabel(logoIcon);
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         centerPanel.add(logoLabel);
+        centerPanel.add(Box.createVerticalStrut(10));
+
+        infoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        centerPanel.add(infoLabel);
         centerPanel.add(Box.createVerticalStrut(10));
 
         RoundedDisplayBox detailsPanel = new RoundedDisplayBox();
@@ -184,6 +192,18 @@ public class CharacterDeleteView extends JFrame {
 
     public JButton getReturnButton() {
         return btnReturn;
+    }
+
+    public JComboBox<String> getCharacterDropdown() {
+        return charDropdown;
+    }
+
+    public void setCharacterInfoLabel(String text) {
+        infoLabel.setText(text);
+    }
+
+    public int getPlayerID() {
+        return playerID;
     }
 
     private JPanel createDropdownPanel(String labelText, JComboBox<String> dropdown) {
