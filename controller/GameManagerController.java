@@ -140,14 +140,15 @@ public void actionPerformed(ActionEvent e) {
     // === Navigation & Controller Binding Methods ===
 
     /**
-     * Opens character creation management for a given player (by ID or name).
+     * Opens character creation management for a given player.
      * Called from UI navigation.
      *
-     * @param playerID the ID or name of the player to manage
+     * @param playerName the player's unique name
+     * @param playerID   numeric ID of the player (1 or 2)
      */
-    public void handleNavigateToCharacterCreationManagement(String playerName) {
+    public void handleNavigateToCharacterCreationManagement(String playerName, int playerID) {
         SwingUtilities.invokeLater(() -> {
-            CharacterCreationManagementView view = new CharacterCreationManagementView(playerName);
+            CharacterCreationManagementView view = new CharacterCreationManagementView(playerName, playerID);
 
             view.setActionListener(e -> {
                 String command = e.getActionCommand();
