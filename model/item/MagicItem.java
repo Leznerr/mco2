@@ -40,8 +40,11 @@ public abstract class MagicItem implements Serializable {
     /** PASSIVE or SINGLE_USE, never {@code null}. */
     private final ItemType itemType;
 
-    /** Rarity tag (“COMMON”, “RARE”, etc.), cannot be blank. */
-    private final String rarity;
+    /** Rarity tier of this item. */
+    private final RarityType rarityType;
+
+    /** Cached drop chance percentage from {@link #rarityType}. */
+    private final int dropChance;
 
     /**
      * Constructs an immutable magic item.
@@ -49,23 +52,24 @@ public abstract class MagicItem implements Serializable {
      * @param name        non-blank display name
      * @param description non-blank description
      * @param type        non-null {@link ItemType}
-     * @param rarity      non-blank rarity label
+     * @param rarity      rarity tier of the item
      * @throws GameException if any argument violates a pre-condition
      */
     protected MagicItem(String name,
                         String description,
                         ItemType type,
-                        String rarity) throws GameException {
+                        RarityType rarity) throws GameException {
 
         InputValidator.requireNonBlank(name, "item name");
         InputValidator.requireNonBlank(description, "item description");
         InputValidator.requireNonNull(type, "item type");
-        InputValidator.requireNonBlank(rarity, "item rarity");
+        InputValidator.requireNonNull(rarity, "item rarity");
 
         this.name = name;
         this.description = description;
         this.itemType = type;
-        this.rarity = rarity;
+        this.rarityType = rarity;
+        this.dropChance = rarity.getDropChance();
     }
 
     /** @return immutable item name */
@@ -99,7 +103,7 @@ public abstract class MagicItem implements Serializable {
         return name.equals(that.name)
                 && description.equals(that.description)
                 && itemType == that.itemType
-                && rarity.equals(that.rarity);
+                && rarityType == that.rarityType;
     }
 
     /**
@@ -109,7 +113,7 @@ public abstract class MagicItem implements Serializable {
      */
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(name, description, itemType, rarity);
+        return java.util.Objects.hash(name, description, itemType, rarityType);
     }
 
     /**
@@ -120,9 +124,19 @@ public abstract class MagicItem implements Serializable {
         return getName() + " (" + itemType + ")";
     }
 
-    /** @return rarity string (“COMMON”, “RARE”, etc.) */
+    /** @return rarity string (“Common”, “Rare”, etc.) */
     public String getRarity() {
-        return rarity;
+        return rarityType.toString();
+    }
+
+    /** @return rarity enumeration value */
+    public RarityType getRarityType() {
+        return rarityType;
+    }
+
+    /** @return percentage chance this item’s rarity drops */
+    public int getDropChance() {
+        return dropChance;
     }
 
     /**

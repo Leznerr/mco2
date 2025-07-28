@@ -1,6 +1,7 @@
 package model.core;
 
 import model.item.PassiveItem;
+import model.item.RarityType;
 import model.item.SingleUseEffectType;
 import model.item.SingleUseItem;
 import model.util.GameException;
@@ -18,7 +19,7 @@ public class CharacterInventoryTest {
     @Test
     public void testEquipAndUnequipDelegation() throws GameException {
         Character c = new Character("Hero", RaceType.HUMAN, ClassType.WARRIOR, List.of());
-        PassiveItem ring = new PassiveItem("Ring", "", "Common");
+        PassiveItem ring = new PassiveItem("Ring", "", RarityType.COMMON);
         c.getInventory().addItem(ring);
 
         c.equipItem(ring);
@@ -31,7 +32,7 @@ public class CharacterInventoryTest {
     @Test
     public void testHasItemAndUseSingleUseItem() throws GameException {
         Character c = new Character("Hero", RaceType.HUMAN, ClassType.WARRIOR, List.of());
-        SingleUseItem potion = new SingleUseItem("Potion", "", "Common", SingleUseEffectType.HEAL_HP, 10);
+        SingleUseItem potion = new SingleUseItem("Potion", "", RarityType.COMMON, SingleUseEffectType.HEAL_HP, 10);
         c.getInventory().addItem(potion);
 
         assertTrue(c.hasItem(potion));

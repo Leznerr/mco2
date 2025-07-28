@@ -7,6 +7,7 @@ import java.util.Random;
 
 import model.item.MagicItem;
 import model.item.PassiveItem;
+import model.item.RarityType;
 import model.item.SingleUseItem;
 import model.item.SingleUseEffectType;
 
@@ -33,19 +34,19 @@ public final class MagicItemFactory {
         new SingleUseItem(
                 "Potion of Minor Healing",
                 "Drink to instantly restore 40 HP. Brewed by caravan apprentices.",
-                "Common",
+                RarityType.COMMON,
                 SingleUseEffectType.HEAL_HP,
                 40),
         new SingleUseItem(
                 "Scroll of Minor Energy",
                 "A hastily scribed scroll that replenishes 20 EP when read aloud.",
-                "Common",
+                RarityType.COMMON,
                 SingleUseEffectType.RESTORE_EP,
                 20),
         new SingleUseItem(
                 "Defender's Aegis",
                 "Envelops the bearer in a barrier, negating all damage for one turn.",
-                "Common",
+                RarityType.COMMON,
                 SingleUseEffectType.GRANT_IMMUNITY,
                 1)
     );
@@ -54,31 +55,31 @@ public final class MagicItemFactory {
         new PassiveItem(
                 "Amulet of Vitality",
                 "An emerald charm that raises maximum HP by 20 while worn.",
-                "Uncommon"),
+                RarityType.UNCOMMON),
         new PassiveItem(
                 "Ring of Focus",
                 "Favored by Arcane College scholars. Grants +2 EP each turn.",
-                "Uncommon")
+                RarityType.UNCOMMON)
     );
 
     private static final List<MagicItem> RARE_ITEMS = List.of(
         new PassiveItem(
                 "Orb of Resilience",
                 "A mysterious sphere that heals 5 HP at the start of each turn.",
-                "Rare"),
+                RarityType.RARE),
         new PassiveItem(
                 "Ancient Tome of Power",
                 "Dusty pages filled with forgotten spells. Gain +5 EP each turn.",
-                "Rare")
+                RarityType.RARE)
     );
 
     /* -------------------------------------------------------------
      * Rarity Weighting (Cumulative Ranges)
      * ----------------------------------------------------------- */
 
-    private static final int COMMON_UPPER   = 59; // 0–59
-    private static final int UNCOMMON_UPPER = 94; // 60–94
-    // 95–99 → Rare
+    private static final int COMMON_UPPER   = RarityType.COMMON.getDropChance();
+    private static final int UNCOMMON_UPPER = COMMON_UPPER + RarityType.UNCOMMON.getDropChance();
+    // Remaining percentage belongs to RARE
 
     private static final SecureRandom RNG = new SecureRandom();
 
@@ -114,13 +115,24 @@ public final class MagicItemFactory {
      */
     public static MagicItem createRandomReward(Random random) {
         Objects.requireNonNull(random, "Random generator must not be null");
+        int roll = random.nextInt(100) + 1; // 1–100
+        RarityType rarity = (roll <= COMMON_UPPER)   ? RarityType.COMMON
+                             : (roll <= UNCOMMON_UPPER) ? RarityType.UNCOMMON
+                                                        : RarityType.RARE;
+        return getRandomItemByRarity(rarity, random);
+    }
 
-        int roll = random.nextInt(100); // 0–99
-        List<MagicItem> pool = (roll <= COMMON_UPPER)   ? COMMON_ITEMS
-                             : (roll <= UNCOMMON_UPPER) ? UNCOMMON_ITEMS
-                                                        : RARE_ITEMS;
+    /** Returns a random item template from the given rarity pool. */
+    public static MagicItem getRandomItemByRarity(RarityType rarity, Random random) {
+        Objects.requireNonNull(rarity, "rarity");
+        Objects.requireNonNull(random, "random");
 
+        List<MagicItem> pool = switch (rarity) {
+            case COMMON -> COMMON_ITEMS;
+            case UNCOMMON -> UNCOMMON_ITEMS;
+            case RARE -> RARE_ITEMS;
+        };
         MagicItem template = pool.get(random.nextInt(pool.size()));
-        return template.copy(); // ensures deep-copy, no shared state
+        return template.copy();
     }
 }
