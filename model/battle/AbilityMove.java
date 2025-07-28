@@ -52,8 +52,49 @@ public final class AbilityMove implements Move {
         // Modular and extensible effect processing
         switch (ability.getAbilityEffectType()) {
             case DAMAGE -> {
-                target.takeDamage(ability.getEffectValue());
-                log.addEntry(target.getName() + " takes " + ability.getEffectValue() + " damage.");
+                int dmg = ability.getEffectValue();
+                if (user.getRaceType() == model.core.RaceType.ORC && user.getCurrentHp() < user.getMaxHp() * 0.3) {
+                    dmg += 10;
+                    log.addEntry("Orc " + user.getName() + " unleashes Rage! +10 ability damage.");
+                }
+                int before = target.getCurrentHp();
+                target.takeDamage(dmg);
+                int dealt = before - target.getCurrentHp();
+                log.addEntry(target.getName() + " takes " + dealt + " damage.");
+
+                if (ability.getName().equals("Summon Spirit Wolf")) {
+                    int drain = Math.min(2, target.getCurrentEp());
+                    target.spendEp(drain);
+                    log.addEntry(target.getName() + " loses " + drain + " EP.");
+                }
+                if (ability.getName().equals("Elemental Pact")) {
+                    user.heal(12);
+                    log.addEntry(user.getName() + " heals 12 HP.");
+                }
+                if (ability.getName().equals("Greater Summoning")) {
+                    user.gainEp(8);
+                    log.addEntry(user.getName() + " gains 8 EP.");
+                }
+                if (ability.getName().equals("EMP Grenade")) {
+                    int drain = Math.min(6, target.getCurrentEp());
+                    target.spendEp(drain);
+                    log.addEntry(target.getName() + " loses " + drain + " EP.");
+                }
+                if (ability.getName().equals("Overclock")) {
+                    user.takeDamage(6);
+                    log.addEntry(user.getName() + " suffers 6 recoil damage.");
+                }
+                if (ability.getName().equals("Deploy Turret")) {
+                    target.addStatusEffect(StatusEffectFactory.create(StatusEffectType.MARKED));
+                    log.addEntry(target.getName() + " is now MARKED.");
+                }
+                if (user.getRaceType() == model.core.RaceType.VAMPIRE && dealt > 0) {
+                    int heal = dealt / 3;
+                    if (heal > 0) {
+                        user.heal(heal);
+                        log.addEntry("Vampire " + user.getName() + " lifesteals " + heal + " HP!");
+                    }
+                }
             }
             case HEAL -> {
                 user.heal(ability.getEffectValue());
@@ -65,8 +106,13 @@ public final class AbilityMove implements Move {
             }
             case APPLY_STATUS -> {
                 var statusType = ability.getStatusEffectApplied();
-                target.addStatusEffect(StatusEffectFactory.create(statusType));
-                log.addEntry(target.getName() + " is now " + statusType + ".");
+                boolean apply = ability.getEffectValue() <= 0 || new java.util.Random().nextInt(100) < ability.getEffectValue();
+                if (apply) {
+                    target.addStatusEffect(StatusEffectFactory.create(statusType));
+                    log.addEntry(target.getName() + " is now " + statusType + ".");
+                } else {
+                    log.addEntry(target.getName() + " resisted the effect.");
+                }
             }
             case DEFENSE, EVADE, UTILITY -> {
                 var statusType = ability.getStatusEffectApplied();

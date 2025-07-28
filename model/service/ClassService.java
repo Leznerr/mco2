@@ -66,6 +66,22 @@ public final class ClassService {
         paladin.add(new Ability("Guardian's Blessing", "Restore 10 EP.", 0, AbilityEffectType.ENERGY_GAIN, 10, null));
         abilities.put(ClassType.PALADIN, Collections.unmodifiableList(paladin));
 
+        List<Ability> summoner = new ArrayList<>();
+        summoner.add(new Ability("Summon Spirit Wolf", "Deal 22 damage and drain 2 EP.", 7, AbilityEffectType.DAMAGE, 22, null));
+        summoner.add(new Ability("Elemental Pact", "Deal 28 damage and heal 12 HP.", 10, AbilityEffectType.DAMAGE, 28, null));
+        summoner.add(new Ability("Protective Wisp", "Gain a shield absorbing damage.", 8, AbilityEffectType.DEFENSE, 0, StatusEffectType.SHIELDED));
+        summoner.add(new Ability("Arcane Binding", "50% chance to stun the enemy.", 6, AbilityEffectType.APPLY_STATUS, 50, StatusEffectType.STUNNED));
+        summoner.add(new Ability("Greater Summoning", "Deal 38 damage and gain 8 EP.", 14, AbilityEffectType.DAMAGE, 38, null));
+        abilities.put(ClassType.SUMMONER, Collections.unmodifiableList(summoner));
+
+        List<Ability> engineer = new ArrayList<>();
+        engineer.add(new Ability("Deploy Turret", "Deal 20 damage and mark the target.", 9, AbilityEffectType.DAMAGE, 20, StatusEffectType.MARKED));
+        engineer.add(new Ability("Repair Drone", "Heal self for 25 HP.", 7, AbilityEffectType.HEAL, 25, null));
+        engineer.add(new Ability("EMP Grenade", "Deal 18 damage and drain 6 EP.", 8, AbilityEffectType.DAMAGE, 18, null));
+        engineer.add(new Ability("Defensive Matrix", "Gain immunity for 1 turn.", 11, AbilityEffectType.DEFENSE, 0, StatusEffectType.IMMUNITY));
+        engineer.add(new Ability("Overclock", "Deal 32 damage but lose 6 HP.", 13, AbilityEffectType.DAMAGE, 32, null));
+        abilities.put(ClassType.ENGINEER, Collections.unmodifiableList(engineer));
+
         CLASS_ABILITIES = Collections.unmodifiableMap(abilities);
 
         EnumMap<ClassType, String> desc = new EnumMap<>(ClassType.class);
@@ -73,6 +89,8 @@ public final class ClassService {
         desc.put(ClassType.ROGUE, "Shadow-dancing skirmishers with deadly precision.");
         desc.put(ClassType.WARRIOR, "Front-line fighters whose steel and grit hold fast.");
         desc.put(ClassType.PALADIN, "Holy warriors combining defence with divine magic.");
+        desc.put(ClassType.SUMMONER, "Mystics who conjure spirits to aid them.");
+        desc.put(ClassType.ENGINEER, "Inventors wielding gadgets and explosives.");
         CLASS_DESCRIPTIONS = Collections.unmodifiableMap(desc);
     }
 

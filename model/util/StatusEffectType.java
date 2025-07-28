@@ -37,5 +37,11 @@ public enum StatusEffectType {
     /** Grants immunity to further negative effects. */
     IMMUNITY,
 
+    /** Blocks incoming damage up to a fixed amount. */
+    SHIELDED,
+
+    /** Causes the target to take additional damage. */
+    MARKED,
+
     NONE;
 }

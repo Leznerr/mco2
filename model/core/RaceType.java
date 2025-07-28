@@ -68,6 +68,18 @@ public enum RaceType {
     GNOME(
         "Clever and resourceful, gnomes have a knack for finding hidden opportunities.",
         new RaceBonus(0, 0, 1)
+    ),
+
+    /** Blood-drinkers who regenerate from the wounds they inflict. */
+    VAMPIRE(
+        "Dark beings that siphon vitality from their foes.",
+        new RaceBonus(0, 0, 0)
+    ),
+
+    /** Brutish warriors fueled by rage when wounded. */
+    ORC(
+        "Ferocious fighters gaining power as they bleed.",
+        new RaceBonus(10, 0, 0)
     );
 
     private final String description;
