@@ -6,6 +6,7 @@ import model.core.ClassType;
 import model.core.RaceType;
 import model.service.ClassService;
 import model.service.RaceService;
+import model.util.Constants;
 
 import java.util.List;
 import java.util.Random;
@@ -29,7 +30,8 @@ public final class RandomCharacterGenerator {
         ClassType clazz = classes[rng.nextInt(classes.length)];
 
         Character c = new Character(name, race, clazz);
-        List<Ability> abilities = classService.getRandomAbilitiesForClass(clazz, 3);
+        int abilityCount = Constants.NUM_ABILITIES_PER_CHAR + race.getExtraAbilitySlots();
+        List<Ability> abilities = classService.getRandomAbilitiesForClass(clazz, abilityCount);
         c.setAbilities(abilities);
         return c;
     }
