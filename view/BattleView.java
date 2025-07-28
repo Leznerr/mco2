@@ -232,6 +232,7 @@ public class BattleView extends JFrame {
             setupPlayerPanel(leftPanel, 1);
             setupPlayerPanel(rightPanel, 2);
         } else {
+            // Player vs Bot shows the human controls on the left
             setupPlayerPanel(leftPanel, 0);
             setupBotPanel(rightPanel);
         }
@@ -279,13 +280,15 @@ public class BattleView extends JFrame {
         nameCharNamePanel.setLayout(new BorderLayout());
         nameCharNamePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        int idForFields = (playerID == 0) ? 1 : playerID;
+
         JTextArea nameCharNameArea;
-        if (playerID == 1) {
+        if (idForFields == 1) {
             if (p1NameCharNameArea == null) {
                 p1NameCharNameArea = new JTextArea();
             }
             nameCharNameArea = p1NameCharNameArea;
-        } else if (playerID == 2) {
+        } else if (idForFields == 2) {
             if (p2NameCharNameArea == null) {
                 p2NameCharNameArea = new JTextArea();
             }
@@ -313,12 +316,12 @@ public class BattleView extends JFrame {
         statusPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JTextArea statusArea;
-        if (playerID == 1) {
+        if (idForFields == 1) {
             if (p1StatusArea == null) {
                 p1StatusArea = new JTextArea();
             }
             statusArea = p1StatusArea;
-        } else if (playerID == 2) {
+        } else if (idForFields == 2) {
             if (p2StatusArea == null) {
                 p2StatusArea = new JTextArea();
             }
@@ -350,12 +353,12 @@ public class BattleView extends JFrame {
         abilitiesItemsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JTextArea abilitiesItemsArea;
-        if (playerID == 1) {
+        if (idForFields == 1) {
             if (p1AbilitiesItemsArea == null) {
                 p1AbilitiesItemsArea = new JTextArea();
             }
             abilitiesItemsArea = p1AbilitiesItemsArea;
-        } else if (playerID == 2) {
+        } else if (idForFields == 2) {
             if (p2AbilitiesItemsArea == null) {
                 p2AbilitiesItemsArea = new JTextArea();
             }
@@ -386,13 +389,13 @@ public class BattleView extends JFrame {
         panel.add(Box.createVerticalStrut(10));
         JComboBox<String> cmbAbilities;
         JButton btnUse;
-        if (playerID == 1) {
+        if (idForFields == 1) {
             cmbAbilities = cmbP1Abilities;
             if (btnP1Use == null) {
                 btnP1Use = new RoundedButton(P1_USE);
             }
             btnUse = btnP1Use;
-        } else if (playerID == 2) {
+        } else if (idForFields == 2) {
             cmbAbilities = cmbP2Abilities;
             if (btnP2Use == null) {
                 btnP2Use = new RoundedButton(P2_USE);
@@ -723,7 +726,11 @@ public class BattleView extends JFrame {
     }
 
     public void addUseAbilityP1Listener(ActionListener l) {
-        btnP1Use.addActionListener(l);
+        if (btnP1Use != null) {
+            btnP1Use.addActionListener(l);
+        } else {
+            throw new IllegalStateException("btnP1Use not initialized");
+        }
     }
 
     public void addUseAbilityP2Listener(ActionListener l) {
