@@ -180,7 +180,8 @@ public void actionPerformed(ActionEvent e) {
     
     private void handleNavigateToManualCreation(String playerName) {
         SwingUtilities.invokeLater(() -> {
-            CharacterManualCreationView manualView = new CharacterManualCreationView(playerName);
+            int id = players.indexOf(findByName(players, playerName)) + 1;
+            CharacterManualCreationView manualView = new CharacterManualCreationView(playerName, id);
             CharacterManualCreationController controller =
                 new CharacterManualCreationController(manualView, playerName, this);
             manualView.setController(controller);

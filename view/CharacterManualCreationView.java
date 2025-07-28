@@ -18,6 +18,7 @@ import controller.CharacterManualCreationController;
 public class CharacterManualCreationView extends JFrame {
 
     private final String playerName;
+    private final int playerID;
 
     // Command constants
     public static final String CREATE = "CREATE";
@@ -42,8 +43,13 @@ public class CharacterManualCreationView extends JFrame {
     private CharacterManualCreationController controller;
 
     public CharacterManualCreationView(String playerName) {
+        this(playerName, 1);
+    }
+
+    public CharacterManualCreationView(String playerName, int playerID) {
         super("Fatal Fantasy: Tactics | Manual Character Creation - " + playerName);
         this.playerName = playerName;
+        this.playerID = playerID;
 
         charNameField = new RoundedTextField("Enter character name", 20);
         btnCreate = new RoundedButton(CREATE);
@@ -95,7 +101,7 @@ public class CharacterManualCreationView extends JFrame {
         centerPanel.add(Box.createVerticalStrut(40));
 
         // Logo
-        String headlineImagePath = String.format("view/assets/Player%sManualCharCreationLogo.png", playerName);
+        String headlineImagePath = String.format("view/assets/Player%dManualCharCreationLogo.png", playerID);
         ImageIcon logoIcon = new ImageIcon(headlineImagePath);
         Image logoImg = logoIcon.getImage().getScaledInstance(550, -1, Image.SCALE_SMOOTH);
         JLabel logoLabel = new JLabel(new ImageIcon(logoImg));

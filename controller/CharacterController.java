@@ -73,7 +73,7 @@ public final class CharacterController {
 
     /** Opens the manual character creation view for this player. */
 public void openManualCreationView() {
-    CharacterManualCreationView manualView = new CharacterManualCreationView(player.getName());
+    CharacterManualCreationView manualView = new CharacterManualCreationView(player.getName(), 1);
     bindCharacterManualCreationView(manualView);
     manualView.setVisible(true);
 }
