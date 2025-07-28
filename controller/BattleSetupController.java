@@ -5,7 +5,7 @@ import model.core.Player;
 import model.util.DialogUtils;
 import model.util.GameException;
 import model.util.RandomCharacterGenerator;
-import model.util.SimpleBot;
+import model.util.SmartBot;
 import view.BattleCharSelectionView;
 
 import java.util.List;
@@ -67,7 +67,7 @@ public class BattleSetupController {
     private void launchPvB() {
         try {
             Character bot = RandomCharacterGenerator.generate("Bot");
-            AIController ai = new AIController(new SimpleBot(new Random()));
+            AIController ai = new AIController(new SmartBot(new Random()));
             sceneManager.showPlayerVsBotBattle(players.get(0), p1Char, bot, ai);
         } catch (GameException e) {
             DialogUtils.showErrorDialog("Battle Error", e.getMessage());
