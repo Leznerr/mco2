@@ -553,7 +553,7 @@ Optional<Ability> abilityOpt = user.getAbilities().stream()
     private List<String> abilityNames(Character c) {
         List<String> names = new ArrayList<>();
 
-        int limit = Math.min(c.getUnlockedAbilitySlots(), c.getAbilities().size());
+        int limit = Math.min(c.getAbilitySlotCount(), c.getAbilities().size());
         for (int i = 0; i < limit; i++) {
             Ability a = c.getAbilities().get(i);
             String entry = String.format(
@@ -583,7 +583,7 @@ Optional<Ability> abilityOpt = user.getAbilities().stream()
     private String buildAbilityList(Character c) {
         StringBuilder sb = new StringBuilder();
 
-        int limit = Math.min(c.getUnlockedAbilitySlots(), c.getAbilities().size());
+        int limit = Math.min(c.getAbilitySlotCount(), c.getAbilities().size());
         for (int i = 0; i < limit; i++) {
             Ability a = c.getAbilities().get(i);
             sb.append(a.getName())

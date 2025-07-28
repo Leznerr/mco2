@@ -17,6 +17,7 @@ public class LevelingTest {
         assertEquals(2, c.getLevel());
         assertEquals(4, c.getAbilitySlots());
         assertEquals(4, c.getUnlockedAbilitySlots());
+        assertEquals(4, c.getAbilitySlotCount());
         assertEquals(10, c.getNextLevelMilestone());
     }
 }
