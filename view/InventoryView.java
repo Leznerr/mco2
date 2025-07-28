@@ -189,14 +189,19 @@ public class InventoryView extends JFrame{
         lblName = new JLabel();
         lblName.setFont(new Font("Serif", Font.BOLD, 22));
         lblName.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblName.setForeground(Color.WHITE);
         lblType = new JLabel();
         lblType.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblType.setForeground(Color.WHITE);
         lblStatus = new JLabel();
         lblStatus.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblStatus.setForeground(Color.WHITE);
         lblRarity = new JLabel();
         lblRarity.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblRarity.setForeground(Color.WHITE);
         lblEffect = new JLabel();
         lblEffect.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblEffect.setForeground(Color.WHITE);
 
         txtDescription = new JTextArea();
         txtDescription.setFont(new Font("Serif", Font.PLAIN, 18));
@@ -205,11 +210,15 @@ public class InventoryView extends JFrame{
         txtDescription.setEditable(false);
         txtDescription.setLineWrap(true);
         txtDescription.setWrapStyleWord(true);
+        txtDescription.setMinimumSize(new Dimension(350, 40));
+        txtDescription.setPreferredSize(new Dimension(350, 60));
 
         JScrollPane descPane = new JScrollPane(txtDescription);
         descPane.setOpaque(false);
         descPane.getViewport().setOpaque(false);
         descPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        descPane.setMinimumSize(new Dimension(350, 40));
+        descPane.setPreferredSize(new Dimension(350, 60));
 
         detailPanel.add(Box.createVerticalStrut(10));
         detailPanel.add(lblName);
@@ -320,6 +329,7 @@ public class InventoryView extends JFrame{
             lblEffect.setText("");
         }
         txtDescription.setText(item.getDescription());
+        txtDescription.setForeground(Color.WHITE);
         cardLayout.show(cardPanel, "DETAIL");
         btnViewItem.setVisible(false);
         btnBack.setVisible(true);
