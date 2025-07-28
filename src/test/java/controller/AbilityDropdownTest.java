@@ -43,7 +43,7 @@ public class AbilityDropdownTest {
         c1.setAbilities(all);
 
         // lock to 3 slots via reflection
-        Field f = Character.class.getDeclaredField("unlockedAbilitySlots");
+        Field f = Character.class.getDeclaredField("abilitySlotCount");
         f.setAccessible(true);
         f.setInt(c1, 3);
 

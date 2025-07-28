@@ -56,6 +56,8 @@ public class Character implements Serializable {
     private int nextLevelMilestone;
     private int abilitySlots;
     private int unlockedAbilitySlots;
+    /** Tracks how many ability slots are currently available. */
+    private int abilitySlotCount;
 
     // --- Temporary Battle State ---
     private boolean isStunned;
@@ -86,6 +88,7 @@ public class Character implements Serializable {
         this.nextLevelMilestone = other.nextLevelMilestone;
         this.abilitySlots = other.abilitySlots;
         this.unlockedAbilitySlots = other.unlockedAbilitySlots;
+        this.abilitySlotCount = other.abilitySlotCount;
 
         this.isStunned = false;
     }
@@ -133,6 +136,7 @@ public class Character implements Serializable {
         if (!this.abilities.isEmpty()) {
             this.unlockedAbilitySlots = Math.min(this.abilities.size(), this.abilitySlots);
         }
+        this.abilitySlotCount = this.unlockedAbilitySlots;
     }
 
     /**
@@ -162,6 +166,7 @@ public class Character implements Serializable {
         this.nextLevelMilestone = 5;
         this.abilitySlots = Constants.NUM_ABILITIES_PER_CHAR + race.getExtraAbilitySlots();
         this.unlockedAbilitySlots = this.abilitySlots;
+        this.abilitySlotCount = this.abilitySlots;
     }
 
     // --- Getters for Core Attributes ---
@@ -198,6 +203,7 @@ public class Character implements Serializable {
     public int getNextLevelMilestone() { return nextLevelMilestone; }
     public int getAbilitySlots() { return abilitySlots; }
     public int getUnlockedAbilitySlots() { return unlockedAbilitySlots; }
+    public int getAbilitySlotCount() { return abilitySlotCount; }
 
     // --- Combat State Management ---
 
@@ -310,6 +316,7 @@ public class Character implements Serializable {
         if (level == 2 || level == 4) {
             this.abilitySlots++;
             this.unlockedAbilitySlots = Math.min(this.unlockedAbilitySlots + 1, this.abilitySlots);
+            this.abilitySlotCount = this.unlockedAbilitySlots;
         }
     }
 
@@ -356,8 +363,8 @@ public class Character implements Serializable {
      */
     public void setAbilities(List<Ability> newAbilities) {
         InputValidator.requireNonNull(newAbilities, "New abilities list");
-        if (newAbilities.size() > abilitySlots) {
-            throw new IllegalArgumentException("A character can equip at most " + abilitySlots + " abilities.");
+        if (newAbilities.size() > abilitySlotCount) {
+            throw new IllegalArgumentException("A character can equip at most " + abilitySlotCount + " abilities.");
         }
         this.abilities.clear();
         this.abilities.addAll(newAbilities);
@@ -474,6 +481,9 @@ public class Character implements Serializable {
         }
         if (unlockedAbilitySlots == 0) {
             unlockedAbilitySlots = abilitySlots;
+        }
+        if (abilitySlotCount == 0) {
+            abilitySlotCount = unlockedAbilitySlots;
         }
     }
 }
