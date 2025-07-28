@@ -1,6 +1,8 @@
 package model.util;
 
 import java.util.List;
+import java.util.Collection;
+import java.util.Arrays;
 
 import model.core.Player;
 
@@ -155,5 +157,34 @@ public final class InputValidator {
                 .anyMatch(p -> p.getName().equalsIgnoreCase(input))) {
             throw new GameException("The name " + input + " is already taken.");
         }
+    }
+
+    /**
+     * Ensures all elements in the collection are distinct.
+     *
+     * @param items   collection to validate (non-null)
+     * @param message error message if duplicates are found
+     * @throws GameException if the collection contains duplicate elements
+     */
+    public static void requireDistinct(Collection<?> items, String message)
+            throws GameException {
+        requireNonNull(items, "items");
+        long distinctCount = items.stream().distinct().count();
+        if (distinctCount != items.size()) {
+            throw new GameException(message);
+        }
+    }
+
+    /**
+     * Ensures all values in the provided array are distinct.
+     *
+     * @param values  array to validate (non-null)
+     * @param message error message if duplicates are found
+     * @throws GameException if the array contains duplicate elements
+     */
+    public static void requireDistinct(Object[] values, String message)
+            throws GameException {
+        requireNonNull(values, "values");
+        requireDistinct(Arrays.asList(values), message);
     }
 }

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import model.core.Ability;
 import model.core.ClassType;
@@ -146,9 +147,9 @@ public final class CharacterGeneratorController {
         // Shuffle and pick first 3 unique abilities
         Collections.shuffle(pool, rng);
         List<Ability> chosen = pool.subList(0, 3);
-        if (!areDistinct(chosen)) {
-            throw new GameException("Duplicate abilities detected for class " + classType);
-        }
+        InputValidator.requireDistinct(
+                chosen.stream().map(Ability::getName).collect(Collectors.toList()),
+                "Duplicate abilities detected for class " + classType);
 
         Character character = new Character(name, race, classType);
         character.setAbilities(chosen);
@@ -156,11 +157,6 @@ public final class CharacterGeneratorController {
     }
 
     // --- Utility Helpers ---
-    /** Checks that all ability names are unique (defensive, in case of config issues). */
-    private static boolean areDistinct(List<Ability> abilities) {
-        return abilities.stream().map(Ability::getName).distinct().count() == abilities.size();
-    }
-
     /** Formats a character for preview display. */
     private static String format(Character c) {
         StringBuilder sb = new StringBuilder(128);
