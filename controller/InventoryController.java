@@ -120,7 +120,16 @@ public final class InventoryController implements ActionListener {
             if (sel != null) handleEquipItem(sel);
         } else if (InventoryView.UNEQUIP.equals(cmd)) {
             handleUnequipItem();
-
+        } else if (InventoryView.VIEW_ITEM.equals(cmd)) {
+            MagicItem sel = view.getSelectedItem();
+            if (sel != null) {
+                boolean eq = sel.equals(character.getInventory().getEquippedItem());
+                view.displayItemDetails(sel, eq);
+            } else {
+                view.showInfoMessage("Select an item to view.");
+            }
+        } else if (InventoryView.BACK.equals(cmd)) {
+            view.showInventoryList();
         }
     }
 }

@@ -1,12 +1,14 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -23,6 +25,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JTextArea;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -38,6 +41,8 @@ public class InventoryView extends JFrame{
     // Button labels
     public static final String EQUIP = "Equip";
     public static final String UNEQUIP = "Unequip";
+    public static final String VIEW_ITEM = "View Magic Item";
+    public static final String BACK = "Back to Inventory";
     public static final String RETURN = "Return";
 
     // UI components
@@ -45,6 +50,18 @@ public class InventoryView extends JFrame{
     private JButton btnUnequip;
 
     private JButton btnReturn;
+    private JButton btnViewItem;
+    private JButton btnBack;
+
+    private JLabel lblName;
+    private JLabel lblType;
+    private JLabel lblStatus;
+    private JLabel lblRarity;
+    private JLabel lblEffect;
+    private JTextArea txtDescription;
+
+    private CardLayout cardLayout;
+    private JPanel cardPanel;
     private final DefaultListModel<model.item.MagicItem> listModel = new DefaultListModel<>();
     private JList<model.item.MagicItem> itemList;
 
@@ -126,7 +143,7 @@ public class InventoryView extends JFrame{
 
         centerPanel.add(Box.createVerticalStrut(10));
 
-        // Rounded display box for character list
+        // Rounded display box for list/details
         RoundedDisplayBox detailsPanel = new RoundedDisplayBox();
         detailsPanel.setPreferredSize(new Dimension(400, 500));
         detailsPanel.setMaximumSize(new Dimension(400, 500));
@@ -141,6 +158,7 @@ public class InventoryView extends JFrame{
             @Override
             public Component getListCellRendererComponent(JList<?> l, Object val, int idx, boolean sel, boolean foc) {
                 super.getListCellRendererComponent(l, val, idx, sel, foc);
+                setOpaque(false);
                 if (val instanceof model.item.MagicItem mi) {
                     setText((idx + 1) + ". " + mi.getName());
                     setToolTipText(mi.getDescription());
@@ -155,13 +173,71 @@ public class InventoryView extends JFrame{
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        detailsPanel.add(scrollPane, BorderLayout.CENTER);
-
         JLabel tipLabel = new JLabel("Single-use items may only be used in battle.");
         tipLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        detailsPanel.add(tipLabel, BorderLayout.SOUTH);
+
+        JPanel listPanel = new JPanel(new BorderLayout());
+        listPanel.setOpaque(false);
+        listPanel.add(scrollPane, BorderLayout.CENTER);
+        listPanel.add(tipLabel, BorderLayout.SOUTH);
+
+        // Detail panel setup
+        JPanel detailPanel = new JPanel();
+        detailPanel.setOpaque(false);
+        detailPanel.setLayout(new BoxLayout(detailPanel, BoxLayout.Y_AXIS));
+
+        lblName = new JLabel();
+        lblName.setFont(new Font("Serif", Font.BOLD, 22));
+        lblName.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblType = new JLabel();
+        lblType.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblStatus = new JLabel();
+        lblStatus.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblRarity = new JLabel();
+        lblRarity.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblEffect = new JLabel();
+        lblEffect.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        txtDescription = new JTextArea();
+        txtDescription.setFont(new Font("Serif", Font.PLAIN, 18));
+        txtDescription.setForeground(Color.WHITE);
+        txtDescription.setOpaque(false);
+        txtDescription.setEditable(false);
+        txtDescription.setLineWrap(true);
+        txtDescription.setWrapStyleWord(true);
+
+        JScrollPane descPane = new JScrollPane(txtDescription);
+        descPane.setOpaque(false);
+        descPane.getViewport().setOpaque(false);
+        descPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        detailPanel.add(Box.createVerticalStrut(10));
+        detailPanel.add(lblName);
+        detailPanel.add(Box.createVerticalStrut(5));
+        detailPanel.add(lblType);
+        detailPanel.add(lblStatus);
+        detailPanel.add(lblRarity);
+        detailPanel.add(lblEffect);
+        detailPanel.add(Box.createVerticalStrut(10));
+        detailPanel.add(descPane);
+        detailPanel.add(Box.createVerticalGlue());
+
+        cardLayout = new CardLayout();
+        cardPanel = new JPanel(cardLayout);
+        cardPanel.setOpaque(false);
+        cardPanel.add(listPanel, "LIST");
+        cardPanel.add(detailPanel, "DETAIL");
+        cardLayout.show(cardPanel, "LIST");
+
+        detailsPanel.add(cardPanel, BorderLayout.CENTER);
 
         centerPanel.add(detailsPanel);
+        centerPanel.add(Box.createVerticalStrut(10));
+        btnViewItem = new RoundedButton(VIEW_ITEM);
+        btnBack = new RoundedButton(BACK);
+        btnBack.setVisible(false);
+        centerPanel.add(btnViewItem);
+        centerPanel.add(btnBack);
         centerPanel.add(Box.createVerticalGlue());
 
         backgroundPanel.add(centerPanel, BorderLayout.CENTER);
@@ -194,21 +270,27 @@ public class InventoryView extends JFrame{
         btnEquip.setActionCommand(EQUIP);
         btnUnequip.setActionCommand(UNEQUIP);
         btnReturn.setActionCommand(RETURN);
+        btnViewItem.setActionCommand(VIEW_ITEM);
+        btnBack.setActionCommand(BACK);
 
         btnEquip.addActionListener(listener);
         btnUnequip.addActionListener(listener);
         btnReturn.addActionListener(listener);
+        btnViewItem.addActionListener(listener);
+        btnBack.addActionListener(listener);
     }
 
     /** Updates the inventory list and highlights the equipped item. */
     public void updateInventory(java.util.List<model.item.MagicItem> items,
                                 model.item.MagicItem equipped) {
+        showInventoryList();
         listModel.clear();
         for (model.item.MagicItem m : items) listModel.addElement(m);
         itemList.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> l, Object val, int idx, boolean sel, boolean foc) {
                 super.getListCellRendererComponent(l, val, idx, sel, foc);
+                setOpaque(false);
                 if (val instanceof model.item.MagicItem mi) {
                     String name = mi.getName();
                     if (mi.equals(equipped)) name += " (Equipped)";
@@ -225,14 +307,38 @@ public class InventoryView extends JFrame{
         return itemList.getSelectedValue();
     }
 
-    /** Displays a dialog showing full details for the provided item. */
-    public void showMagicItemDetails(model.item.MagicItem item) {
+    /** Shows the detail panel for the provided item. */
+    public void displayItemDetails(model.item.MagicItem item, boolean isEquipped) {
         if (item == null) return;
-        String msg = item.getName() + "\nType: " + item.getItemType() +
-                "\nRarity: " + item.getRarity() +
-                "\n\n" + item.getDescription();
-        JOptionPane.showMessageDialog(this, msg, "Magic Item Details",
-                JOptionPane.INFORMATION_MESSAGE);
+        lblName.setText(item.getName());
+        lblType.setText("Type: " + item.getItemType());
+        lblStatus.setText("Status: " + (isEquipped ? "Equipped" : "Not Equipped"));
+        lblRarity.setText("Rarity: " + item.getRarity());
+        if (item instanceof model.item.SingleUseItem su) {
+            lblEffect.setText("Effect: " + describeEffect(su));
+        } else {
+            lblEffect.setText("");
+        }
+        txtDescription.setText(item.getDescription());
+        cardLayout.show(cardPanel, "DETAIL");
+        btnViewItem.setVisible(false);
+        btnBack.setVisible(true);
+    }
+
+    /** Returns to the inventory list view. */
+    public void showInventoryList() {
+        cardLayout.show(cardPanel, "LIST");
+        btnViewItem.setVisible(true);
+        btnBack.setVisible(false);
+    }
+
+    private String describeEffect(model.item.SingleUseItem item) {
+        return switch (item.getEffectType()) {
+            case HEAL_HP -> "Heals " + item.getEffectValue() + " HP";
+            case RESTORE_EP -> "Restores " + item.getEffectValue() + " EP";
+            case REVIVE -> "Revives with " + item.getEffectValue() + "% HP";
+            case GRANT_IMMUNITY -> "Grants immunity for " + item.getEffectValue() + " turn(s)";
+        };
     }
 
     public void showInfoMessage(String msg) {
