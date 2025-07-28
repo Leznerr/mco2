@@ -191,17 +191,26 @@ public final class BattleController {
             throw new GameException("Character is not part of the current battle.");
         }
 
-        // Item choice is prefixed with "Item: "
-        if (choice.startsWith("Item: ")) {
-            String name = choice.substring(6);
-            Optional<SingleUseItem> itemOpt = user.getInventory().getAllItems().stream()
-                    .filter(i -> i instanceof SingleUseItem && i.getName().equals(name))
-                    .map(i -> (SingleUseItem) i)
-                    .findFirst();
-            if (itemOpt.isPresent()) {
-                submitMove(user, new ItemMove(itemOpt.get()));
+        // Magic item usage via dropdown
+        if (choice.startsWith("Use Magic Item: ")) {
+            String name = choice.substring("Use Magic Item: ".length());
+            int idx = name.indexOf(" (");
+            if (idx > 0) name = name.substring(0, idx);
+            MagicItem eq = user.getInventory().getEquippedItem();
+            if (eq instanceof SingleUseItem su && eq.getName().equals(name)) {
+                submitMove(user, new ItemMove(su));
+                return;
+            } else {
+                battle.getCombatLog().addEntry("This item has already been used.");
+                view.displayTurnResults(battle.getCombatLog());
                 return;
             }
+        }
+
+        if (choice.startsWith("Magic Item: ")) {
+            battle.getCombatLog().addEntry("Passive item effects are always active and do not require use.");
+            view.displayTurnResults(battle.getCombatLog());
+            return;
         }
 
         // Otherwise treat as ability name (strip details if present)
@@ -491,9 +500,16 @@ public final class BattleController {
                     a.getName(), a.getEpCost(), a.getDescription());
             names.add(entry);
         }
-        c.getInventory().getAllItems().stream()
-                .filter(i -> i instanceof SingleUseItem)
-                .forEach(i -> names.add("Item: " + i.getName()));
+        MagicItem eq = c.getInventory().getEquippedItem();
+        if (eq instanceof SingleUseItem su) {
+            String entry = String.format("Use Magic Item: %s (Single-Use, Effect: %s)",
+                    su.getName(), su.getDescription());
+            names.add(entry);
+        } else if (eq instanceof PassiveItem p) {
+            String entry = String.format("Magic Item: %s (Passive, Effect: %s, Always Active)",
+                    p.getName(), p.getDescription());
+            names.add(entry);
+        }
         return names;
     }
 
@@ -507,11 +523,19 @@ public final class BattleController {
               .append(a.getDescription())
               .append(")\n");
         }
-        for (var item : c.getInventory().getAllItems()) {
-            sb.append("Item: ").append(item.getName()).append("\n");
-        }
-        if (c.getInventory().getEquippedItem() != null) {
-            sb.append("Equipped: ").append(c.getInventory().getEquippedItem().getName());
+        MagicItem eq = c.getInventory().getEquippedItem();
+        if (eq instanceof SingleUseItem su) {
+            sb.append("Equipped Item: ")
+              .append(su.getName())
+              .append(" (Single-Use, Effect: ")
+              .append(su.getDescription())
+              .append(")");
+        } else if (eq instanceof PassiveItem p) {
+            sb.append("Equipped Item: ")
+              .append(p.getName())
+              .append(" (Passive, Effect: ")
+              .append(p.getDescription())
+              .append(", Always Active)");
         }
         return sb.toString();
     }
