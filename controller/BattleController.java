@@ -180,7 +180,12 @@ public final class BattleController {
 
     /**
      * Resolves a player choice string from the UI into an actionable move.
-     * The choice may refer to an ability or a usable magic item.
+     * Choices come directly from {@link #abilityNames(Character)} so the
+     * format is predictable:
+     * <ul>
+     *   <li><code>{Ability Name} (EP: {cost})</code></li>
+     *   <li><code>Item: {Item Name}</code></li>
+     * </ul>
      */
     public void handlePlayerChoice(Character user, String choice) throws GameException {
         ensureRunning();
@@ -191,9 +196,9 @@ public final class BattleController {
             throw new GameException("Character is not part of the current battle.");
         }
 
-        // Item choice is prefixed with "Item: "
+        // Item choice is prefixed with "Item: " as produced by abilityNames()
         if (choice.startsWith("Item: ")) {
-            String name = choice.substring(6);
+            String name = choice.substring(6).trim();
             Optional<SingleUseItem> itemOpt = user.getInventory().getAllItems().stream()
                     .filter(i -> i instanceof SingleUseItem && i.getName().equals(name))
                     .map(i -> (SingleUseItem) i)
@@ -204,12 +209,14 @@ public final class BattleController {
             }
         }
 
-        // Otherwise treat as ability name (strip details if present)
+        // Otherwise treat as ability name. Dropdown entries append
+        // " (EP: {cost})" which we strip before lookup.
         String abilityName = choice;
         int idx = abilityName.indexOf(" (EP:");
         if (idx > 0) {
             abilityName = abilityName.substring(0, idx);
         }
+        abilityName = abilityName.trim();
 
         Optional<Ability> abilityOpt = user.getAbilities().stream()
                 .filter(a -> a.getName().equals(abilityName))
@@ -484,35 +491,55 @@ public final class BattleController {
         view.updateAbilityDropdown(2, abilityNames(c2));
     }
 
+    /**
+     * Builds the list of options shown in the ability/item dropdown.
+     *
+     * <p>Entries follow one of two simple string formats:</p>
+     * <ul>
+     *   <li><code>{Ability Name} (EP: {cost})</code></li>
+     *   <li><code>Item: {Item Name}</code> (for {@link SingleUseItem}s)</li>
+     * </ul>
+     */
     private List<String> abilityNames(Character c) {
         List<String> names = new ArrayList<>();
+
         for (Ability a : c.getAbilities()) {
-            String entry = String.format("%s (EP: %d, Effect: %s)",
-                    a.getName(), a.getEpCost(), a.getDescription());
+            String entry = String.format("%s (EP: %d)", a.getName(), a.getEpCost());
             names.add(entry);
         }
+
         c.getInventory().getAllItems().stream()
                 .filter(i -> i instanceof SingleUseItem)
                 .forEach(i -> names.add("Item: " + i.getName()));
+
         return names;
     }
 
+    /**
+     * Builds the text shown in each player's ability/item list box.
+     * Only ability name and EP cost are displayed to keep the UI concise.
+     */
     private String buildAbilityList(Character c) {
         StringBuilder sb = new StringBuilder();
+
+        // Abilities listed as "{Name} (EP: {cost})" one per line
         for (var a : c.getAbilities()) {
             sb.append(a.getName())
               .append(" (EP: ")
               .append(a.getEpCost())
-              .append(", Effect: ")
-              .append(a.getDescription())
               .append(")\n");
         }
+
+        // Magic items listed with their type
         for (var item : c.getInventory().getAllItems()) {
-            sb.append("Item: ").append(item.getName()).append("\n");
+            String label = (item instanceof PassiveItem) ? "Passive Item: " : "Single Use Item: ";
+            sb.append(label).append(item.getName()).append("\n");
         }
+
         if (c.getInventory().getEquippedItem() != null) {
             sb.append("Equipped: ").append(c.getInventory().getEquippedItem().getName());
         }
+
         return sb.toString();
     }
 
