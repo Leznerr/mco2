@@ -21,6 +21,7 @@ import model.core.Player;
 import model.item.MagicItem;
 import model.item.PassiveItem;
 import model.item.SingleUseItem;
+import model.service.MagicItemFactory;
 import model.util.Constants;
 import model.util.GameException;
 import model.util.InputValidator;
@@ -344,6 +345,22 @@ Optional<Ability> abilityOpt = user.getAbilities().stream()
                     log.addEntry(persistentWinner.getName() + " gains 50 XP.");
                     log.addEntry(persistentLoser.getName() + " gains 20 XP.");
                     persistentWinner.incrementBattlesWon();
+
+                    // Award magic item for every 3rd win milestone
+                    if (persistentWinner.getBattlesWon() % 3 == 0) {
+                        MagicItem reward = MagicItemFactory.createRandomReward();
+                        persistentWinner.getInventory().addItem(reward);
+                        log.addEntry(persistentWinner.getName() + " is awarded a magic item: " + reward.getName());
+                        javax.swing.JOptionPane.showMessageDialog(
+                                null,
+                                persistentWinner.getName() + " has been awarded a magic item!\n\n" +
+                                        reward.getName() + " (" + reward.getRarity() + ")\n" +
+                                        reward.getDescription(),
+                                "Magic Item Awarded!",
+                                javax.swing.JOptionPane.INFORMATION_MESSAGE
+                        );
+                    }
+
                     if (persistentWinner.canLevelUp()) {
                         persistentWinner.levelUp();
                         javax.swing.JOptionPane.showMessageDialog(null,
