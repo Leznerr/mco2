@@ -55,6 +55,7 @@ public class Character implements Serializable {
     private int battlesWon;
     private int nextLevelMilestone;
     private int abilitySlots;
+    private int unlockedAbilitySlots;
 
     // --- Temporary Battle State ---
     private boolean isStunned;
@@ -84,6 +85,7 @@ public class Character implements Serializable {
         this.battlesWon = other.battlesWon;
         this.nextLevelMilestone = other.nextLevelMilestone;
         this.abilitySlots = other.abilitySlots;
+        this.unlockedAbilitySlots = other.unlockedAbilitySlots;
 
         this.isStunned = false;
     }
@@ -128,6 +130,9 @@ public class Character implements Serializable {
         this.isStunned = false;
 
         initializeStats();
+        if (!this.abilities.isEmpty()) {
+            this.unlockedAbilitySlots = Math.min(this.abilities.size(), this.abilitySlots);
+        }
     }
 
     /**
@@ -156,6 +161,7 @@ public class Character implements Serializable {
         this.battlesWon = 0;
         this.nextLevelMilestone = 5;
         this.abilitySlots = Constants.NUM_ABILITIES_PER_CHAR + race.getExtraAbilitySlots();
+        this.unlockedAbilitySlots = this.abilitySlots;
     }
 
     // --- Getters for Core Attributes ---
@@ -191,6 +197,7 @@ public class Character implements Serializable {
     public int getBattlesWon() { return battlesWon; }
     public int getNextLevelMilestone() { return nextLevelMilestone; }
     public int getAbilitySlots() { return abilitySlots; }
+    public int getUnlockedAbilitySlots() { return unlockedAbilitySlots; }
 
     // --- Combat State Management ---
 
@@ -302,6 +309,7 @@ public class Character implements Serializable {
     public void unlockAbilitySlot() {
         if (level == 2 || level == 4) {
             this.abilitySlots++;
+            this.unlockedAbilitySlots = Math.min(this.unlockedAbilitySlots + 1, this.abilitySlots);
         }
     }
 
@@ -463,6 +471,9 @@ public class Character implements Serializable {
         }
         if (abilitySlots == 0) {
             abilitySlots = Constants.NUM_ABILITIES_PER_CHAR + race.getExtraAbilitySlots();
+        }
+        if (unlockedAbilitySlots == 0) {
+            unlockedAbilitySlots = abilitySlots;
         }
     }
 }
