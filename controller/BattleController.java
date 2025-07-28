@@ -183,8 +183,9 @@ public final class BattleController {
      * Choices come directly from {@link #abilityNames(Character)} so the
      * format is predictable:
      * <ul>
-     *   <li><code>{Ability Name} (EP: {cost})</code></li>
-     *   <li><code>Item: {Item Name}</code></li>
+     *   <li><code>{Ability Name} (EP: n, Effect: desc)</code></li>
+     *   <li><code>Use Magic Item: {Name} (Single-Use, ...)</code></li>
+     *   <li><code>Item: {Name} (Passive, ...)</code></li>
      * </ul>
      */
     public void handlePlayerChoice(Character user, String choice) throws GameException {
@@ -194,6 +195,22 @@ public final class BattleController {
 
         if (!belongsToBattle(user)) {
             throw new GameException("Character is not part of the current battle.");
+        }
+
+        if (choice.startsWith("Use Magic Item: ")) {
+            String itemName = choice.substring("Use Magic Item: ".length());
+            int idx = itemName.indexOf(" (");
+            if (idx > 0) itemName = itemName.substring(0, idx);
+
+            MagicItem eq = user.getInventory().getEquippedItem();
+            if (eq instanceof SingleUseItem su && eq.getName().equals(itemName)) {
+                submitMove(user, new ItemMove(su));
+                return;
+            } else {
+                battle.getCombatLog().addEntry("This item is not equipped or already used.");
+                view.displayTurnResults(battle.getCombatLog());
+                return;
+            }
         }
 
         if (choice.startsWith("Item: ")) {
@@ -499,25 +516,33 @@ public final class BattleController {
     /**
      * Builds the list of options shown in the ability/item dropdown.
      *
-     * <p>Entries follow one of two simple string formats:</p>
+     * <p>Each ability entry includes its EP cost and a short effect summary.</p>
+     *
+     * <p>Equipped magic items are appended using one of two formats:</p>
      * <ul>
-     *   <li><code>{Ability Name} (EP: {cost})</code></li>
-     *   <li><code>Item: {Item Name}</code> (for {@link SingleUseItem}s)</li>
+     *   <li><code>Use Magic Item: {Name} (Single-Use, Effect: {desc})</code></li>
+     *   <li><code>Item: {Name} (Passive, Effect: {desc}, Always Active)</code></li>
      * </ul>
      */
     private List<String> abilityNames(Character c) {
         List<String> names = new ArrayList<>();
 
         for (Ability a : c.getAbilities()) {
-            String entry = String.format("%s (EP: %d)", a.getName(), a.getEpCost());
+            String entry = String.format(
+                    "%s (EP: %d, Effect: %s)",
+                    a.getName(), a.getEpCost(), a.getDescription());
             names.add(entry);
         }
 
         MagicItem eq = c.getInventory().getEquippedItem();
-        if (eq instanceof SingleUseItem) {
-            names.add("Item: " + eq.getName());
-        } else if (eq instanceof PassiveItem) {
-            names.add("Item: " + eq.getName() + " (Passive)");
+        if (eq instanceof SingleUseItem su) {
+            names.add(String.format(
+                    "Use Magic Item: %s (Single-Use, Effect: %s)",
+                    su.getName(), su.getDescription()));
+        } else if (eq instanceof PassiveItem p) {
+            names.add(String.format(
+                    "Item: %s (Passive, Effect: %s, Always Active)",
+                    p.getName(), p.getDescription()));
         }
 
         return names;
