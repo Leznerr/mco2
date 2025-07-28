@@ -28,7 +28,7 @@ public class PlayerCharacterManagementView extends JFrame {
     private final int playerID;
 
     public PlayerCharacterManagementView(int playerID) {
-        super("Manage Characters - Player " + playerID);
+        super("Fatal Fantasy: Tactics | Player " + playerID + " Management");
         this.playerID = playerID;
         initUI();
         setSize(800, 700);
@@ -61,12 +61,12 @@ public class PlayerCharacterManagementView extends JFrame {
             b.setMaximumSize(buttonSize);
         }
 
-        // Match PlayerCharManagementView spacing
-        bgPanel.add(Box.createVerticalStrut(50));
+        bgPanel.add(Box.createVerticalGlue());
+        bgPanel.add(Box.createVerticalStrut(40));
 
         String logoPath = String.format("view/assets/Player%dCharManagLogo.png", playerID);
         ImageIcon logoIcon = new ImageIcon(logoPath);
-        Image logoImg = logoIcon.getImage().getScaledInstance(500, -1, Image.SCALE_SMOOTH);
+        Image logoImg = logoIcon.getImage().getScaledInstance(400, -1, Image.SCALE_SMOOTH);
         JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         bgPanel.add(logoLabel);
@@ -76,6 +76,7 @@ public class PlayerCharacterManagementView extends JFrame {
         buttonPanel.setOpaque(false);
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        buttonPanel.add(Box.createVerticalGlue());
         buttonPanel.add(btnViewCharacters);
         buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnCreateCharacter);
@@ -87,6 +88,7 @@ public class PlayerCharacterManagementView extends JFrame {
         buttonPanel.add(btnInventory);
         buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnReturn);
+        buttonPanel.add(Box.createVerticalGlue());
         bgPanel.add(buttonPanel);
         bgPanel.add(Box.createVerticalGlue());
 
