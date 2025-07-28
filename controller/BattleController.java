@@ -196,21 +196,11 @@ public final class BattleController {
             throw new GameException("Character is not part of the current battle.");
         }
 
-        // Item choice is prefixed with "Item: " as produced by abilityNames()
-        if (choice.startsWith("Item: ")) {
-            String name = choice.substring(6).trim();
-            Optional<SingleUseItem> itemOpt = user.getInventory().getAllItems().stream()
-                    .filter(i -> i instanceof SingleUseItem && i.getName().equals(name))
-                    .map(i -> (SingleUseItem) i)
-                    .findFirst();
-            if (itemOpt.isPresent()) {
-                submitMove(user, new ItemMove(itemOpt.get()));
                 return;
             }
         }
 
-        // Otherwise treat as ability name. Dropdown entries append
-        // " (EP: {cost})" which we strip before lookup.
+
         String abilityName = choice;
         int idx = abilityName.indexOf(" (EP:");
         if (idx > 0) {
@@ -508,10 +498,6 @@ public final class BattleController {
             names.add(entry);
         }
 
-        c.getInventory().getAllItems().stream()
-                .filter(i -> i instanceof SingleUseItem)
-                .forEach(i -> names.add("Item: " + i.getName()));
-
         return names;
     }
 
@@ -529,15 +515,7 @@ public final class BattleController {
               .append(a.getEpCost())
               .append(")\n");
         }
-
-        // Magic items listed with their type
-        for (var item : c.getInventory().getAllItems()) {
-            String label = (item instanceof PassiveItem) ? "Passive Item: " : "Single Use Item: ";
-            sb.append(label).append(item.getName()).append("\n");
-        }
-
-        if (c.getInventory().getEquippedItem() != null) {
-            sb.append("Equipped: ").append(c.getInventory().getEquippedItem().getName());
+<<<<<<
         }
 
         return sb.toString();
