@@ -607,7 +607,8 @@ Optional<Ability> abilityOpt = user.getAbilities().stream()
         if (!c.getActiveStatusEffects().isEmpty()) {
             String statuses = c.getActiveStatusEffects().stream()
                     .map(se -> se.getType().name())
-                    .collect(Collectors.joining(","));
+                    .distinct()
+                    .collect(Collectors.joining(", "));
             return base + " | " + statuses;
         }
         return base;
