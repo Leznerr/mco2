@@ -104,7 +104,7 @@ public class PlayerCharManagementView extends JFrame {
         };
 
         backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.Y_AXIS));
-        backgroundPanel.add(Box.createVerticalStrut(60));
+        backgroundPanel.add(Box.createVerticalStrut(50));
 
         String headlineImagePath = String.format("view/assets/Player%dCharManagLogo.png", playerID);
         ImageIcon logoIcon = new ImageIcon(headlineImagePath);
@@ -113,7 +113,7 @@ public class PlayerCharManagementView extends JFrame {
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         backgroundPanel.add(logoLabel);
 
-        backgroundPanel.add(Box.createVerticalStrut(40));
+        backgroundPanel.add(Box.createVerticalStrut(10));
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
@@ -127,15 +127,15 @@ public class PlayerCharManagementView extends JFrame {
         btnReturn = new RoundedButton(RETURN);
 
         buttonPanel.add(btnViewChar);
-        buttonPanel.add(Box.createVerticalStrut(15));
+        buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnCreateChar);
-        buttonPanel.add(Box.createVerticalStrut(15));
+        buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnEditChar);
-        buttonPanel.add(Box.createVerticalStrut(15));
+        buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnDeleteChar);
-        buttonPanel.add(Box.createVerticalStrut(15));
+        buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnInventory);
-        buttonPanel.add(Box.createVerticalStrut(15));
+        buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(btnReturn);
 
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
