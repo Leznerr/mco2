@@ -180,7 +180,35 @@ public final class CharacterManualCreationController {
     }
 
     private void refreshAbilityOptions() {
+        clearAbilityOptions();
 
+        String classStr = view.getSelectedClass();
+        if (classStr == null || classStr.isBlank()) {
+            return;
+        }
+
+        try {
+            ClassType classType = ClassType.valueOf(classStr);
+            List<String> abilities = classService.getAvailableAbilities(classType)
+                    .stream()
+                    .map(Ability::getName)
+                    .collect(Collectors.toList());
+
+            String[] opts = abilities.toArray(new String[0]);
+            for (int i = 1; i <= 3; i++) {
+                view.setAbilityOptions(i, opts);
+            }
+
+            // If race allows a fourth ability slot (gnome), populate it as well
+            String raceStr = view.getSelectedRace();
+            if (raceStr != null && !raceStr.isBlank() && RaceType.valueOf(raceStr) == RaceType.GNOME) {
+                view.setAbilityOptions(4, opts);
+            }
+        } catch (GameException e) {
+            // In case of an error fetching abilities, keep the dropdowns empty
+            clearAbilityOptions();
+        }
+    }
 
     // --- Helper: Find Player by Name ---
     private Player getPlayerByName(String playerName) {

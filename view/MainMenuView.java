@@ -53,10 +53,19 @@ public class MainMenuView extends JFrame {
         super("Fatal Fantasy: Tactics | Main Menu");
 
         initUI();
-        
+        setSize(800, 700);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setResizable(false);
 
-
-
+        // Allow the frame to close naturally when the user clicks the X button
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
+    }
     /**
      * Initializes the UI components and arranges them in the main layout.
      */
