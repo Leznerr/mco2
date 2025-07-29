@@ -54,15 +54,15 @@ public class CharacterManagementMenuController {
                     "Info", JOptionPane.INFORMATION_MESSAGE);
             view.setPlayer1Name(null);
             view.setPlayer2Name(null);
-            return;
-        }
-        if (players.size() > 0) {
-            view.setPlayer1Name(players.get(0).getName());
-        }
-        if (players.size() > 1) {
-            view.setPlayer2Name(players.get(1).getName());
         } else {
-            view.setPlayer2Name(null);
+            if (players.size() > 0) {
+                view.setPlayer1Name(players.get(0).getName());
+            }
+            if (players.size() > 1) {
+                view.setPlayer2Name(players.get(1).getName());
+            } else {
+                view.setPlayer2Name(null);
+            }
         }
     }
 }

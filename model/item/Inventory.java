@@ -97,10 +97,9 @@ public final class Inventory implements Serializable {
      */
     public void addItem(MagicItem item) {
         InputValidator.requireNonNull(item, "Item to add");
-        if (items.contains(item)) {
-            return; // prevent duplicates
+        if (!items.contains(item)) {
+            items.add(item);
         }
-        items.add(item);
     }
 
     /**
