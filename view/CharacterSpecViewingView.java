@@ -46,7 +46,6 @@ public class CharacterSpecViewingView extends JFrame {
 
                 if (choice == JOptionPane.YES_OPTION) {
                     dispose(); // closes the window
-                    // System.exit(0);
                 }
             }
         });

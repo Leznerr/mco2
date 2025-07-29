@@ -75,7 +75,9 @@ public final class SceneManager {
         root = stage.getContentPane();
         root.setLayout(cards);
 
-        stage.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // Use DISPOSE_ON_CLOSE so window closures don't forcibly exit the JVM
+        // allowing for graceful shutdown without System.exit calls.
+        stage.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         stage.setSize(800, 700);
         stage.setLocationRelativeTo(null);
         stage.setResizable(false);
@@ -166,12 +168,14 @@ public final class SceneManager {
                 } else if (SavedPlayersRegistrationView.REGISTER.equals(cmd)) {
                     String n1 = savedPlayersRegView.getSelectedPlayer1();
                     String n2 = savedPlayersRegView.getSelectedPlayer2();
+                    boolean proceed = true;
                     if (n1 == null || n2 == null) {
-                        JOptionPane.showMessageDialog(savedPlayersRegView, "Both players must be selected.",
+                        JOptionPane.showMessageDialog(savedPlayersRegView,
+                                "Both players must be selected.",
                                 "Error", JOptionPane.ERROR_MESSAGE);
-                        return;
+                        proceed = false;
                     }
-                    if (gameManagerController.handleRegisterSavedPlayers(n1, n2)) {
+                    if (proceed && gameManagerController.handleRegisterSavedPlayers(n1, n2)) {
                         JOptionPane.showMessageDialog(savedPlayersRegView,
                                 "Players Loaded: " + n1 + " and " + n2,
                                 "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -251,6 +255,7 @@ public final class SceneManager {
         stage.setVisible(false);
 
         tradeView = new TradeView(merchant, client);
+        boolean controllerReady = true;
         try {
             tradeController = new TradeController(tradeView,
                     gameManagerController.getPlayers());
@@ -258,20 +263,22 @@ public final class SceneManager {
             JOptionPane.showMessageDialog(stage,
                     "Unable to open trade view: " + e.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+            controllerReady = false;
         }
 
-        tradeView.setActionListener(e -> {
-            String cmd = e.getActionCommand();
-            if (TradeView.RETURN.equals(cmd)) {
-                tradeView.dispose();
-                stage.setSize(800, 700);
-                stage.setVisible(true);
-                showTradingHall(gameManagerController.getPlayers());
-            }
-        });
+        if (controllerReady) {
+            tradeView.setActionListener(e -> {
+                String cmd = e.getActionCommand();
+                if (TradeView.RETURN.equals(cmd)) {
+                    tradeView.dispose();
+                    stage.setSize(800, 700);
+                    stage.setVisible(true);
+                    showTradingHall(gameManagerController.getPlayers());
+                }
+            });
 
-        tradeView.setVisible(true);
+            tradeView.setVisible(true);
+        }
     }
 
     /** Shows the menu to pick which player's characters to manage. */
