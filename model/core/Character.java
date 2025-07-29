@@ -352,20 +352,28 @@ public class Character implements Serializable {
      */
     public void levelUp() {
         if (canLevelUp()) {
+            int previousLevel = this.level;
             this.level++;
             this.battlesWon -= nextLevelMilestone;
             this.nextLevelMilestone += 5;
+
             LevelingSystem.processLevelUp(this);
-            unlockAbilitySlot();
+
+            unlockAbilitySlot(previousLevel, this.level);
         }
     }
 
-    /** Unlocks an additional ability slot at specific level thresholds. */
-    public void unlockAbilitySlot() {
-        if (level == 2 || level == 4) {
-            this.abilitySlots++;
-            this.unlockedAbilitySlots = Math.min(this.unlockedAbilitySlots + 1, this.abilitySlots);
-            this.abilitySlotCount = this.unlockedAbilitySlots;
+    /**
+     * Unlocks additional ability slots when crossing levels 2 and 4.
+     * Handles scenarios where multiple levels are gained at once.
+     */
+    private void unlockAbilitySlot(int oldLevel, int newLevel) {
+        for (int lvl = oldLevel + 1; lvl <= newLevel; lvl++) {
+            if (lvl == 2 || lvl == 4) {
+                this.abilitySlots++;
+                this.unlockedAbilitySlots = Math.min(this.unlockedAbilitySlots + 1, this.abilitySlots);
+                this.abilitySlotCount = this.unlockedAbilitySlots;
+            }
         }
     }
 
