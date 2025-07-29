@@ -71,20 +71,20 @@ public class TradingHallController implements ActionListener {
         if (mName == null || cName == null || mName.equals(cName)) {
             JOptionPane.showMessageDialog(view, "Select two different players.",
                     "Invalid Selection", JOptionPane.ERROR_MESSAGE);
-            return;
+        } else {
+            Player p1 = findPlayerByName(mName);
+            Player p2 = findPlayerByName(cName);
+            if (p1.getCharacters().isEmpty() || p2.getCharacters().isEmpty()) {
+                JOptionPane.showMessageDialog(view,
+                        "Both players must have at least one character to trade.",
+                        "Invalid Selection", JOptionPane.ERROR_MESSAGE);
+            } else {
+                System.out.println("TradingHallController starting trade between "
+                        + p1.getName() + " and " + p2.getName());
+                view.dispose();
+                sceneManager.showTradeView(p1, p2);
+            }
         }
-        Player p1 = findPlayerByName(mName);
-        Player p2 = findPlayerByName(cName);
-        if (p1.getCharacters().isEmpty() || p2.getCharacters().isEmpty()) {
-            JOptionPane.showMessageDialog(view,
-                    "Both players must have at least one character to trade.",
-                    "Invalid Selection", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        System.out.println("TradingHallController starting trade between "
-                + p1.getName() + " and " + p2.getName());
-        view.dispose();
-        sceneManager.showTradeView(p1, p2);
     }
 
     private Player findPlayerByName(String name) {

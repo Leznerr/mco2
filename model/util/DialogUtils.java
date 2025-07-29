@@ -62,16 +62,18 @@ public final class DialogUtils {
      */
     public static boolean showConfirmationDialog(String title, String message) {
         final int[] result = new int[1];
+        boolean ok;
         try {
             SwingUtilities.invokeAndWait(() ->
                 result[0] = JOptionPane.showConfirmDialog(
                     null, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
                 )
             );
+            ok = true;
         } catch (Exception e) {
             showErrorDialog("Dialog Error", "Unexpected error while displaying confirmation dialog.");
-            return false;
+            ok = false;
         }
-        return result[0] == JOptionPane.YES_OPTION;
+        return ok && result[0] == JOptionPane.YES_OPTION;
     }
 }

@@ -77,10 +77,16 @@ public final class SingleUseItem extends MagicItem {
      */
     @Override
     public boolean equals(Object o) {
-        if (!super.equals(o)) return false;
-        if (getClass() != o.getClass()) return false;
-        SingleUseItem that = (SingleUseItem) o;
-        return effectValue == that.effectValue && effectType == that.effectType;
+        boolean result;
+        if (!super.equals(o)) {
+            result = false;
+        } else if (getClass() != o.getClass()) {
+            result = false;
+        } else {
+            SingleUseItem that = (SingleUseItem) o;
+            result = effectValue == that.effectValue && effectType == that.effectType;
+        }
+        return result;
     }
 
     /**
