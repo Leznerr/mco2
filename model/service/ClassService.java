@@ -13,6 +13,7 @@ import model.core.AbilityEffectType;
 import model.util.StatusEffectType;
 import model.util.GameException;
 import model.util.InputValidator;
+import model.util.AbilityRegistry;
 
 /**
  * Provides access to predefined {@link Ability} and descriptions per {@link ClassType}
@@ -35,27 +36,27 @@ public final class ClassService {
         EnumMap<ClassType, List<Ability>> abilities = new EnumMap<>(ClassType.class);
 
         List<Ability> mage = new ArrayList<>();
-        mage.add(new Ability("Arcane Bolt", "Deal 20 damage.", 5, AbilityEffectType.DAMAGE, 20, null));
-        mage.add(new Ability("Mana Surge", "Gain 10 EP.", 0, AbilityEffectType.ENERGY_GAIN, 10, null));
-        mage.add(new Ability("Fireball", "Hurl a fiery blast for 30 damage.", 7, AbilityEffectType.DAMAGE, 30, null));
-        mage.add(new Ability("Frost Nova", "Chance to stun the enemy.", 6, AbilityEffectType.APPLY_STATUS, 0, StatusEffectType.STUNNED));
-        mage.add(new Ability("Arcane Shield", "Gain temporary immunity.", 6, AbilityEffectType.DEFENSE, 0, null));
+        mage.add(AbilityRegistry.getAbilityByName("Arcane Bolt"));
+        mage.add(AbilityRegistry.getAbilityByName("Arcane Blast"));
+        mage.add(AbilityRegistry.getAbilityByName("Mana Channel"));
+        mage.add(AbilityRegistry.getAbilityByName("Lesser Heal"));
+        mage.add(AbilityRegistry.getAbilityByName("Arcane Shield"));
         abilities.put(ClassType.MAGE, Collections.unmodifiableList(mage));
 
         List<Ability> rogue = new ArrayList<>();
-        rogue.add(new Ability("Backstab", "Deal 15 damage ignoring defence.", 4, AbilityEffectType.DAMAGE, 15, null));
-        rogue.add(new Ability("Shadow Veil", "Increase evasion for 2 turns.", 3, AbilityEffectType.UTILITY, 0, null));
-        rogue.add(new Ability("Poison Dart", "Poison the enemy.", 5, AbilityEffectType.APPLY_STATUS, 0, StatusEffectType.POISONED));
-        rogue.add(new Ability("Quick Step", "Boost evasion briefly.", 3, AbilityEffectType.EVADE, 0, null));
-        rogue.add(new Ability("Smoke Bomb", "Escape damage for a turn.", 4, AbilityEffectType.DEFENSE, 0, null));
+        rogue.add(AbilityRegistry.getAbilityByName("Shiv"));
+        rogue.add(AbilityRegistry.getAbilityByName("Backstab"));
+        rogue.add(AbilityRegistry.getAbilityByName("Focus"));
+        rogue.add(AbilityRegistry.getAbilityByName("Smoke Bomb"));
+        rogue.add(AbilityRegistry.getAbilityByName("Sneak Attack"));
         abilities.put(ClassType.ROGUE, Collections.unmodifiableList(rogue));
 
         List<Ability> warrior = new ArrayList<>();
-        warrior.add(new Ability("Power Strike", "Deal 25 damage.", 6, AbilityEffectType.DAMAGE, 25, null));
-        warrior.add(new Ability("Fortify", "Raise defence for 2 turns.", 4, AbilityEffectType.DEFENSE, 0, null));
-        warrior.add(new Ability("Cleave", "Damage all foes for 20.", 6, AbilityEffectType.DAMAGE, 20, null));
-        warrior.add(new Ability("Shield Bash", "Stun an enemy.", 5, AbilityEffectType.APPLY_STATUS, 0, StatusEffectType.STUNNED));
-        warrior.add(new Ability("Battle Cry", "Increase attack power.", 4, AbilityEffectType.UTILITY, 0, null));
+        warrior.add(AbilityRegistry.getAbilityByName("Cleave"));
+        warrior.add(AbilityRegistry.getAbilityByName("Shield Bash"));
+        warrior.add(AbilityRegistry.getAbilityByName("Ironclad Defense"));
+        warrior.add(AbilityRegistry.getAbilityByName("Bloodlust"));
+        warrior.add(AbilityRegistry.getAbilityByName("Rallying Cry"));
         abilities.put(ClassType.WARRIOR, Collections.unmodifiableList(warrior));
 
         List<Ability> paladin = new ArrayList<>();
