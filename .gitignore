@@ -1,5 +1,10 @@
 *.class
 *.dat
 
-.idea/
+# Ignore JetBrains IDE configuration directories anywhere in the repo
+**/.idea/
+
+# Maven build output
+target/
+
 sources.txt
