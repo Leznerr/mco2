@@ -15,6 +15,7 @@ import model.battle.Defend;
 import model.battle.ItemMove;
 import model.battle.Move;
 import model.battle.Recharge;
+import model.battle.LevelingSystem;
 import model.core.Ability;
 import model.core.Character;
 import model.core.Player;
@@ -317,10 +318,12 @@ public final class BattleController {
             if (gameManagerController != null) {
                 Player winPlayer = (winner == battleC1) ? player1 : player2;
                 if (winPlayer != null) {
-                    persistentWinner.addExperience(50);
-                    persistentLoser.addExperience(20);
-                    log.addEntry(persistentWinner.getName() + " gains 50 XP.");
-                    log.addEntry(persistentLoser.getName() + " gains 20 XP.");
+                    int winnerXp = LevelingSystem.calculateXpGained(persistentWinner, persistentLoser);
+                    int loserXp  = LevelingSystem.calculateXpGained(persistentLoser, persistentWinner);
+                    persistentWinner.addExperience(winnerXp);
+                    persistentLoser.addExperience(loserXp);
+                    log.addEntry(persistentWinner.getName() + " gains " + winnerXp + " XP.");
+                    log.addEntry(persistentLoser.getName() + " gains " + loserXp + " XP.");
                     // Delegate win handling (including XP awards and item rewards)
                     // to GameManagerController to avoid double-counting wins.
 
