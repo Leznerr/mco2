@@ -219,9 +219,9 @@ public class Character implements Serializable {
      * @param damage The non-negative amount of damage to apply.
      */
     public void takeDamage(int damage) {
-        if (damage < 0) return;
+        if (damage >= 0) {
 
-        int finalDamage = damage;
+            int finalDamage = damage;
 
         if (hasStatusEffect(StatusEffectType.IMMUNITY)) {
             finalDamage = 0;
@@ -249,7 +249,8 @@ public class Character implements Serializable {
             finalDamage += 5;
         }
 
-        this.currentHp = Math.max(0, this.currentHp - finalDamage);
+            this.currentHp = Math.max(0, this.currentHp - finalDamage);
+        }
     }
 
     /**
@@ -280,8 +281,9 @@ public class Character implements Serializable {
      * @param healingAmount The non-negative amount of HP to restore.
      */
     public void heal(int healingAmount) {
-        if (healingAmount < 0) return;
-        this.currentHp = Math.min(this.maxHp, this.currentHp + healingAmount);
+        if (healingAmount >= 0) {
+            this.currentHp = Math.min(this.maxHp, this.currentHp + healingAmount);
+        }
     }
 
     /**
@@ -289,9 +291,10 @@ public class Character implements Serializable {
      * Current HP is boosted by the same value.
      */
     public void increaseMaxHp(int amount) {
-        if (amount <= 0) return;
-        this.maxHp += amount;
-        this.currentHp += amount;
+        if (amount > 0) {
+            this.maxHp += amount;
+            this.currentHp += amount;
+        }
     }
 
     /**
@@ -312,8 +315,9 @@ public class Character implements Serializable {
      * @param amount The non-negative amount of EP to restore.
      */
     public void gainEp(int amount) {
-        if (amount < 0) return;
-        this.currentEp = Math.min(this.maxEp, this.currentEp + amount);
+        if (amount >= 0) {
+            this.currentEp = Math.min(this.maxEp, this.currentEp + amount);
+        }
     }
 
     // --- Progression Management ---
@@ -324,8 +328,9 @@ public class Character implements Serializable {
      * @param amount The non-negative amount of XP to add.
      */
     public void addExperience(int amount) {
-        if (amount < 0) return;
-        this.experience += amount;
+        if (amount >= 0) {
+            this.experience += amount;
+        }
     }
     
     // Internal state modification for progression; should only be called by trusted services like LevelingSystem.
@@ -346,12 +351,13 @@ public class Character implements Serializable {
      * Levels up the character, increasing stats and unlocking ability slots when applicable.
      */
     public void levelUp() {
-        if (!canLevelUp()) return;
-        this.level++;
-        this.battlesWon -= nextLevelMilestone;
-        this.nextLevelMilestone += 5;
-        LevelingSystem.processLevelUp(this);
-        unlockAbilitySlot();
+        if (canLevelUp()) {
+            this.level++;
+            this.battlesWon -= nextLevelMilestone;
+            this.nextLevelMilestone += 5;
+            LevelingSystem.processLevelUp(this);
+            unlockAbilitySlot();
+        }
     }
 
     /** Unlocks an additional ability slot at specific level thresholds. */
@@ -425,13 +431,12 @@ public class Character implements Serializable {
                 && "Elven Cloak".equals(p.getName())
                 && !statusEffectImmunityUsed) {
             statusEffectImmunityUsed = true;
-            return;
+        } else if (activeStatusEffects.size() >= Constants.MAX_STATUS_EFFECTS) {
+            // Too many status effects - optionally throw exception
+        } else {
+            activeStatusEffects.add(effect);
+            effect.applyEffect(this);
         }
-        if (activeStatusEffects.size() >= Constants.MAX_STATUS_EFFECTS) {
-            return; // Or throw exception
-        }
-        activeStatusEffects.add(effect);
-        effect.applyEffect(this);
     }
 
     public void removeStatusEffect(StatusEffectType type) {

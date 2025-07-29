@@ -38,16 +38,16 @@ public class SaveLoadService {
 
     // Loads the game data from a file
     public static GameData loadGame() throws GameException {
+        GameData result;
         try (ObjectInputStream gameDataStream = new ObjectInputStream(new FileInputStream(GAME_DATA_FILE))) {
-            return (GameData) gameDataStream.readObject(); // Read the GameData object
+            result = (GameData) gameDataStream.readObject();
         } catch (FileNotFoundException e) {
-            // If the file does not exist (first-time load), return a new empty GameData object
             System.out.println("No saved game found. Returning new game data.");
-            return new GameData(); // Returning an empty game data object
+            result = new GameData();
         } catch (IOException | ClassNotFoundException e) {
-            // Handle any I/O errors or ClassNotFoundException (in case of deserialization issues)
             throw new GameException("Failed to load game data", e);
         }
+        return result;
     }
 
     // Saves Hall of Fame data
@@ -74,38 +74,38 @@ public class SaveLoadService {
         Path legacy = Path.of("model/save/hall_of_fame.dat");
         Path file = Files.exists(current) ? current : legacy;
 
+        HallOfFameData result = null;
         if (!Files.exists(file)) {
             System.out.println("No Hall of Fame found. Returning empty Hall of Fame.");
-            return new HallOfFameData();
-        }
-
-        try (ObjectInputStream hallOfFameStream = new ObjectInputStream(new FileInputStream(file.toFile()))) {
-            Object obj = hallOfFameStream.readObject();
-            if (obj instanceof HallOfFameData data) {
-                return data;
-            }
-
-            if (obj instanceof List<?> list) {
-                // Legacy format: single list of entries (players only)
-                List<HallOfFameEntry> entries = new ArrayList<>();
-                for (Object o : list) {
-                    if (o instanceof HallOfFameEntry e) {
-                        entries.add(e);
+            result = new HallOfFameData();
+        } else {
+            try (ObjectInputStream hallOfFameStream = new ObjectInputStream(new FileInputStream(file.toFile()))) {
+                Object obj = hallOfFameStream.readObject();
+                if (obj instanceof HallOfFameData data) {
+                    result = data;
+                } else if (obj instanceof List<?> list) {
+                    // Legacy format: single list of entries (players only)
+                    List<HallOfFameEntry> entries = new ArrayList<>();
+                    for (Object o : list) {
+                        if (o instanceof HallOfFameEntry e) {
+                            entries.add(e);
+                        }
                     }
+                    HallOfFameData data = new HallOfFameData();
+                    data.setPlayers(entries);
+                    // Persist upgraded format for next run
+                    saveHallOfFame(data);
+                    result = data;
+                } else {
+                    // Unknown data - start fresh
+                    result = new HallOfFameData();
                 }
-                HallOfFameData data = new HallOfFameData();
-                data.setPlayers(entries);
-                // Persist upgraded format for next run
-                saveHallOfFame(data);
-                return data;
+            } catch (IOException | ClassNotFoundException e) {
+                // Corrupt or unreadable file - ignore and start fresh
+                result = new HallOfFameData();
             }
-
-            // Unknown data - start fresh
-            return new HallOfFameData();
-        } catch (IOException | ClassNotFoundException e) {
-            // Corrupt or unreadable file - ignore and start fresh
-            return new HallOfFameData();
         }
+        return result;
     }
 
     // Adds a new player to the existing game data and saves it

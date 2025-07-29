@@ -217,20 +217,18 @@ public class TradeController implements ActionListener {
         List<MagicItem> cItems = view.getSelectedClientItems();
         if (merchant == null || client == null || merchant == client) {
             view.showError("Select two different characters.");
-            return;
-        }
-        if (mItems.isEmpty() && cItems.isEmpty()) {
+        } else if (mItems.isEmpty() && cItems.isEmpty()) {
             view.showError("Select at least one item to trade.");
-            return;
-        }
-        try {
-            executeTrade(merchant, mItems, client, cItems);
-            persist();
-            view.appendTradeLog(buildLogMessage(merchant, mItems, client, cItems));
-            view.showInfo("Trade completed successfully.");
-            view.refresh();
-        } catch (GameException ex) {
-            view.showError(ex.getMessage());
+        } else {
+            try {
+                executeTrade(merchant, mItems, client, cItems);
+                persist();
+                view.appendTradeLog(buildLogMessage(merchant, mItems, client, cItems));
+                view.showInfo("Trade completed successfully.");
+                view.refresh();
+            } catch (GameException ex) {
+                view.showError(ex.getMessage());
+            }
         }
     }
 
@@ -274,12 +272,17 @@ public class TradeController implements ActionListener {
     }
 
     private Player findPlayerForCharacter(Character c) throws GameException {
+        Player owner = null;
         for (Player p : players) {
             if (p.getCharacters().contains(c)) {
-                return p;
+                owner = p;
+                break;
             }
         }
-        throw new GameException("Character does not belong to any loaded player.");
+        if (owner == null) {
+            throw new GameException("Character does not belong to any loaded player.");
+        }
+        return owner;
     }
 
     private void persist() throws GameException {
