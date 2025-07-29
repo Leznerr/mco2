@@ -326,14 +326,14 @@ public final class BattleController {
                     log.addEntry(persistentLoser.getName() + " gains " + loserXp + " XP.");
                     // Delegate win handling (including XP awards and item rewards)
                     // to GameManagerController to avoid double-counting wins.
-
+                    gameManagerController.handlePlayerWin(winPlayer, persistentWinner);
                     if (persistentWinner.canLevelUp()) {
                         persistentWinner.levelUp();
                         javax.swing.JOptionPane.showMessageDialog(null,
-                                persistentWinner.getName() + " reached Level " + persistentWinner.getLevel() + "!",
+                                persistentWinner.getName() + " reached Level " +
+                                        persistentWinner.getLevel() + "!",
                                 "Level Up", javax.swing.JOptionPane.INFORMATION_MESSAGE);
                     }
-                    gameManagerController.handlePlayerWin(winPlayer, persistentWinner);
                 }
             }
 
