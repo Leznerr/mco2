@@ -54,24 +54,7 @@ public class MainMenuView extends JFrame {
 
         initUI();
         
-        setSize(800, 700);
-        // Use DO_NOTHING_ON_CLOSE so GameManagerController can handle
-        // confirmation and graceful shutdown.
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        setLocationRelativeTo(null);
-        setResizable(false);
-
-        // Dispose this frame when the user clicks the window close button so
-        // the application can terminate naturally when no windows remain.
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                dispose();
-            }
-        });
-        setVisible(true);
-    }
 
 
     /**
