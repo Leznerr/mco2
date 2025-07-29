@@ -73,12 +73,13 @@ public final class BattleController {
      * @return the active battle copy or {@code null} if the character is unknown
      */
     public Character getBattleCopy(Character original) {
+        Character copy = null;
         if (original == originalC1) {
-            return battleC1;
+            copy = battleC1;
         } else if (original == originalC2) {
-            return battleC2;
+            copy = battleC2;
         }
-        return null;
+        return copy;
     }
 
     /* ===================================================== CONSTRUCTION */
