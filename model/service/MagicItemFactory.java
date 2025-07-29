@@ -14,7 +14,7 @@ import model.item.SingleUseEffectType;
 /**
  * <h2>MagicItemFactory</h2>
  * <p>Static utility class that randomly creates {@link MagicItem} rewards,
- * observing the specified rarity distribution (Common 70%, Uncommon 25%, Rare 5%).</p>
+ * observing the specified rarity distribution (Common 60%, Uncommon 35%, Rare 5%).</p>
  *
  * <p><strong>Design Features:</strong></p>
  * <ul>
