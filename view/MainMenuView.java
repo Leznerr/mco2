@@ -61,10 +61,6 @@ public class MainMenuView extends JFrame {
         // confirmation and graceful shutdown.
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        setLocationRelativeTo(null);
-        setResizable(false);
-        setVisible(true);
-    }
 
 
     /**
