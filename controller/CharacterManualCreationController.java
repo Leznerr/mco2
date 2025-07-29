@@ -180,24 +180,7 @@ public final class CharacterManualCreationController {
     }
 
     private void refreshAbilityOptions() {
-        String classStr = view.getSelectedClass();
-        if (classStr == null || classStr.isBlank()) {
-            clearAbilityOptions();
-        } else {
-            try {
-                ClassType classType = ClassType.valueOf(classStr);
-                List<String> abilityNames = classService.getAvailableAbilities(classType)
-                        .stream().map(Ability::getName).collect(Collectors.toList());
-                String[] options = abilityNames.toArray(new String[0]);
-                view.setAbilityOptions(1, options);
 
-                    view.setAbilityOptions(4, options);
-                }
-            } catch (Exception e) {
-                clearAbilityOptions();
-            }
-        }
-    }
 
     // --- Helper: Find Player by Name ---
     private Player getPlayerByName(String playerName) {

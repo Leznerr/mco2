@@ -341,7 +341,14 @@ public void actionPerformed(ActionEvent e) {
      */
     private void quitApplication() {
         handleSaveGameRequest();
-        mainMenuView.dispose();
+        // Dispose all top-level frames so the JVM can terminate naturally
+        // without invoking System.exit. Once no visible windows remain, the
+        // Swing event thread will end on its own.
+        SwingUtilities.invokeLater(() -> {
+            for (java.awt.Frame frame : java.awt.Frame.getFrames()) {
+                frame.dispose();
+            }
+        });
         Main.shutdown();
     }
 

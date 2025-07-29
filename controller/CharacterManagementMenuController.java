@@ -29,7 +29,12 @@ public class CharacterManagementMenuController {
             switch (cmd) {
                 case CharacterManagementMenuView.MANAGE_PLAYER1 -> openPlayerView(0);
                 case CharacterManagementMenuView.MANAGE_PLAYER2 -> openPlayerView(1);
-                case CharacterManagementMenuView.RETURN_TO_MENU -> sceneManager.showMainMenu();
+                case CharacterManagementMenuView.RETURN_TO_MENU -> {
+                    // Close this menu before returning to the main menu so the
+                    // application can exit cleanly if no other windows remain.
+                    view.dispose();
+                    sceneManager.showMainMenu();
+                }
             }
         };
         view.setActionListener(l);
