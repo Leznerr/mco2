@@ -49,12 +49,13 @@ public final class SmartBot implements AIMoveStrategy {
         List<Move> defensiveMoves = new ArrayList<>();
 
         for (Ability a : bot.getAbilities()) {
-            if (a.getEpCost() > bot.getCurrentEp()) continue;
-            switch (a.getAbilityEffectType()) {
-                case HEAL -> healingMoves.add(new AbilityMove(a));
-                case ENERGY_GAIN -> energyMoves.add(new AbilityMove(a));
-                case DEFENSE, EVADE -> defensiveMoves.add(new AbilityMove(a));
-                default -> attackMoves.add(new AbilityMove(a));
+            if (a.getEpCost() <= bot.getCurrentEp()) {
+                switch (a.getAbilityEffectType()) {
+                    case HEAL -> healingMoves.add(new AbilityMove(a));
+                    case ENERGY_GAIN -> energyMoves.add(new AbilityMove(a));
+                    case DEFENSE, EVADE -> defensiveMoves.add(new AbilityMove(a));
+                    default -> attackMoves.add(new AbilityMove(a));
+                }
             }
         }
 

@@ -202,14 +202,12 @@ public void actionPerformed(ActionEvent e) {
     }
 
     private int getPlayerIndex(String name) {
-        int index = 1;
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).getName().equalsIgnoreCase(name)) {
-                index = i + 1;
-                break;
+                return i + 1;
             }
         }
-        return index;
+        return 1;
     }
 
     public void handleNavigateToCharacterManagement(Player player) {

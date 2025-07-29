@@ -231,11 +231,14 @@ public class Character implements Serializable {
             }
 
             if (hasStatusEffect(StatusEffectType.SHIELDED)) {
+                StatusEffect chosen = null;
                 for (StatusEffect se : activeStatusEffects) {
-                    if (se.getType() == StatusEffectType.SHIELDED && se instanceof model.util.effects.ShieldEffect s) {
-                        finalDamage = s.absorb(finalDamage);
-                        break;
+                    if (chosen == null && se.getType() == StatusEffectType.SHIELDED && se instanceof model.util.effects.ShieldEffect) {
+                        chosen = se;
                     }
+                }
+                if (chosen instanceof model.util.effects.ShieldEffect s) {
+                    finalDamage = s.absorb(finalDamage);
                 }
                 removeStatusEffect(StatusEffectType.SHIELDED);
             }

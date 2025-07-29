@@ -101,7 +101,7 @@ public final class LevelingSystem {
             if (xp >= e.getValue()) {
                 lvl = e.getKey();
             } else {
-                break; // thresholds are ascending
+                return lvl; // thresholds are ascending
             }
         }
         return lvl;

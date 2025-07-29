@@ -272,17 +272,12 @@ public class TradeController implements ActionListener {
     }
 
     private Player findPlayerForCharacter(Character c) throws GameException {
-        Player owner = null;
         for (Player p : players) {
             if (p.getCharacters().contains(c)) {
-                owner = p;
-                break;
+                return p;
             }
         }
-        if (owner == null) {
-            throw new GameException("Character does not belong to any loaded player.");
-        }
-        return owner;
+        throw new GameException("Character does not belong to any loaded player.");
     }
 
     private void persist() throws GameException {

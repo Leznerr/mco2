@@ -224,12 +224,18 @@ public class PlayerCharacterManagementController {
         if (valid) {
             try {
                 String[] abilityNames = ev.getSelectedAbilities();
-                for (String a : abilityNames) {
+                boolean allSelected = true;
+                int idx = 0;
+                while (idx < abilityNames.length && allSelected) {
+                    String a = abilityNames[idx];
                     if (a == null || a.isBlank()) {
                         ev.showErrorMessage("All ability slots must be selected.");
-                        valid = false;
-                        break;
+                        allSelected = false;
                     }
+                    idx++;
+                }
+                if (!allSelected) {
+                    valid = false;
                 }
 
                 if (valid) {
@@ -243,13 +249,19 @@ public class PlayerCharacterManagementController {
                 if (valid) {
                     java.util.List<String> validList = classService.getAvailableAbilities(c.getClassType())
                             .stream().map(Ability::getName).toList();
-                    for (int i = 0; i < Math.min(3, abilityNames.length); i++) {
+                    boolean selectionValid = true;
+                    int i = 0;
+                    int limit = Math.min(3, abilityNames.length);
+                    while (i < limit && selectionValid) {
                         String a = abilityNames[i];
                         if (!validList.contains(a)) {
                             ev.showErrorMessage("Invalid ability selection for class.");
-                            valid = false;
-                            break;
+                            selectionValid = false;
                         }
+                        i++;
+                    }
+                    if (!selectionValid) {
+                        valid = false;
                     }
                 }
 
@@ -267,11 +279,18 @@ public class PlayerCharacterManagementController {
                     if (itemName == null || itemName.equals("None")) {
                         c.unequipItem();
                     } else {
-                        for (MagicItem mi : c.getInventory().getAllItems()) {
+                        java.util.List<MagicItem> items = c.getInventory().getAllItems();
+                        MagicItem chosen = null;
+                        int j = 0;
+                        while (j < items.size() && chosen == null) {
+                            MagicItem mi = items.get(j);
                             if (mi.getName().equalsIgnoreCase(itemName)) {
-                                c.equipItem(mi);
-                                break;
+                                chosen = mi;
                             }
+                            j++;
+                        }
+                        if (chosen != null) {
+                            c.equipItem(chosen);
                         }
                     }
 

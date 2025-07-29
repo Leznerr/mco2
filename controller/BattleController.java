@@ -275,27 +275,27 @@ public final class BattleController {
 
         /* order by priority – higher first (ties resolved arbitrarily) */
         List<Turn> order = buildTurnOrder();
-        for (Turn t : order) {
-            if (!t.actor.isAlive()) continue;
+        for (int i = 0; i < order.size() && !battleEnded(); i++) {
+            Turn t = order.get(i);
+            if (t.actor.isAlive()) {
+                if (t.actor.isStunned()) {
+                    log.addEntry(t.actor.getName() + " is stunned and skips their turn!");
+                } else if (t.target.isAlive()) {
+                    t.move.execute(t.actor, t.target, log);
+                    if (!t.target.isAlive()) {
+                        if (!t.target.checkPhoenixFeather(log)) {
+                            log.addEntry(t.target.getName() + " has fallen!");
+                        }
+                    }
+                    if (!t.actor.isAlive()) {
+                        if (!t.actor.checkPhoenixFeather(log)) {
+                            log.addEntry(t.actor.getName() + " has fallen!");
+                        }
+                    }
+                }
 
-            if (t.actor.isStunned()) {
-                log.addEntry(t.actor.getName() + " is stunned and skips their turn!");
-            } else if (t.target.isAlive()) {
-                t.move.execute(t.actor, t.target, log);
-                if (!t.target.isAlive()) {
-                    if (!t.target.checkPhoenixFeather(log)) {
-                        log.addEntry(t.target.getName() + " has fallen!");
-                    }
-                }
-                if (!t.actor.isAlive()) {
-                    if (!t.actor.checkPhoenixFeather(log)) {
-                        log.addEntry(t.actor.getName() + " has fallen!");
-                    }
-                }
+                t.actor.processEndOfTurnEffects(log);
             }
-
-            t.actor.processEndOfTurnEffects(log);
-            if (battleEnded()) break;
         }
 
         log.addEntry("--- End of Round " + battle.getRoundNumber() + " ---");
