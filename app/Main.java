@@ -9,21 +9,21 @@ import controller.SceneManager;
  */
 public final class Main {
 
-    private static SceneManager sceneManager;
+    // Previously held a static SceneManager reference; replaced with a
+    // local variable in main to avoid mutable static state.
 
     private Main() {
         // no instances
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> sceneManager = new SceneManager());
+        SwingUtilities.invokeLater(SceneManager::new);
     }
 
     /**
      * Shuts down the application gracefully.
      */
     public static void shutdown() {
-        // Any future cleanup logic can be placed here
-        System.exit(0);
+        // Application windows dispose themselves; nothing else required.
     }
 }

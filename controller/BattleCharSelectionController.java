@@ -65,18 +65,17 @@ public class BattleCharSelectionController implements ActionListener {
         if (name == null) {
             JOptionPane.showMessageDialog(view, "No character selected.",
                     "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+        } else if (view.confirmCharacterSelection(name)) {
+            Character c = player.getCharacter(name).orElse(null);
+            if (c == null) {
+                JOptionPane.showMessageDialog(view, "Character not found.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                view.dispose();
+                if (onSelect != null) {
+                    onSelect.accept(c);
+                }
+            }
         }
-        if (!view.confirmCharacterSelection(name)) {
-            return;
-        }
-        Character c = player.getCharacter(name).orElse(null);
-        if (c == null) {
-            JOptionPane.showMessageDialog(view, "Character not found.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        view.dispose();
-        if (onSelect != null) onSelect.accept(c);
     }
 }

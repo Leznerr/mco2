@@ -199,32 +199,30 @@ public final class BattleController {
         if (equipped != null && equipped.getName().equals(choice)) {
             if (equipped instanceof SingleUseItem su) {
                 submitMove(user, new ItemMove(su));
-                return;
             } else {
                 battle.getCombatLog().addEntry("Passive items are always active; cannot be used.");
                 view.displayTurnResults(battle.getCombatLog());
-                return;
             }
-        }
-
-        String abilityName = choice.trim();
-        final String finalAbilityName = abilityName;
-
-Optional<Ability> abilityOpt = user.getAbilities().stream()
-    .filter(a -> a.getName().equals(finalAbilityName))
-    .findFirst();
-
-        if (abilityOpt.isPresent()) {
-            Ability a = abilityOpt.get();
-            if (a.getEpCost() > user.getCurrentEp()) {
-                battle.getCombatLog().addEntry(user.getName() + " lacks EP for " + a.getName());
-                view.displayTurnResults(battle.getCombatLog());
-                return;
-            }
-            submitMove(user, new AbilityMove(a));
         } else {
-            battle.getCombatLog().addEntry("Unknown action: " + choice);
-            view.displayTurnResults(battle.getCombatLog());
+            String abilityName = choice.trim();
+            final String finalAbilityName = abilityName;
+
+            Optional<Ability> abilityOpt = user.getAbilities().stream()
+                    .filter(a -> a.getName().equals(finalAbilityName))
+                    .findFirst();
+
+            if (abilityOpt.isPresent()) {
+                Ability a = abilityOpt.get();
+                if (a.getEpCost() > user.getCurrentEp()) {
+                    battle.getCombatLog().addEntry(user.getName() + " lacks EP for " + a.getName());
+                    view.displayTurnResults(battle.getCombatLog());
+                } else {
+                    submitMove(user, new AbilityMove(a));
+                }
+            } else {
+                battle.getCombatLog().addEntry("Unknown action: " + choice);
+                view.displayTurnResults(battle.getCombatLog());
+            }
         }
     }
 

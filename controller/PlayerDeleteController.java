@@ -49,20 +49,29 @@ public class PlayerDeleteController implements ActionListener {
             sceneManager.showPlayerRegistration();
         } else if (PlayerDeleteView.DELETE.equals(cmd)) {
             String name = view.getSelectedPlayer();
+            boolean proceed = true;
             if (name == null) {
-                JOptionPane.showMessageDialog(view, "Please select a player to delete.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
+                JOptionPane.showMessageDialog(view,
+                        "Please select a player to delete.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                proceed = false;
+            } else if (!view.confirmPlayerDeletion(name)) {
+                proceed = false;
             }
-            if (!view.confirmPlayerDeletion(name)) {
-                return;
-            }
-            try {
-                gameManager.deletePlayerByName(name);
-                SaveLoadService.saveGame(gameManager.getGameData());
-                JOptionPane.showMessageDialog(view, "Player \"" + name + "\" deleted.", "Success", JOptionPane.INFORMATION_MESSAGE);
-                refresh();
-            } catch (GameException ex) {
-                JOptionPane.showMessageDialog(view, "Could not delete player: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+
+            if (proceed) {
+                try {
+                    gameManager.deletePlayerByName(name);
+                    SaveLoadService.saveGame(gameManager.getGameData());
+                    JOptionPane.showMessageDialog(view,
+                            "Player \"" + name + "\" deleted.",
+                            "Success", JOptionPane.INFORMATION_MESSAGE);
+                    refresh();
+                } catch (GameException ex) {
+                    JOptionPane.showMessageDialog(view,
+                            "Could not delete player: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }

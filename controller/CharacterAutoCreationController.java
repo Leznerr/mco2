@@ -87,28 +87,23 @@ public final class CharacterAutoCreationController {
         String name = view.getCharacterName();
         if (name.isBlank()) {
             view.showErrorMessage("Please enter a character name.");
-            return;
-        }
-        if (generatedRace == null || generatedClass == null || generatedAbilities == null) {
+        } else if (generatedRace == null || generatedClass == null || generatedAbilities == null) {
             view.showErrorMessage("Please randomize a character first.");
-            return;
-        }
+        } else {
+            try {
+                if (view.confirmCharacterCreation(name)) {
+                    Player player = getPlayerByName(playerName);
+                    Character newCharacter = new Character(name, generatedRace, generatedClass, generatedAbilities);
+                    player.addCharacter(newCharacter);
+                    gameManagerController.handleSaveGameRequest();
 
-        try {
-            if (!view.confirmCharacterCreation(name)) {
-                return;
+                    view.showInfoMessage("Character \"" + name + "\" created successfully!");
+                    view.dispose();
+                    gameManagerController.handleNavigateToCharacterManagement(player);
+                }
+            } catch (GameException ge) {
+                view.showErrorMessage("Failed to create character: " + ge.getMessage());
             }
-
-            Player player = getPlayerByName(playerName);
-            Character newCharacter = new Character(name, generatedRace, generatedClass, generatedAbilities);
-            player.addCharacter(newCharacter);
-            gameManagerController.handleSaveGameRequest();
-
-            view.showInfoMessage("Character \"" + name + "\" created successfully!");
-            view.dispose();
-            gameManagerController.handleNavigateToCharacterManagement(player);
-        } catch (GameException ge) {
-            view.showErrorMessage("Failed to create character: " + ge.getMessage());
         }
     }
 
