@@ -180,10 +180,9 @@ public final class CharacterManualCreationController {
     }
 
     private void refreshAbilityOptions() {
+        boolean populated = false;
         String classStr = view.getSelectedClass();
-        if (classStr == null || classStr.isBlank()) {
-            clearAbilityOptions();
-        } else {
+        if (classStr != null && !classStr.isBlank()) {
             try {
                 ClassType classType = ClassType.valueOf(classStr);
                 List<String> abilityNames = classService.getAvailableAbilities(classType)
@@ -198,9 +197,13 @@ public final class CharacterManualCreationController {
                         && RaceType.valueOf(raceStr) == RaceType.GNOME) {
                     view.setAbilityOptions(4, options);
                 }
-            } catch (Exception e) {
-                clearAbilityOptions();
+                populated = true;
+            } catch (Exception ignore) {
+                populated = false;
             }
+        }
+        if (!populated) {
+            clearAbilityOptions();
         }
     }
 
