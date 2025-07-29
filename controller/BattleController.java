@@ -185,7 +185,7 @@ public final class BattleController {
      * format is predictable:
      * <ul>
      *   <li><code>{Ability Name}</code></li>
-     *   <li><code>{Magic Item Name}</code></li>
+     *   <li><code>Use Magic Item: {Item Name}</code></li>
      * </ul>
      */
     public void handlePlayerChoice(Character user, String choice) throws GameException {
@@ -198,7 +198,9 @@ public final class BattleController {
         }
 
         MagicItem equipped = user.getInventory().getEquippedItem();
-        if (equipped != null && equipped.getName().equals(choice)) {
+        String itemPrefix = "Use Magic Item: ";
+        if (equipped != null && choice.startsWith(itemPrefix)
+                && equipped.getName().equals(choice.substring(itemPrefix.length()).trim())) {
             if (equipped instanceof SingleUseItem su) {
                 submitMove(user, new ItemMove(su));
             } else {
@@ -520,13 +522,8 @@ public final class BattleController {
     /**
      * Builds the list of options shown in the ability/item dropdown.
      *
-     * <p>Each ability entry includes its EP cost and a short effect summary.</p>
-     *
-     * <p>Equipped magic items are appended using one of two formats:</p>
-     * <ul>
-     *   <li><code>Use Magic Item: {Name} (Single-Use, Effect: {desc})</code></li>
-     *   <li><code>Item: {Name} (Passive, Effect: {desc}, Always Active)</code></li>
-     * </ul>
+     * <p>Ability names are added directly. If a magic item is equipped,
+     * an entry of the form {@code "Use Magic Item: {Name}"} is appended.</p>
      */
     private List<String> abilityNames(Character c) {
         List<String> names = new ArrayList<>();
@@ -539,7 +536,7 @@ public final class BattleController {
 
         MagicItem eq = c.getInventory().getEquippedItem();
         if (eq != null) {
-            names.add(eq.getName());
+            names.add("Use Magic Item: " + eq.getName());
         }
 
         return names;
