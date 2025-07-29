@@ -425,25 +425,22 @@ public void actionPerformed(ActionEvent e) {
             InputValidator.requireNonNull(character, "character");
 
             // Skip Hall of Fame updates for AI-controlled bots
-            if ("Bot".equalsIgnoreCase(winner.getName())) {
-                return;
+            if (!"Bot".equalsIgnoreCase(winner.getName())) {
+                winner.incrementWins();
+                character.incrementBattlesWon();
+                hallOfFameController.addWinForPlayer(winner);
+                hallOfFameController.addWinForCharacter(character);
+
+                if (character.getBattlesWon() % Constants.WINS_PER_REWARD == 0) {
+                    MagicItem reward = generateUniqueReward(character);
+                    character.getInventory().addItem(reward);
+                    javax.swing.JOptionPane.showMessageDialog(
+                            null,
+                            formatAwardMessage(reward),
+                            "Item Awarded",
+                            javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                }
             }
-
-            winner.incrementWins();
-            character.incrementBattlesWon();
-            hallOfFameController.addWinForPlayer(winner);
-            hallOfFameController.addWinForCharacter(character);
-
-            if (character.getBattlesWon() % Constants.WINS_PER_REWARD == 0) {
-                MagicItem reward = generateUniqueReward(character);
-                character.getInventory().addItem(reward);
-                javax.swing.JOptionPane.showMessageDialog(
-                        null,
-                        formatAwardMessage(reward),
-                        "Item Awarded",
-                        javax.swing.JOptionPane.INFORMATION_MESSAGE);
-            }
-
             SaveLoadService.saveGame(new GameData(players,
                                                  hallOfFameController.getHallOfFame()));
         } catch (GameException e) {

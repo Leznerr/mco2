@@ -97,13 +97,19 @@ public abstract class MagicItem implements Serializable {
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MagicItem that = (MagicItem) o;
-        return name.equals(that.name)
-                && description.equals(that.description)
-                && itemType == that.itemType
-                && rarityType == that.rarityType;
+        boolean result;
+        if (this == o) {
+            result = true;
+        } else if (o == null || getClass() != o.getClass()) {
+            result = false;
+        } else {
+            MagicItem that = (MagicItem) o;
+            result = name.equals(that.name)
+                    && description.equals(that.description)
+                    && itemType == that.itemType
+                    && rarityType == that.rarityType;
+        }
+        return result;
     }
 
     /**

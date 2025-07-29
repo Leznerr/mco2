@@ -320,10 +320,10 @@ public class InventoryView extends JFrame{
 
     /** Shows the detail panel for the provided item. */
     public void displayItemDetails(model.item.MagicItem item, boolean isEquipped) {
-        if (item == null) return;
-        lblName.setText(item.getName());
-        lblType.setText("Type: " + item.getItemType());
-        lblStatus.setText("Status: " + (isEquipped ? "Equipped" : "Not Equipped"));
+        if (item != null) {
+            lblName.setText(item.getName());
+            lblType.setText("Type: " + item.getItemType());
+            lblStatus.setText("Status: " + (isEquipped ? "Equipped" : "Not Equipped"));
         lblRarity.setText("Rarity: " + item.getRarity());
         if (item instanceof model.item.SingleUseItem su) {
             lblEffect.setText("Effect: " + describeEffect(su));
@@ -335,6 +335,7 @@ public class InventoryView extends JFrame{
         cardLayout.show(cardPanel, "DETAIL");
         btnViewItem.setVisible(false);
         btnBack.setVisible(true);
+        }
     }
 
     /** Returns to the inventory list view. */
