@@ -24,12 +24,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 import model.battle.CombatLog;
 import model.core.Character;
 import view.OutlinedLabel;
 
-// import controller._;
 
 /**
  * The battle view for Fatal Fantasy: Tactics Game.
@@ -56,7 +59,8 @@ public class BattleView extends JFrame {
     private JComboBox<String> cmbP1Abilities = new JComboBox<>();
     private JComboBox<String> cmbP2Abilities = new JComboBox<>();
     private JTextArea p1NameCharNameArea, p2NameCharNameArea, p1StatusArea, p2StatusArea;
-    private JTextArea p1AbilitiesItemsArea, p2AbilitiesItemsArea, battleLogArea, battleOutcomeArea;
+    private JTextArea p1AbilitiesItemsArea, p2AbilitiesItemsArea, battleLogArea;
+    private JTextPane battleOutcomeArea;
     private OutlinedLabel roundLabel;
     private int lastLogIndex = 0;
     
@@ -201,13 +205,18 @@ public class BattleView extends JFrame {
         battleOutcomePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Text area for battle outcome
-        battleOutcomeArea = new JTextArea();
+        battleOutcomeArea = new JTextPane();
         battleOutcomeArea.setFont(new Font("Serif", Font.PLAIN, 18));
         battleOutcomeArea.setForeground(Color.WHITE);
         battleOutcomeArea.setOpaque(false);
         battleOutcomeArea.setEditable(false);
-        battleOutcomeArea.setLineWrap(true);
-        battleOutcomeArea.setWrapStyleWord(true);
+
+        // Center align text
+        StyledDocument doc = battleOutcomeArea.getStyledDocument();
+        SimpleAttributeSet center = new SimpleAttributeSet();
+        StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+        doc.setParagraphAttributes(0, doc.getLength(), center, false);
+
         battleOutcomePanel.add(battleOutcomeArea, BorderLayout.CENTER);
 
         centerPanel.add(battleLogPanel);
@@ -273,9 +282,9 @@ public class BattleView extends JFrame {
 
         // Name/CharName Area
         RoundedDisplayBox nameCharNamePanel = new RoundedDisplayBox();
-        nameCharNamePanel.setPreferredSize(new Dimension(280, 40));
-        nameCharNamePanel.setMaximumSize(new Dimension(280, 40));
-        nameCharNamePanel.setMinimumSize(new Dimension(280, 40));
+        nameCharNamePanel.setPreferredSize(new Dimension(280, 60));
+        nameCharNamePanel.setMaximumSize(new Dimension(280, 60));
+        nameCharNamePanel.setMinimumSize(new Dimension(280, 60));
         nameCharNamePanel.setLayout(new BorderLayout());
         nameCharNamePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -297,13 +306,14 @@ public class BattleView extends JFrame {
         nameCharNameArea.setEditable(false);
         nameCharNameArea.setLineWrap(true);
         nameCharNameArea.setWrapStyleWord(true);
+        nameCharNameArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         nameCharNamePanel.add(nameCharNameArea, BorderLayout.CENTER);
 
         // Status Area
         RoundedDisplayBox statusPanel = new RoundedDisplayBox();
-        statusPanel.setPreferredSize(new Dimension(280, 40));
-        statusPanel.setMaximumSize(new Dimension(280, 40));
-        statusPanel.setMinimumSize(new Dimension(280, 40));
+        statusPanel.setPreferredSize(new Dimension(280, 60));
+        statusPanel.setMaximumSize(new Dimension(280, 60));
+        statusPanel.setMinimumSize(new Dimension(280, 60));
         statusPanel.setLayout(new BorderLayout());
         statusPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -325,6 +335,7 @@ public class BattleView extends JFrame {
         statusArea.setEditable(false);
         statusArea.setLineWrap(true);
         statusArea.setWrapStyleWord(true);
+        statusArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         statusPanel.add(statusArea, BorderLayout.CENTER);
 
         panel.add(nameCharNamePanel);
@@ -333,9 +344,9 @@ public class BattleView extends JFrame {
 
         // Abilities/Items Area
         RoundedDisplayBox abilitiesItemsPanel = new RoundedDisplayBox();
-        abilitiesItemsPanel.setPreferredSize(new Dimension(280, 200));
-        abilitiesItemsPanel.setMaximumSize(new Dimension(280, 200));
-        abilitiesItemsPanel.setMinimumSize(new Dimension(280, 200));
+        abilitiesItemsPanel.setPreferredSize(new Dimension(280, 160));
+        abilitiesItemsPanel.setMaximumSize(new Dimension(280, 160));
+        abilitiesItemsPanel.setMinimumSize(new Dimension(280, 160));
         abilitiesItemsPanel.setLayout(new BorderLayout());
         abilitiesItemsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -394,9 +405,10 @@ public class BattleView extends JFrame {
 
         panel.add(Box.createVerticalGlue());
     }
+
     /**
      * Helper method to create dropdown panels with outlined labels
-     *
+     * 
      * @param labelText the text for the label
      * @param dropdown the JComboBox to be added
      * @return a JPanel containing the label and dropdown
@@ -533,7 +545,14 @@ public class BattleView extends JFrame {
      */
     public void setBattleOutcome(String text) {
         battleOutcomeArea.setText(text);
+
+        // Reapply center alignment after setting text
+        StyledDocument doc = battleOutcomeArea.getStyledDocument();
+        SimpleAttributeSet center = new SimpleAttributeSet();
+        StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+        doc.setParagraphAttributes(0, doc.getLength(), center, false);
     }
+
 
     /** Clears any text from the battle outcome area. */
     public void clearBattleOutcome() {
@@ -625,7 +644,7 @@ public class BattleView extends JFrame {
         resetBattleLog();
         clearBattleOutcome();
     }
-
+    
     public void displayTurnResults(CombatLog log) {
         var entries = log.getLogEntries();
         for (int i = lastLogIndex; i < entries.size(); i++) {
@@ -639,5 +658,5 @@ public class BattleView extends JFrame {
         setBattleControlsEnabled(false);
         setEndButtonsEnabled(true);
     }
-
+    
 }
