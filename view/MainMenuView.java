@@ -14,10 +14,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-// import controller.____;
 
 /**
  * The main menu view for Fatal Fantasy: Tactics Game.
@@ -56,10 +54,6 @@ public class MainMenuView extends JFrame {
 
         initUI();
         
-        setSize(800, 700);
-        // Use DO_NOTHING_ON_CLOSE so GameManagerController can handle
-        // confirmation and graceful shutdown.
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 
 
