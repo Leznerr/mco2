@@ -311,14 +311,12 @@ public final class SceneManager {
 
     private int playersIndex(Player player) {
         List<Player> list = gameManagerController.getPlayers();
-        int index = 1;
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i) == player) {
-                index = i + 1;
-                break;
+                return i + 1;
             }
         }
-        return index;
+        return 1;
     }
 
     /** Shows the battle mode selection screen. */

@@ -147,17 +147,19 @@ public final class ClassService {
         List<Ability> matched = new ArrayList<>();
 
         for (String name : names) {
-            boolean found = false;
-            for (Ability ability : allAbilities) {
+            Ability found = null;
+            int i = 0;
+            while (i < allAbilities.size() && found == null) {
+                Ability ability = allAbilities.get(i);
                 if (ability.getName().equalsIgnoreCase(name)) {
-                    matched.add(ability);
-                    found = true;
-                    break;
+                    found = ability;
                 }
+                i++;
             }
-            if (!found) {
+            if (found == null) {
                 throw new GameException("Ability not found: " + name);
             }
+            matched.add(found);
         }
 
         return matched;
