@@ -108,14 +108,14 @@ public final class CharacterGeneratorController {
             String chosenName = view.getCharacterName().trim();
             if (chosenName.isEmpty()) {
                 view.showErrorMessage("Please enter a character name first.");
-                return;
-            }
-            boolean confirmed = view.confirmCharacterCreation(chosenName);
-            if (confirmed) {
-                Character finalChar = generateRandomCharacterWithName(chosenName);
-                saveCallback.accept(finalChar);
-                view.showInfoMessage("Character \"" + chosenName + "\" created!");
-                view.resetFields();
+            } else {
+                boolean confirmed = view.confirmCharacterCreation(chosenName);
+                if (confirmed) {
+                    Character finalChar = generateRandomCharacterWithName(chosenName);
+                    saveCallback.accept(finalChar);
+                    view.showInfoMessage("Character \"" + chosenName + "\" created!");
+                    view.resetFields();
+                }
             }
         } catch (GameException ge) {
             view.showErrorMessage("Creation failed: " + ge.getMessage());

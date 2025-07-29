@@ -73,12 +73,13 @@ public final class BattleController {
      * @return the active battle copy or {@code null} if the character is unknown
      */
     public Character getBattleCopy(Character original) {
+        Character copy = null;
         if (original == originalC1) {
-            return battleC1;
+            copy = battleC1;
         } else if (original == originalC2) {
-            return battleC2;
+            copy = battleC2;
         }
-        return null;
+        return copy;
     }
 
     /* ===================================================== CONSTRUCTION */
@@ -459,11 +460,11 @@ public final class BattleController {
      * persistent character instance.
      */
     private void syncInventory(Character persistent, Character battleCopy) {
-        if (persistent == null || battleCopy == null) return;
+        if (persistent != null && battleCopy != null) {
 
-        Map<String, Long> remaining = battleCopy.getInventory().getAllItems().stream()
-                .filter(i -> i instanceof SingleUseItem)
-                .collect(Collectors.groupingBy(MagicItem::getName, Collectors.counting()));
+            Map<String, Long> remaining = battleCopy.getInventory().getAllItems().stream()
+                    .filter(i -> i instanceof SingleUseItem)
+                    .collect(Collectors.groupingBy(MagicItem::getName, Collectors.counting()));
 
         List<MagicItem> originalItems = new ArrayList<>(persistent.getInventory().getAllItems());
         Map<String, Long> counts = new HashMap<>();
@@ -473,13 +474,14 @@ public final class BattleController {
             }
         }
 
-        for (MagicItem item : originalItems) {
-            if (item instanceof SingleUseItem) {
-                long have = counts.getOrDefault(item.getName(), 0L);
-                long keep = remaining.getOrDefault(item.getName(), 0L);
-                if (have > keep) {
-                    persistent.getInventory().removeItem(item);
-                    counts.put(item.getName(), have - 1);
+            for (MagicItem item : originalItems) {
+                if (item instanceof SingleUseItem) {
+                    long have = counts.getOrDefault(item.getName(), 0L);
+                    long keep = remaining.getOrDefault(item.getName(), 0L);
+                    if (have > keep) {
+                        persistent.getInventory().removeItem(item);
+                        counts.put(item.getName(), have - 1);
+                    }
                 }
             }
         }

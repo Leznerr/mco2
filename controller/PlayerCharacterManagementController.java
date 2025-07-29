@@ -119,12 +119,13 @@ public class PlayerCharacterManagementController {
                 String name = specView.getSelectedCharacter();
                 // ignore events where no character is selected
                 if (name == null || name.isBlank()) {
-                    return;
+                    // nothing to display
+                } else {
+                    Character c = player.getCharacter(name).orElse(null);
+                    String details = (c == null) ? "Character not found." : c.toString() + "\nAbilities:\n" +
+                            c.getAbilities().stream().map(Ability::getName).collect(Collectors.joining("\n"));
+                    specView.updateCharacterDetails(details);
                 }
-                Character c = player.getCharacter(name).orElse(null);
-                String details = (c == null) ? "Character not found." : c.toString() + "\nAbilities:\n" +
-                        c.getAbilities().stream().map(Ability::getName).collect(Collectors.joining("\n"));
-                specView.updateCharacterDetails(details);
             }
         });
         specView.setVisible(true);
@@ -155,120 +156,132 @@ public class PlayerCharacterManagementController {
         String name = ev.getSelectedCharacter();
         if (name == null) {
             ev.resetFields();
-            return;
-        }
+        } else {
+            Character c = player.getCharacter(name).orElse(null);
+            if (c == null) {
+                ev.resetFields();
+            } else {
+                List<String> abilityNames;
+                try {
+                    abilityNames = classService.getAvailableAbilities(c.getClassType())
+                            .stream().map(Ability::getName).toList();
+                } catch (GameException ex) {
+                    abilityNames = List.of();
+                }
+                String[] opts = abilityNames.toArray(new String[0]);
+                for (int i = 1; i <= 3; i++) {
+                    ev.setAbilityOptions(i, opts);
+                }
 
-        Character c = player.getCharacter(name).orElse(null);
-        if (c == null) return;
+                boolean allowFour = c.getAbilitySlotCount() > 3;
+                ev.setAbility4Visible(allowFour);
+                if (allowFour) {
+                    ev.setAbilityOptions(4, opts);
+                }
 
-        List<String> abilityNames;
-        try {
-            abilityNames = classService.getAvailableAbilities(c.getClassType())
-                    .stream().map(Ability::getName).toList();
-        } catch (GameException ex) {
-            abilityNames = List.of();
-        }
-        String[] opts = abilityNames.toArray(new String[0]);
-        for (int i = 1; i <= 3; i++) {
-            ev.setAbilityOptions(i, opts);
-        }
+                List<Ability> current = c.getAbilities();
+                for (int i = 0; i < Math.min(current.size(), 3); i++) {
+                    ev.setSelectedAbility(i + 1, current.get(i).getName());
+                }
+                if (allowFour && current.size() >= 4) {
+                    ev.setSelectedAbility(4, current.get(3).getName());
+                }
 
-        boolean allowFour = c.getAbilitySlotCount() > 3;
-        ev.setAbility4Visible(allowFour);
-        if (allowFour) {
-            ev.setAbilityOptions(4, opts);
+                List<MagicItem> items = c.getInventory().getAllItems();
+                String[] itemNames = new String[items.size() + 1];
+                itemNames[0] = "None";
+                for (int i = 0; i < items.size(); i++) {
+                    itemNames[i + 1] = items.get(i).getName();
+                }
+                ev.setMagicItemOptions(itemNames);
+                MagicItem equipped = c.getEquippedItem();
+                ev.setSelectedMagicItem(equipped != null ? equipped.getName() : "None");
+            }
         }
-
-        List<Ability> current = c.getAbilities();
-        for (int i = 0; i < Math.min(current.size(), 3); i++) {
-            ev.setSelectedAbility(i + 1, current.get(i).getName());
-        }
-        if (allowFour && current.size() >= 4) {
-            ev.setSelectedAbility(4, current.get(3).getName());
-        }
-
-        List<MagicItem> items = c.getInventory().getAllItems();
-        String[] itemNames = new String[items.size() + 1];
-        itemNames[0] = "None";
-        for (int i = 0; i < items.size(); i++) {
-            itemNames[i + 1] = items.get(i).getName();
-        }
-        ev.setMagicItemOptions(itemNames);
-        MagicItem equipped = c.getEquippedItem();
-        ev.setSelectedMagicItem(equipped != null ? equipped.getName() : "None");
     }
 
     private void handleEditConfirmation(CharacterEditView ev) {
         String charName = ev.getSelectedCharacter();
+        boolean valid = true;
         if (charName == null) {
             ev.showErrorMessage("No character selected.");
-            return;
+            valid = false;
         }
 
-        if (!ev.confirmCharacterEdit(charName)) {
-            return;
+        if (valid && !ev.confirmCharacterEdit(charName)) {
+            valid = false;
         }
 
-        Character c = player.getCharacter(charName).orElse(null);
-        if (c == null) {
-            ev.showErrorMessage("Character not found.");
-            return;
+        Character c = null;
+        if (valid) {
+            c = player.getCharacter(charName).orElse(null);
+            if (c == null) {
+                ev.showErrorMessage("Character not found.");
+                valid = false;
+            }
         }
 
-        try {
-            String[] abilityNames = ev.getSelectedAbilities();
-            // Ensure all abilities are chosen
-            for (String a : abilityNames) {
-                if (a == null || a.isBlank()) {
-                    ev.showErrorMessage("All ability slots must be selected.");
-                    return;
-                }
-            }
-
-            // Check for duplicates
-            java.util.Set<String> unique = new java.util.HashSet<>(java.util.Arrays.asList(abilityNames));
-            if (unique.size() != abilityNames.length) {
-                ev.showErrorMessage("Abilities must be unique.");
-                return;
-            }
-
-            // Validate abilities for the character's class (first three only)
-            java.util.List<String> valid = classService.getAvailableAbilities(c.getClassType())
-                    .stream().map(Ability::getName).toList();
-            for (int i = 0; i < Math.min(3, abilityNames.length); i++) {
-                String a = abilityNames[i];
-                if (!valid.contains(a)) {
-                    ev.showErrorMessage("Invalid ability selection for class.");
-                    return;
-                }
-            }
-
-        int expected = Math.min(c.getAbilitySlotCount(), 4);
-            if (abilityNames.length != expected) {
-                ev.showErrorMessage("Incorrect number of abilities selected.");
-                return;
-            }
-
-            java.util.List<Ability> newAbilities = classService.getAbilitiesByNames(abilityNames);
-            c.setAbilities(newAbilities);
-
-            String itemName = ev.getSelectedMagicItem();
-            if (itemName == null || itemName.equals("None")) {
-                c.unequipItem();
-            } else {
-                for (MagicItem mi : c.getInventory().getAllItems()) {
-                    if (mi.getName().equalsIgnoreCase(itemName)) {
-                        c.equipItem(mi);
+        if (valid) {
+            try {
+                String[] abilityNames = ev.getSelectedAbilities();
+                for (String a : abilityNames) {
+                    if (a == null || a.isBlank()) {
+                        ev.showErrorMessage("All ability slots must be selected.");
+                        valid = false;
                         break;
                     }
                 }
-            }
 
-            gameManagerController.handleSaveGameRequest();
-            ev.showInfoMessage("Character updated.");
-            ev.dispose();
-        } catch (GameException ex) {
-            ev.showErrorMessage(ex.getMessage());
+                if (valid) {
+                    java.util.Set<String> unique = new java.util.HashSet<>(java.util.Arrays.asList(abilityNames));
+                    if (unique.size() != abilityNames.length) {
+                        ev.showErrorMessage("Abilities must be unique.");
+                        valid = false;
+                    }
+                }
+
+                if (valid) {
+                    java.util.List<String> validList = classService.getAvailableAbilities(c.getClassType())
+                            .stream().map(Ability::getName).toList();
+                    for (int i = 0; i < Math.min(3, abilityNames.length); i++) {
+                        String a = abilityNames[i];
+                        if (!validList.contains(a)) {
+                            ev.showErrorMessage("Invalid ability selection for class.");
+                            valid = false;
+                            break;
+                        }
+                    }
+                }
+
+                int expected = Math.min(c.getAbilitySlotCount(), 4);
+                if (valid && abilityNames.length != expected) {
+                    ev.showErrorMessage("Incorrect number of abilities selected.");
+                    valid = false;
+                }
+
+                if (valid) {
+                    java.util.List<Ability> newAbilities = classService.getAbilitiesByNames(abilityNames);
+                    c.setAbilities(newAbilities);
+
+                    String itemName = ev.getSelectedMagicItem();
+                    if (itemName == null || itemName.equals("None")) {
+                        c.unequipItem();
+                    } else {
+                        for (MagicItem mi : c.getInventory().getAllItems()) {
+                            if (mi.getName().equalsIgnoreCase(itemName)) {
+                                c.equipItem(mi);
+                                break;
+                            }
+                        }
+                    }
+
+                    gameManagerController.handleSaveGameRequest();
+                    ev.showInfoMessage("Character updated.");
+                    ev.dispose();
+                }
+            } catch (GameException ex) {
+                ev.showErrorMessage(ex.getMessage());
+            }
         }
     }
 
@@ -282,19 +295,16 @@ public class PlayerCharacterManagementController {
                 String name = delView.getSelectedCharacter();
                 if (name == null || name.isBlank()) {
                     delView.showErrorMessage("No character selected.");
-                    return;
-                }
-
-                if (!delView.confirmCharacterDeletion(name)) {
-                    return;
-                }
-
-                if (player.removeCharacter(name)) {
-                    delView.showInfoMessage("Character " + name + " deleted.");
-                    refreshCharacterList(delView);
-                    gameManagerController.handleSaveGameRequest();
+                } else if (!delView.confirmCharacterDeletion(name)) {
+                    // user cancelled deletion
                 } else {
-                    delView.showErrorMessage("Character not found");
+                    if (player.removeCharacter(name)) {
+                        delView.showInfoMessage("Character " + name + " deleted.");
+                        refreshCharacterList(delView);
+                        gameManagerController.handleSaveGameRequest();
+                    } else {
+                        delView.showErrorMessage("Character not found");
+                    }
                 }
             } else if (e.getSource() == delView.getCharacterDropdown()) {
                 String selected = delView.getSelectedCharacter();
@@ -316,22 +326,24 @@ public class PlayerCharacterManagementController {
         if (chars.isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(view, "No characters available.",
                     "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        String[] names = chars.stream().map(Character::getName).toArray(String[]::new);
-        String selected = (String) javax.swing.JOptionPane.showInputDialog(view,
-                "Select Character", "Inventory", javax.swing.JOptionPane.PLAIN_MESSAGE,
-                null, names, names[0]);
-        if (selected == null) return;
-        Character c = player.getCharacter(selected).orElse(null);
-        if (c == null) return;
-        InventoryView iv = new InventoryView(view.getPlayerID());
-        try {
-            new InventoryController(c, iv, gameManagerController);
-            iv.setVisible(true);
-        } catch (GameException ex) {
-            javax.swing.JOptionPane.showMessageDialog(view, ex.getMessage(),
-                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        } else {
+            String[] names = chars.stream().map(Character::getName).toArray(String[]::new);
+            String selected = (String) javax.swing.JOptionPane.showInputDialog(view,
+                    "Select Character", "Inventory", javax.swing.JOptionPane.PLAIN_MESSAGE,
+                    null, names, names[0]);
+            if (selected != null) {
+                Character c = player.getCharacter(selected).orElse(null);
+                if (c != null) {
+                    InventoryView iv = new InventoryView(view.getPlayerID());
+                    try {
+                        new InventoryController(c, iv, gameManagerController);
+                        iv.setVisible(true);
+                    } catch (GameException ex) {
+                        javax.swing.JOptionPane.showMessageDialog(view, ex.getMessage(),
+                                "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
         }
     }
 }

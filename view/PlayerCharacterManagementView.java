@@ -3,6 +3,8 @@ package view;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Per-player character management menu. Lets the user view, create,
@@ -35,6 +37,15 @@ public class PlayerCharacterManagementView extends JFrame {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
+
+        // Allow this frame to close when the user presses the X button so
+        // the program can exit cleanly when no windows remain.
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
     }
 
     private void initUI() {

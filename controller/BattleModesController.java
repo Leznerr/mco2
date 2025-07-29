@@ -44,21 +44,21 @@ public class BattleModesController implements ActionListener {
         if (players.size() < 2) {
             JOptionPane.showMessageDialog(view, "Two players required for PvP.",
                     "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+        } else {
+            view.dispose();
+            new BattleSetupController(sceneManager, players)
+                    .startPvP();
         }
-        view.dispose();
-        new BattleSetupController(sceneManager, players)
-                .startPvP();
     }
 
     private void handlePvB() {
         if (players.isEmpty()) {
             JOptionPane.showMessageDialog(view, "No players registered.",
                     "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+        } else {
+            view.dispose();
+            new BattleSetupController(sceneManager, players)
+                    .startPvB();
         }
-        view.dispose();
-        new BattleSetupController(sceneManager, players)
-                .startPvB();
     }
 }

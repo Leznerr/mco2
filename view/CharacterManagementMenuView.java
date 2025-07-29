@@ -3,6 +3,8 @@ package view;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * First screen for character management where the user selects
@@ -25,6 +27,16 @@ public class CharacterManagementMenuView extends JFrame {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
+
+        // Allow the frame to close naturally when the user clicks the X
+        // button. Controllers can still attach additional listeners if they
+        // need to intercept the event.
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
     }
 
     private void initUI() {
