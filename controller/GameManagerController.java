@@ -202,12 +202,14 @@ public void actionPerformed(ActionEvent e) {
     }
 
     private int getPlayerIndex(String name) {
+        int index = 1;
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).getName().equalsIgnoreCase(name)) {
-                return i + 1;
+                index = i + 1;
+                break;
             }
         }
-        return 1;
+        return index;
     }
 
     public void handleNavigateToCharacterManagement(Player player) {
@@ -242,6 +244,7 @@ public void actionPerformed(ActionEvent e) {
             hasConflict = true;
         }
 
+        boolean success;
         if (!hasConflict) {
             Player player1 = new Player(player1Name);
             Player player2 = new Player(player2Name);
@@ -252,11 +255,12 @@ public void actionPerformed(ActionEvent e) {
             players.clear();
             players.addAll(existing);
             System.out.println("Players " + player1Name + " and " + player2Name + " have been registered.");
-            return true;
+            success = true;
         } else {
             JOptionPane.showMessageDialog(null, errorMsg.toString(), "Player Registration Error", JOptionPane.ERROR_MESSAGE);
-            return false;
+            success = false;
         }
+        return success;
     }
 
     /**
@@ -275,32 +279,31 @@ public void actionPerformed(ActionEvent e) {
             errorMsg.append("Player names must be unique.\n");
         }
 
+        boolean success = false;
         if (!errorMsg.isEmpty()) {
             JOptionPane.showMessageDialog(null, errorMsg.toString(), "Player Selection Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
+        } else {
+            try {
+                GameData data = SaveLoadService.loadGame();
+                List<Player> all = data.getAllPlayers();
+                Player p1 = findByName(all, player1Name);
+                Player p2 = findByName(all, player2Name);
 
-        try {
-            GameData data = SaveLoadService.loadGame();
-            List<Player> all = data.getAllPlayers();
-            Player p1 = findByName(all, player1Name);
-            Player p2 = findByName(all, player2Name);
-
-            if (p1 == null || p2 == null) {
-                JOptionPane.showMessageDialog(null, "Selected players could not be loaded.", "Player Selection Error", JOptionPane.ERROR_MESSAGE);
-                return false;
+                if (p1 == null || p2 == null) {
+                    JOptionPane.showMessageDialog(null, "Selected players could not be loaded.", "Player Selection Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    players.clear();
+                    players.add(p1);
+                    players.add(p2);
+                    // ensure persistence unaffected but save to ensure data file exists
+                    SaveLoadService.saveGame(data);
+                    success = true;
+                }
+            } catch (GameException e) {
+                JOptionPane.showMessageDialog(null, "Failed to load players: " + e.getMessage(), "Player Selection Error", JOptionPane.ERROR_MESSAGE);
             }
-
-            players.clear();
-            players.add(p1);
-            players.add(p2);
-            // ensure persistence unaffected but save to ensure data file exists
-            SaveLoadService.saveGame(data);
-            return true;
-        } catch (GameException e) {
-            JOptionPane.showMessageDialog(null, "Failed to load players: " + e.getMessage(), "Player Selection Error", JOptionPane.ERROR_MESSAGE);
-            return false;
         }
+        return success;
     }
 
     private static Player findByName(List<Player> list, String name) {
@@ -338,7 +341,14 @@ public void actionPerformed(ActionEvent e) {
      */
     private void quitApplication() {
         handleSaveGameRequest();
-        mainMenuView.dispose();
+        // Dispose all top-level frames so the JVM can terminate naturally
+        // without invoking System.exit. Once no visible windows remain, the
+        // Swing event thread will end on its own.
+        SwingUtilities.invokeLater(() -> {
+            for (java.awt.Frame frame : java.awt.Frame.getFrames()) {
+                frame.dispose();
+            }
+        });
         Main.shutdown();
     }
 
@@ -425,25 +435,22 @@ public void actionPerformed(ActionEvent e) {
             InputValidator.requireNonNull(character, "character");
 
             // Skip Hall of Fame updates for AI-controlled bots
-            if ("Bot".equalsIgnoreCase(winner.getName())) {
-                return;
+            if (!"Bot".equalsIgnoreCase(winner.getName())) {
+                winner.incrementWins();
+                character.incrementBattlesWon();
+                hallOfFameController.addWinForPlayer(winner);
+                hallOfFameController.addWinForCharacter(character);
+
+                if (character.getBattlesWon() % Constants.WINS_PER_REWARD == 0) {
+                    MagicItem reward = generateUniqueReward(character);
+                    character.getInventory().addItem(reward);
+                    javax.swing.JOptionPane.showMessageDialog(
+                            null,
+                            formatAwardMessage(reward),
+                            "Item Awarded",
+                            javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                }
             }
-
-            winner.incrementWins();
-            character.incrementBattlesWon();
-            hallOfFameController.addWinForPlayer(winner);
-            hallOfFameController.addWinForCharacter(character);
-
-            if (character.getBattlesWon() % Constants.WINS_PER_REWARD == 0) {
-                MagicItem reward = generateUniqueReward(character);
-                character.getInventory().addItem(reward);
-                javax.swing.JOptionPane.showMessageDialog(
-                        null,
-                        formatAwardMessage(reward),
-                        "Item Awarded",
-                        javax.swing.JOptionPane.INFORMATION_MESSAGE);
-            }
-
             SaveLoadService.saveGame(new GameData(players,
                                                  hallOfFameController.getHallOfFame()));
         } catch (GameException e) {

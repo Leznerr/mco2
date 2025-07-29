@@ -29,7 +29,12 @@ public class CharacterManagementMenuController {
             switch (cmd) {
                 case CharacterManagementMenuView.MANAGE_PLAYER1 -> openPlayerView(0);
                 case CharacterManagementMenuView.MANAGE_PLAYER2 -> openPlayerView(1);
-                case CharacterManagementMenuView.RETURN_TO_MENU -> sceneManager.showMainMenu();
+                case CharacterManagementMenuView.RETURN_TO_MENU -> {
+                    // Close this menu before returning to the main menu so the
+                    // application can exit cleanly if no other windows remain.
+                    view.dispose();
+                    sceneManager.showMainMenu();
+                }
             }
         };
         view.setActionListener(l);
@@ -54,15 +59,15 @@ public class CharacterManagementMenuController {
                     "Info", JOptionPane.INFORMATION_MESSAGE);
             view.setPlayer1Name(null);
             view.setPlayer2Name(null);
-            return;
-        }
-        if (players.size() > 0) {
-            view.setPlayer1Name(players.get(0).getName());
-        }
-        if (players.size() > 1) {
-            view.setPlayer2Name(players.get(1).getName());
         } else {
-            view.setPlayer2Name(null);
+            if (players.size() > 0) {
+                view.setPlayer1Name(players.get(0).getName());
+            }
+            if (players.size() > 1) {
+                view.setPlayer2Name(players.get(1).getName());
+            } else {
+                view.setPlayer2Name(null);
+            }
         }
     }
 }
