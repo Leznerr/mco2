@@ -1,16 +1,17 @@
 package controller;
 
-import view.BattleCharSelectionView;
-import model.core.Player;
-import model.core.Character;
-import model.core.Ability;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import javax.swing.JOptionPane;
+
+import model.core.Ability;
+import model.core.Character;
+import model.core.Player;
+import view.BattleCharSelectionView;
 
 /** Controller for selecting a character for battle. */
 public class BattleCharSelectionController implements ActionListener {

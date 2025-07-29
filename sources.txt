@@ -39,6 +39,7 @@ C:\Users\User\Downloads\mco2-main\mco2\model\item\Inventory.java
 C:\Users\User\Downloads\mco2-main\mco2\model\item\ItemType.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\item\MagicItem.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\item\PassiveItem.java 
+C:\Users\User\Downloads\mco2-main\mco2\model\item\RarityType.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\item\SingleUseEffectType.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\item\SingleUseItem.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\service\ClassService.java 
@@ -60,7 +61,9 @@ C:\Users\User\Downloads\mco2-main\mco2\model\util\TradeOffer.java
 C:\Users\User\Downloads\mco2-main\mco2\model\util\effects\DefenseUpEffect.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\util\effects\EvadeEffect.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\util\effects\ImmunityEffect.java 
+C:\Users\User\Downloads\mco2-main\mco2\model\util\effects\MarkedEffect.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\util\effects\PoisonEffect.java 
+C:\Users\User\Downloads\mco2-main\mco2\model\util\effects\ShieldEffect.java 
 C:\Users\User\Downloads\mco2-main\mco2\model\util\effects\StunEffect.java 
 C:\Users\User\Downloads\mco2-main\mco2\persistence\GameData.java 
 C:\Users\User\Downloads\mco2-main\mco2\persistence\HallOfFameData.java 

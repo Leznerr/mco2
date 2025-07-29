@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0587f6fc-7477-4be2-b411-d98843c2ce53" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/model/service/MagicItemFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/model/service/MagicItemFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources.txt" beforeDir="false" afterPath="$PROJECT_DIR$/sources.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/persistence/HallOfFameMigrationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/persistence/HallOfFameMigrationTest.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="30Vopx8Chsu4Nvzml9z709iC1dV" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.MainMenuTest.executor": "Run",
+    "Downloaded.Files.Path.Enabled": "false",
+    "JUnit.AbilityDropdownTest.executor": "Run",
+    "JUnit.All in fatalfantasy.executor": "Run",
+    "JUnit.BattleControllerTest.executor": "Run",
+    "JUnit.GameManagerPersistenceTest.executor": "Run",
+    "JUnit.HallOfFameMigrationTest.executor": "Run",
+    "JUnit.HallOfFamePersistenceTest.executor": "Run",
+    "JUnit.InputValidatorTest.executor": "Run",
+    "JUnit.LevelingPersistenceTest.executor": "Run",
+    "JUnit.NewClassesTest.executor": "Run",
+    "JUnit.SmartBotTest.executor": "Run",
+    "JUnit.test in fatalfantasy.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "back__up",
+    "last_opened_file_path": "C:/Users/User/Downloads/mco2-main/mco2",
+    "project.structure.last.edited": "Global Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.46206897"
+  }
+}]]></component>
+  <component name="RunManager" selected="JUnit.HallOfFameMigrationTest">
+    <configuration name="All in fatalfantasy" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="fatalfantasy" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="HallOfFameMigrationTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="fatalfantasy" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="persistence.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="persistence" />
+      <option name="MAIN_CLASS_NAME" value="persistence.HallOfFameMigrationTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LevelingPersistenceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="fatalfantasy" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="persistence.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="persistence" />
+      <option name="MAIN_CLASS_NAME" value="persistence.LevelingPersistenceTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NewClassesTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="fatalfantasy" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="model.classnew.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="model.classnew" />
+      <option name="MAIN_CLASS_NAME" value="model.classnew.NewClassesTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="test in fatalfantasy" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="fatalfantasy" />
+      <option name="TEST_OBJECT" value="directory" />
+      <dir value="$PROJECT_DIR$/src/test" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="mco2" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <module name="mco2" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.HallOfFameMigrationTest" />
+        <item itemvalue="JUnit.All in fatalfantasy" />
+        <item itemvalue="JUnit.test in fatalfantasy" />
+        <item itemvalue="JUnit.LevelingPersistenceTest" />
+        <item itemvalue="JUnit.NewClassesTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0587f6fc-7477-4be2-b411-d98843c2ce53" name="Changes" comment="" />
+      <created>1753722287942</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1753722287942</updated>
+    </task>
+    <servers />
+  </component>
+</project>
