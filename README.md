@@ -39,3 +39,36 @@ All persistent data is stored in simple serialized files relative to the working
 directory. Player and character information is written to `ff_tactics_save.dat`
 while Hall of Fame standings are kept in `save/hall_of_fame.dat`. The save
 directory is created automatically on first run.
+
+## Character Options
+
+The core specification mandates **four playable races** and **four classes**.
+Those required options are:
+
+### Core Races
+
+- Human
+- Dwarf
+- Elf
+- Gnome
+
+### Core Classes
+
+- Warrior
+- Mage
+- Rogue
+- Paladin
+
+The project also contains extra choices implemented as optional bonus content
+to extend gameplay. These additional options are not part of the required
+feature set and can be ignored when grading:
+
+### Bonus Races
+
+- Vampire
+- Orc
+
+### Bonus Classes
+
+- Engineer
+- Summoner
