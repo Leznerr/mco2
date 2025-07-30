@@ -261,7 +261,8 @@ public class TradeView extends JFrame {
         label.setFont(new Font("Serif", Font.BOLD, 17));
 
         list.setFont(new Font("Serif", Font.BOLD, 18));
-        list.setForeground(Color.WHITE); // ensure item text is visible
+        list.setForeground(Color.WHITE);              // default text color
+        list.setSelectionForeground(Color.WHITE);     // keep selected items white
         list.setOpaque(false);
         list.setVisibleRowCount(6);
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -272,8 +273,8 @@ public class TradeView extends JFrame {
                 setOpaque(false);
                 if (value instanceof model.item.MagicItem mi) {
                     setText((index + 1) + ". " + mi.getName());
-                    setForeground(Color.WHITE);
                 }
+                setForeground(Color.WHITE);
                 return this;
             }
         });
