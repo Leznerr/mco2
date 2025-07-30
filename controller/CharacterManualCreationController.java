@@ -252,14 +252,10 @@ public final class CharacterManualCreationController {
                     view.setAbilityOptions(i, opts);
                 }
 
-                // If race allows a fourth ability slot (gnome), populate with cross-class abilities
+                // If race allows a fourth ability slot (gnome), populate it as well
                 String raceStr = view.getSelectedRace();
                 if (raceStr != null && !raceStr.isBlank() && RaceType.valueOf(raceStr) == RaceType.GNOME) {
-                    List<String> allAbilities = classService.getAllAbilities()
-                            .stream()
-                            .map(Ability::getName)
-                            .collect(Collectors.toList());
-                    view.setAbilityOptions(4, allAbilities.toArray(new String[0]));
+                    view.setAbilityOptions(4, opts);
                 }
             } catch (GameException e) {
                 // In case of an error fetching abilities, keep the dropdowns empty
