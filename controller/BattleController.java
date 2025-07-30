@@ -510,6 +510,18 @@ public final class BattleController {
             case "Golden Dragon Scale" -> log.addEntry(c.getName() + " is shielded by " + name + ".");
             case "Elven Cloak" -> log.addEntry(c.getName() + " feels nimble under the " + name + ".");
             case "Phoenix Feather" -> log.addEntry(name + " is ready to revive " + c.getName() + ".");
+            case "Ring of Focus" -> {
+                c.gainEp(2);
+                log.addEntry(c.getName() + " gains 2 EP from " + name + ".");
+            }
+            case "Orb of Resilience" -> {
+                c.heal(5);
+                log.addEntry(c.getName() + " gains 5 HP from " + name + ".");
+            }
+            case "Ancient Tome of Power" -> {
+                c.gainEp(5);
+                log.addEntry(c.getName() + " gains 5 EP from " + name + ".");
+            }
             default -> log.addEntry("Item effect for " + name + " not implemented.");
         }
     }
