@@ -62,7 +62,7 @@ public class TradeView extends JFrame {
     private final JComboBox<String> clientDropdown = new JComboBox<>();
     private JTextArea tradeLogArea;
 
-    /** Simple renderer to display magic item names in white. */
+    /** Renderer that shows magic item names in white or yellow when selected. */
     private static class MagicItemListRenderer extends DefaultListCellRenderer {
         @Override
         public Component getListCellRendererComponent(
@@ -73,7 +73,7 @@ public class TradeView extends JFrame {
             if (value instanceof model.item.MagicItem mi) {
                 setText((index + 1) + ". " + mi.getName());
             }
-            setForeground(Color.WHITE);
+            setForeground(isSelected ? Color.YELLOW : Color.WHITE);
             return this;
         }
     }
@@ -279,7 +279,7 @@ public class TradeView extends JFrame {
 
         list.setFont(new Font("Serif", Font.BOLD, 18));
         list.setForeground(Color.WHITE);              // default text color
-        list.setSelectionForeground(Color.WHITE);     // keep selected items white
+        list.setSelectionForeground(Color.YELLOW);    // selected items yellow
         list.setOpaque(false);
         list.setVisibleRowCount(6);
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
