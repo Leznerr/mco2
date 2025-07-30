@@ -19,7 +19,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
@@ -30,6 +29,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+
+import view.MagicItemListRenderer;
 
 // import controller._;
 
@@ -266,18 +267,7 @@ public class TradeView extends JFrame {
         list.setOpaque(false);
         list.setVisibleRowCount(6);
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        list.setCellRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> l, Object value, int index, boolean s, boolean f) {
-                super.getListCellRendererComponent(l, value, index, s, f);
-                setOpaque(false);
-                if (value instanceof model.item.MagicItem mi) {
-                    setText((index + 1) + ". " + mi.getName());
-                }
-                setForeground(Color.WHITE);
-                return this;
-            }
-        });
+        list.setCellRenderer(new MagicItemListRenderer());
 
         JScrollPane pane = new JScrollPane(list);
         pane.setOpaque(false);

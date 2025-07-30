@@ -13,7 +13,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
@@ -29,6 +28,8 @@ import javax.swing.JTextArea;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import view.MagicItemListRenderer;
 
 // import controller._;
 
@@ -154,19 +155,7 @@ public class InventoryView extends JFrame{
         itemList.setOpaque(false);
         itemList.setFont(new Font("Serif", Font.BOLD, 18));
         itemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        itemList.setCellRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> l, Object val, int idx, boolean sel, boolean foc) {
-                super.getListCellRendererComponent(l, val, idx, sel, foc);
-                setOpaque(false);
-                if (val instanceof model.item.MagicItem mi) {
-                    setText((idx + 1) + ". " + mi.getName());
-                    setToolTipText(mi.getDescription());
-                    setForeground(Color.WHITE);
-                }
-                return this;
-            }
-        });
+        itemList.setCellRenderer(new MagicItemListRenderer());
 
         JScrollPane scrollPane = new JScrollPane(itemList);
         scrollPane.setOpaque(false);
@@ -296,17 +285,14 @@ public class InventoryView extends JFrame{
         showInventoryList();
         listModel.clear();
         for (model.item.MagicItem m : items) listModel.addElement(m);
-        itemList.setCellRenderer(new DefaultListCellRenderer() {
+        itemList.setCellRenderer(new MagicItemListRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> l, Object val, int idx, boolean sel, boolean foc) {
                 super.getListCellRendererComponent(l, val, idx, sel, foc);
-                setOpaque(false);
                 if (val instanceof model.item.MagicItem mi) {
                     String name = mi.getName();
                     if (mi.equals(equipped)) name += " (Equipped)";
                     setText((idx + 1) + ". " + name);
-                    setToolTipText(mi.getDescription());
-                    setForeground(Color.WHITE);
                 }
                 return this;
             }
