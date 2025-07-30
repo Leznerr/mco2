@@ -32,6 +32,13 @@ public class BattleCharSelectionController implements ActionListener {
         refresh();
     }
 
+    /**
+     * Refreshes the view with the player's current character options and
+     * their corresponding ability summaries.
+     * <p>
+     * Called during initialization to populate the selection interface.
+     * </p>
+     */
     private void refresh() {
         List<Character> chars = player.getCharacters();
         String[] options = chars.stream().map(Character::getName).toArray(String[]::new);
@@ -49,6 +56,15 @@ public class BattleCharSelectionController implements ActionListener {
         view.updateCharacterList(details);
     }
 
+    /**
+     * Handles user interactions from the character selection view.
+     * <p>
+     * Determines the command type and delegates either to the select handler
+     * or returns to the previous menu.
+     * </p>
+     *
+     * @param e the action event triggered by the view
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
@@ -60,6 +76,14 @@ public class BattleCharSelectionController implements ActionListener {
         }
     }
 
+    /**
+     * Processes the selected character name, confirms the choice,
+     * retrieves the character object from the player, and passes it to the consumer.
+     * <p>
+     * Displays error dialogs if no character is selected or if the character
+     * cannot be found.
+     * </p>
+     */
     private void handleSelect() {
         String name = view.getSelectedCharacter();
         if (name == null) {

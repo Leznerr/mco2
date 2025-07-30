@@ -25,6 +25,9 @@ public class PlayerCharacterManagementController {
     private final GameManagerController gameManagerController;
     private final ClassService classService = ClassService.INSTANCE;
 
+    /**
+     * Constructor for PayerCharacterManagement Controller
+     */
     public PlayerCharacterManagementController(PlayerCharacterManagementView view,
                                                Player player,
                                                GameManagerController gameManagerController) {
@@ -34,6 +37,12 @@ public class PlayerCharacterManagementController {
         bind();
     }
 
+    /**
+     * Binds button commands in the main player character management view to their corresponding actions.
+     * <p>
+     * This includes creating, editing, deleting, and viewing characters, managing inventory,
+     * and returning to the main menu.
+     */
     private void bind() {
         ActionListener l = e -> {
             String cmd = e.getActionCommand();
@@ -52,6 +61,10 @@ public class PlayerCharacterManagementController {
         view.setActionListener(l);
     }
 
+    /**
+     * Opens a view that lists all characters for the current player, allowing users
+     * to view a character's detailed specifications.
+     */
     private void openCharacterList() {
         CharacterListViewingView listView = new CharacterListViewingView(view.getPlayerID());
         listView.setActionListener(e -> {
@@ -66,6 +79,14 @@ public class PlayerCharacterManagementController {
         listView.setVisible(true);
     }
 
+    /**
+     * Refreshes the character list display in the character viewing screen.
+     * <p>
+     * If no characters exist, a placeholder message is shown.
+     * Otherwise, displays each character using their {@code toString()} representation.
+     *
+     * @param lv the view responsible for displaying the character list
+     */
     private void refreshCharacterList(CharacterListViewingView lv) {
         List<Character> chars = player.getCharacters();
         String details = chars.isEmpty() ? "No characters available." :
@@ -73,6 +94,14 @@ public class PlayerCharacterManagementController {
         lv.updateCharacterList(details);
     }
 
+    /**
+     * Refreshes the character list and selection options in the character deletion screen.
+     * <p>
+     * Displays formatted character details (name, race, class, HP, EP) and updates
+     * the selectable character names in the deletion dropdown.
+     *
+     * @param dv the view responsible for deleting characters
+     */
     private void refreshCharacterList(CharacterDeleteView dv) {
         List<Character> chars = player.getCharacters();
         String details;
@@ -99,6 +128,12 @@ public class PlayerCharacterManagementController {
         dv.setCharacterOptions(chars.stream().map(Character::getName).toArray(String[]::new));
     }
 
+    /**
+     * Opens a detailed character specification view based on the selected character.
+     * <p>
+     * Displays basic character info and lists their abilities.
+     * If no characters are available, disables character selection.
+     */
     private void openCharacterSpecView() {
         CharacterSpecViewingView specView = new CharacterSpecViewingView(view.getPlayerID());
         specView.resetView();
@@ -131,6 +166,11 @@ public class PlayerCharacterManagementController {
         specView.setVisible(true);
     }
 
+    /**
+     * Opens the character edit view and populates fields based on the selected character.
+     * <p>
+     * Allows modification of abilities and equipped magic items.
+     */
     private void openEditCharacter() {
         CharacterEditView editView = new CharacterEditView(view.getPlayerID());
 
@@ -152,6 +192,13 @@ public class PlayerCharacterManagementController {
         editView.setVisible(true);
     }
 
+    /**
+     * Populates all editable fields in the edit view based on the selected character.
+     * <p>
+     * Sets available ability options based on class and manages visibility of extra ability slots.
+     *
+     * @param ev the character edit view instance
+     */
     private void populateEditFields(CharacterEditView ev) {
         String name = ev.getSelectedCharacter();
         if (name == null) {
@@ -200,6 +247,14 @@ public class PlayerCharacterManagementController {
         }
     }
 
+    /**
+     * Validates and applies updates made in the character edit view.
+     * <p>
+     * Ensures selected abilities are valid and unique, and updates the equipped item.
+     * Saves game state and notifies the user of success or error.
+     *
+     * @param ev the character edit view instance
+     */
     private void handleEditConfirmation(CharacterEditView ev) {
         String charName = ev.getSelectedCharacter();
         boolean valid = true;
@@ -304,6 +359,11 @@ public class PlayerCharacterManagementController {
         }
     }
 
+    /**
+     * Opens the delete character view, allowing the user to remove a selected character.
+     * <p>
+     * Handles user confirmation and updates the character list upon successful deletion.
+     */
     private void openDeleteCharacter() {
         CharacterDeleteView delView = new CharacterDeleteView(view.getPlayerID());
         delView.setActionListener(e -> {
@@ -339,7 +399,12 @@ public class PlayerCharacterManagementController {
         delView.setVisible(true);
     }
 
-    /** Opens the inventory management view for a selected character. */
+    /**
+     * Opens the inventory management screen for a selected character.
+     * <p>
+     * If no characters exist, an error message is shown.
+     * Otherwise, prompts the user to choose which character's inventory to manage.
+     */
     private void openInventory() {
         java.util.List<Character> chars = player.getCharacters();
         if (chars.isEmpty()) {

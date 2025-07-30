@@ -38,6 +38,23 @@ public final class SmartBot implements AIMoveStrategy {
         this.random = random;
     }
 
+    /**
+     * Chooses the most appropriate {@link Move} based on the current state of the battle.
+     * <p>
+     * The AI logic includes:
+     * <ul>
+     *     <li>Healing when HP is low</li>
+     *     <li>Restoring energy when EP is low</li>
+     *     <li>Executing high-damage or lethal attacks when available</li>
+     *     <li>Using defensive abilities when no offensive options remain</li>
+     * </ul>
+     * Falls back to {@link Recharge} when no viable move is found.
+     *
+     * @param bot      the AI-controlled {@link Character}
+     * @param opponent the opposing {@link Character}
+     * @return a {@link Move} decision for the current turn
+     * @throws GameException if either character is null
+     */
     @Override
     public Move decideMove(Character bot, Character opponent) throws GameException {
         InputValidator.requireNonNull(bot, "botCharacter");
@@ -111,6 +128,13 @@ public final class SmartBot implements AIMoveStrategy {
         return new Recharge();
     }
 
+    /**
+     * Chooses the highest-damage move from a list of attacks.
+     * If multiple moves share the same top damage, one is selected randomly.
+     *
+     * @param attacks list of available attack moves
+     * @return the chosen high-damage move
+     */
     private Move chooseHighestDamage(List<Move> attacks) {
         int best = -1;
         List<Move> bestMoves = new ArrayList<>();
@@ -131,6 +155,12 @@ public final class SmartBot implements AIMoveStrategy {
         return randomPick(bestMoves.isEmpty() ? attacks : bestMoves);
     }
 
+    /**
+     * Selects a random move from the provided list.
+     *
+     * @param moves a non-empty list of candidate moves
+     * @return one randomly chosen move
+     */
     private Move randomPick(List<Move> moves) {
         return moves.get(random.nextInt(moves.size()));
     }

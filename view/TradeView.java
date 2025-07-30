@@ -30,7 +30,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import view.WhiteTextCellRenderer;
 
 // import controller._;
 
@@ -61,22 +60,6 @@ public class TradeView extends JFrame {
     private final JComboBox<String> merchantDropdown = new JComboBox<>();
     private final JComboBox<String> clientDropdown = new JComboBox<>();
     private JTextArea tradeLogArea;
-
-    /** Renderer that shows magic item names in white or yellow when selected. */
-    private static class MagicItemListRenderer extends DefaultListCellRenderer {
-        @Override
-        public Component getListCellRendererComponent(
-                JList<?> list, Object value, int index,
-                boolean isSelected, boolean cellHasFocus) {
-            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            setOpaque(false);
-            if (value instanceof model.item.MagicItem mi) {
-                setText((index + 1) + ". " + mi.getName());
-            }
-            setForeground(isSelected ? Color.YELLOW : Color.WHITE);
-            return this;
-        }
-    }
     
     /**
      * Constructs the Trading UI of Fatal Fantasy: Tactics Game.
@@ -278,12 +261,41 @@ public class TradeView extends JFrame {
         label.setFont(new Font("Serif", Font.BOLD, 17));
 
         list.setFont(new Font("Serif", Font.BOLD, 18));
-        list.setForeground(Color.WHITE);              // default text color
-        list.setSelectionForeground(Color.YELLOW);    // selected items yellow
         list.setOpaque(false);
         list.setVisibleRowCount(6);
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        list.setCellRenderer(new MagicItemListRenderer());
+        list.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> l, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(l, value, index, isSelected, cellHasFocus);
+
+                if (value instanceof model.item.MagicItem mi) {
+                    setText((index + 1) + ". " + mi.getName());
+                }
+
+                // Force white text always AFTER L&F adjustments
+                setForeground(Color.WHITE);
+
+                // Custom background color when selected
+                if (isSelected) {
+                    setBackground(new Color(60, 60, 60, 180));
+                } else {
+                    setBackground(new Color(0, 0, 0, 0));
+                }
+
+                setOpaque(true); // Ensure background is painted
+
+                return this;
+            }
+
+            @Override
+            public void updateUI() {
+                super.updateUI();
+                // Ensure foreground color is retained across Look & Feel changes
+                setForeground(Color.WHITE);
+            }
+        });
+
 
         JScrollPane pane = new JScrollPane(list);
         pane.setOpaque(false);
@@ -327,8 +339,6 @@ public class TradeView extends JFrame {
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
 
         dropdown.setFont(new Font("Serif", Font.BOLD, 18));
-        dropdown.setForeground(Color.WHITE);
-        dropdown.setRenderer(new WhiteTextCellRenderer());
         dropdown.setMaximumSize(new Dimension(250, 35));
         dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 

@@ -18,6 +18,16 @@ import model.util.GameException;
 public final class RandomCharacterGenerator {
     private RandomCharacterGenerator() {}
 
+    /**
+     * Generates a randomly constructed {@link Character} for use as an AI-controlled opponent.
+     * <p>
+     * The character is assigned a random {@link RaceType}, a random {@link ClassType}, and
+     * a random set of abilities based on the chosen class and race's bonus ability slots.
+     *
+     * @param name the name to assign to the generated character
+     * @return a fully initialized {@code Character} with randomized attributes and abilities
+     * @throws GameException if ability generation fails due to service-level constraints
+     */
     public static Character generate(String name) throws GameException {
         Random rng = new Random();
         RaceService raceService = RaceService.INSTANCE;

@@ -1,11 +1,28 @@
 package view;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import controller.CharacterManualCreationController;
 
@@ -165,8 +182,6 @@ public class CharacterManualCreationView extends JFrame {
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
 
         dropdown.setFont(new Font("Serif", Font.BOLD, 18));
-        dropdown.setForeground(Color.WHITE);
-        dropdown.setRenderer(new WhiteTextCellRenderer());
         dropdown.setMaximumSize(new Dimension(250, 35));
         dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 

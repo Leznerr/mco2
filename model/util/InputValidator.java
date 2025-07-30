@@ -113,7 +113,14 @@ public final class InputValidator {
     }
 
 
-    /** Validates that {@code size} equals {@code expectedSize}. */
+    /**
+     * Validates that the provided {@code size} matches the expected size.
+     *
+     * @param size         the actual size to validate
+     * @param expectedSize the exact size expected
+     * @param message      the error message to include in the exception if validation fails
+     * @throws GameException if {@code size} is not equal to {@code expectedSize}
+     */
     public static void requireSize(int size, int expectedSize,
                                    String message) throws GameException {
         if (size != expectedSize) {
@@ -121,7 +128,15 @@ public final class InputValidator {
         }
     }
 
-    /** Validates that {@code size} lies within the range {@code [minSize, maxSize]}. */
+    /**
+     * Validates that the provided {@code size} falls within the inclusive range {@code [minSize, maxSize]}.
+     *
+     * @param size     the actual size to validate
+     * @param minSize  the minimum allowed value (inclusive)
+     * @param maxSize  the maximum allowed value (inclusive)
+     * @param message  the error message to include in the exception if validation fails
+     * @throws GameException if {@code size} is less than {@code minSize} or greater than {@code maxSize}
+     */
     public static void requireSize(int size, int minSize, int maxSize,
                                    String message) throws GameException {
         if (size < minSize || size > maxSize) {

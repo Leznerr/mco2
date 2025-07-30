@@ -34,6 +34,9 @@ public class HallOfFameController implements ActionListener {
     private List<HallOfFameEntry> playerEntries;
     private List<HallOfFameEntry> characterEntries;
 
+    /**
+     * Constructor for HallOfFameController
+     */
     public HallOfFameController(HallOfFameManagementView view, SceneManager sceneManager) {
         InputValidator.requireNonNull(view, "view");
         InputValidator.requireNonNull(sceneManager, "sceneManager");
@@ -55,20 +58,36 @@ public class HallOfFameController implements ActionListener {
     }
 
     /** Opens the Top Players subview and displays leaderboard data. */
+
+    /**
+     * Opens and displays the Top Players leaderboard subview,
+     * sorted by number of wins and XP.
+     */
     private void showTopPlayers() {
         HallOfFamePlayersView playersView = new HallOfFamePlayersView();
         bindHallOfFamePlayersView(playersView);
         playersView.setVisible(true);
     }
 
-    /** Opens the Top Characters subview and displays leaderboard data. */
+    /**
+     * Opens and displays the Top Characters leaderboard subview,
+     * sorted by number of wins and XP.
+     */
     private void showTopCharacters() {
         HallOfFameCharactersView charactersView = new HallOfFameCharactersView();
         bindHallOfFameCharactersView(charactersView);
         charactersView.setVisible(true);
     }
 
-    /** Adds a win to the specified player in the Hall of Fame. */
+    /**
+     * Adds a win to the specified player's Hall of Fame record.
+     * <p>
+     * If the player is not already in the leaderboard, they are added.
+     * </p>
+     *
+     * @param player the player to update
+     * @throws GameException if persistence fails
+     */
     public void addWinForPlayer(Player player) throws GameException {
         InputValidator.requireNonNull(player, "player");
 
@@ -86,7 +105,15 @@ public class HallOfFameController implements ActionListener {
         persistHallOfFame();
     }
 
-    /** Adds a win for a character in the Hall of Fame. */
+    /**
+     * Adds a win to the specified character's Hall of Fame record.
+     * <p>
+     * Updates XP and adds the character if they are not already recorded.
+     * </p>
+     *
+     * @param character the character to update
+     * @throws GameException if persistence fails
+     */
     public void addWinForCharacter(Character character) throws GameException {
         InputValidator.requireNonNull(character, "character");
 
@@ -106,7 +133,13 @@ public class HallOfFameController implements ActionListener {
         persistHallOfFame();
     }
 
-    /** Returns a ranked, immutable list of top players by wins. */
+    /**
+     * Returns the top N players ranked by wins and XP.
+     *
+     * @param count the number of top entries to return
+     * @return an unmodifiable list of ranked {@link HallOfFameEntry} instances
+     * @throws GameException if the count is invalid
+     */
     public List<HallOfFameEntry> getTopPlayersByWins(int count) throws GameException {
         InputValidator.requirePositiveOrZero(count, "count");
 
@@ -117,7 +150,13 @@ public class HallOfFameController implements ActionListener {
             .collect(Collectors.toUnmodifiableList());
     }
 
-    /** Returns a ranked, immutable list of top characters by wins. */
+    /**
+     * Returns the top N characters ranked by wins and XP.
+     *
+     * @param count the number of top entries to return
+     * @return an unmodifiable list of ranked {@link HallOfFameEntry} instances
+     * @throws GameException if the count is invalid
+     */
     public List<HallOfFameEntry> getTopCharactersByWins(int count) throws GameException {
         InputValidator.requirePositiveOrZero(count, "count");
 
@@ -138,19 +177,33 @@ public class HallOfFameController implements ActionListener {
         return new ArrayList<>(characterEntries);
     }
 
-    /** Replaces the entire Hall of Fame list with new entries and persists them. */
+    /**
+     * Replaces the current player Hall of Fame list and saves it.
+     *
+     * @param entries the new list of Hall of Fame entries
+     * @throws GameException if persistence fails or input is null
+     */
     public void setHallOfFame(List<HallOfFameEntry> entries) throws GameException {
         InputValidator.requireNonNull(entries, "entries");
         this.playerEntries = new ArrayList<>(entries);
         persistHallOfFame();
     }
 
-    /** Writes the Hall of Fame entries to disk. */
+    /**
+     * Writes both player and character Hall of Fame entries to persistent storage.
+     *
+     * @throws GameException if an error occurs during saving
+     */
     private void persistHallOfFame() throws GameException {
         SaveLoadService.saveHallOfFame(new HallOfFameData(playerEntries, characterEntries));
     }
 
-    /** Binds return logic and data loading for the Top Characters view. */
+    /**
+     * Binds logic to the Top Characters subview, including return action
+     * and displaying formatted Hall of Fame entries.
+     *
+     * @param view the characters leaderboard view
+     */
     public void bindHallOfFameCharactersView(HallOfFameCharactersView view) {
         InputValidator.requireNonNull(view, "view");
 
@@ -181,7 +234,12 @@ public class HallOfFameController implements ActionListener {
         }
     }
 
-    /** Binds return logic and data loading for the Top Players view. */
+    /**
+     * Binds logic to the Top Players subview, including return action
+     * and displaying formatted Hall of Fame entries.
+     *
+     * @param view the players leaderboard view
+     */
     public void bindHallOfFamePlayersView(HallOfFamePlayersView view) {
         InputValidator.requireNonNull(view, "view");
 
@@ -212,7 +270,16 @@ public class HallOfFameController implements ActionListener {
         }
     }
 
-    /** Handles all button clicks from the Hall of Fame management view. */
+    /**
+     * Handles button actions from the Hall of Fame management view.
+     * <ul>
+     *   <li>Shows Top Players or Top Characters view</li>
+     *   <li>Returns to main menu</li>
+     *   <li>Displays an error for unknown commands</li>
+     * </ul>
+     *
+     * @param e the action event triggered by user interaction
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();

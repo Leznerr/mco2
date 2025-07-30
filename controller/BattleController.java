@@ -103,7 +103,15 @@ public final class BattleController {
     /* ================================================= PUBLIC API */
 
     /**
-     * Kicks off a new battle session.
+     * Kicks off a new battle session between two characters.
+     * <p>
+     * Characters are deep-copied for the battle to preserve original states.
+     * Initializes the battle view and internal state for a fresh session.
+     * </p>
+     *
+     * @param c1 the first character (must be alive)
+     * @param c2 the second character (must be alive)
+     * @throws GameException if any character is null or not alive
      */
     public void startBattle(Character c1, Character c2) throws GameException {
         InputValidator.requireNonNull(c1, "character 1");
@@ -136,8 +144,15 @@ public final class BattleController {
     }
 
     /**
-     * Starts a battle where {@code bot} is controlled by an AI.
-     * The opposing human character must choose moves via the UI.
+     * Starts a new battle session against an AI-controlled opponent.
+     * <p>
+     * Sets up the battle, disables player 2's controls, and queues the AI's first move.
+     * </p>
+     *
+     * @param human the player-controlled character
+     * @param bot the AI-controlled character
+     * @param ai the AI controller
+     * @throws GameException if any parameter is invalid
      */
     public void startBattleVsBot(Character human, Character bot, AIController ai) throws GameException {
         InputValidator.requireNonNull(human, "human");
@@ -155,10 +170,14 @@ public final class BattleController {
     }
 
     /**
-     * Called by UI (or AI) after a character has chosen a move.
+     * Submits a character's move during a battle.
+     * <p>
+     * Once both characters have submitted moves, the round is executed.
+     * </p>
      *
-     * @throws GameException if battle not running, params null, or character
-     *         doesn’t belong to the current battle.
+     * @param user the character submitting the move
+     * @param move the chosen move
+     * @throws GameException if the battle is not running, input is null, or character is invalid
      */
     public void submitMove(Character user, Move move) throws GameException {
         ensureRunning();
@@ -180,13 +199,14 @@ public final class BattleController {
     }
 
     /**
-     * Resolves a player choice string from the UI into an actionable move.
-     * Choices come directly from {@link #abilityNames(Character)} so the
-     * format is predictable:
-     * <ul>
-     *   <li><code>{Ability Name}</code></li>
-     *   <li><code>Use Magic Item: {Item Name}</code></li>
-     * </ul>
+     * Handles a player’s textual choice input and converts it into a corresponding move.
+     * <p>
+     * Supports both ability selection and single-use item activation.
+     * </p>
+     *
+     * @param user the character making the choice
+     * @param choice the player's selected option string
+     * @throws GameException if the choice is invalid or cannot be processed
      */
     public void handlePlayerChoice(Character user, String choice) throws GameException {
         ensureRunning();
@@ -231,13 +251,14 @@ public final class BattleController {
     }
 
     /**
-     * Handles a request to use a single-use item in battle.
-     * Applies the item's effect in the battle context, updates logs,
-     * and removes the item from the user's inventory.
+     * Applies the effect of a single-use item and removes it from the user's inventory.
+     * <p>
+     * Updates the battle state and combat log accordingly.
+     * </p>
      *
      * @param user the character using the item
-     * @param item the single-use item to use
-     * @throws GameException if validation fails or item cannot be used
+     * @param item the item to use
+     * @throws GameException if the item is not found or invalid
      */
     public void useSingleUseItem(Character user, SingleUseItem item) throws GameException {
         ensureRunning();
@@ -261,18 +282,36 @@ public final class BattleController {
         updatePlayerPanels();
     }
 
-    /** Submits a defend action for the given character. */
+    /**
+     * Submits a defend move on behalf of the given character.
+     *
+     * @param user the character defending
+     * @throws GameException if the battle is not running or the move is invalid
+     */
     public void defend(Character user) throws GameException {
         submitMove(user, new Defend());
     }
 
-    /** Submits a recharge action for the given character. */
+    /**
+     * Submits a recharge move on behalf of the given character.
+     *
+     * @param user the character recharging
+     * @throws GameException if the battle is not running or the move is invalid
+     */
     public void recharge(Character user) throws GameException {
         submitMove(user, new Recharge());
     }
 
     /* ================================================= INTERNAL FLOW */
 
+    /**
+     * Executes one full battle round after both players have submitted their moves.
+     * <p>
+     * Applies move effects, handles fainting, XP gain, passive effects, and turn progression.
+     * </p>
+     *
+     * @throws GameException if any move fails or post-battle sync fails
+     */
     private void executeTurn() throws GameException {
         CombatLog log = battle.getCombatLog();
 
@@ -360,6 +399,12 @@ public final class BattleController {
 
     /* ================================================= HELPER STRUCTS */
 
+    /**
+     * Represents a single turn in a round, including the actor, target, and move used.
+     * <p>
+     * Implements comparable to sort by move priority in descending order.
+     * </p>
+     */
     private record Turn(Character actor, Character target, Move move) implements Comparable<Turn> {
         /** Higher priority executes first */
         @Override
@@ -372,7 +417,7 @@ public final class BattleController {
     }
 
     /**
-     * Optional interface: implement in moves that need priority.
+     * Optional interface for moves that require custom priority during turn order calculation.
      */
     public interface Prioritised {
         int getPriority();
@@ -380,6 +425,11 @@ public final class BattleController {
 
     /* ================================================= SMALL UTILS */
 
+    /**
+     * Requests and queues the next move from the AI character, if AI battle is active.
+     *
+     * @throws GameException if the AI controller fails to provide a move
+     */
     private void queueAIMove() throws GameException {
         if (aiController != null && aiCharacter != null && humanOpponent != null) {
             Move aiMove = aiController.requestMove(aiCharacter, humanOpponent);
@@ -387,6 +437,12 @@ public final class BattleController {
         }
     }
 
+    /**
+     * Begins a new round by regenerating EP, applying passive item effects,
+     * and updating the combat log and UI.
+     *
+     * @throws GameException if the battle is not currently active
+     */
     private void startRound() throws GameException {
         ensureRunning();
         CombatLog log = battle.getCombatLog();
@@ -400,6 +456,14 @@ public final class BattleController {
         updatePlayerPanels();
     }
 
+    /**
+     * Applies start-of-turn effects for a given character, including EP regeneration,
+     * passive item effects, and status effects.
+     *
+     * @param c the character to process
+     * @param log the combat log to append status messages to
+     * @throws GameException if an effect cannot be applied
+     */
     private void processRoundStartFor(Character c, CombatLog log) throws GameException {
         c.gainEp(Constants.ROUND_EP_REGEN);
         log.addEntry(c.getName() + " regenerates " + Constants.ROUND_EP_REGEN + " EP.");
@@ -414,6 +478,17 @@ public final class BattleController {
         }
     }
 
+    /**
+     * Applies the specific effect of a known passive item, if implemented.
+     * <p>
+     * Logs the outcome and updates the character accordingly.
+     * </p>
+     *
+     * @param c the character using the item
+     * @param item the passive item to apply
+     * @param log the combat log
+     * @throws GameException if the effect fails
+     */
     private void applyPassiveItemEffect(Character c, PassiveItem item, CombatLog log) throws GameException {
         String name = item.getName();
         switch (name) {
@@ -424,18 +499,6 @@ public final class BattleController {
             case "Silver Amulet" -> {
                 c.heal(5);
                 log.addEntry(c.getName() + " gains 5 HP from " + name + ".");
-            }
-            case "Ring of Focus" -> {
-                c.gainEp(2);
-                log.addEntry(c.getName() + " gains 2 EP from " + name + ".");
-            }
-            case "Orb of Resilience" -> {
-                c.heal(5);
-                log.addEntry(c.getName() + " gains 5 HP from " + name + ".");
-            }
-            case "Ancient Tome of Power" -> {
-                c.gainEp(5);
-                log.addEntry(c.getName() + " gains 5 EP from " + name + ".");
             }
             case "Amulet of Vitality" -> {
                 if (!c.isVitalityBonusApplied()) {
@@ -451,6 +514,11 @@ public final class BattleController {
         }
     }
 
+    /**
+     * Constructs and returns the turn order for the current round based on move priorities.
+     *
+     * @return a sorted list of {@link Turn} instances
+     */
     private List<Turn> buildTurnOrder() {
         Character c1 = battle.getCharacter1();
         Character c2 = battle.getCharacter2();
@@ -464,17 +532,30 @@ public final class BattleController {
         return list;
     }
 
+    /**
+     * Checks whether a character is one of the two currently participating in the battle.
+     *
+     * @param c the character to check
+     * @return {@code true} if part of the current battle, {@code false} otherwise
+     */
     private boolean belongsToBattle(Character c) {
         return c == battle.getCharacter1() || c == battle.getCharacter2();
     }
 
+    /**
+     * Returns whether the current battle has ended due to one or both characters fainting.
+     *
+     * @return {@code true} if the battle is over
+     */
     private boolean battleEnded() {
         return !battle.getCharacter1().isAlive() || !battle.getCharacter2().isAlive();
     }
 
     /**
-     * Synchronises single-use item consumption from the battle copy back to the
-     * persistent character instance.
+     * Synchronizes single-use item usage from the battle copy back to the original character.
+     *
+     * @param persistent the original character
+     * @param battleCopy the battle instance copy
      */
     private void syncInventory(Character persistent, Character battleCopy) {
         if (persistent != null && battleCopy != null) {
@@ -504,6 +585,11 @@ public final class BattleController {
         }
     }
 
+    /**
+     * Throws a {@link GameException} if no battle is currently active.
+     *
+     * @throws GameException if {@code battle} is {@code null}
+     */
     private void ensureRunning() throws GameException {
         if (battle == null) {
             throw new GameException("No active battle – call startBattle() first.");
@@ -532,10 +618,10 @@ public final class BattleController {
     }
 
     /**
-     * Builds the list of options shown in the ability/item dropdown.
+     * Builds the list of ability and magic item options shown in a player's ability dropdown.
      *
-     * <p>Ability names are added directly. If a magic item is equipped,
-     * an entry of the form {@code "Use Magic Item: {Name}"} is appended.</p>
+     * @param c the character whose abilities/items to list
+     * @return list of option strings for the dropdown
      */
     private List<String> abilityNames(Character c) {
         List<String> names = new ArrayList<>();
@@ -555,8 +641,10 @@ public final class BattleController {
     }
 
     /**
-     * Builds the text shown in each player's ability/item list box.
-     * Only ability name and EP cost are displayed to keep the UI concise.
+     * Builds the ability and item description text for a character’s list display.
+     *
+     * @param c the character to describe
+     * @return formatted string with ability EP costs and equipped item info
      */
     private String buildAbilityList(Character c) {
         StringBuilder sb = new StringBuilder();
@@ -581,6 +669,12 @@ public final class BattleController {
         return sb.toString();
     }
 
+    /**
+     * Formats a character's current status for display, including HP, EP, XP, and active status effects.
+     *
+     * @param c the character to describe
+     * @return formatted status string
+     */
     private String formatStatus(Character c) {
         String base = String.format(
                 "HP %d/%d | EP %d/%d | XP %d | Level %d",
@@ -596,6 +690,12 @@ public final class BattleController {
         return base;
     }
 
+    /**
+     * Constructs a congratulatory reward message for obtaining a new magic item.
+     *
+     * @param item the magic item received
+     * @return a formatted message string
+     */
     private String buildAwardMessage(MagicItem item) {
         StringBuilder sb = new StringBuilder();
         sb.append("Congratulations! You received a ")
@@ -610,6 +710,12 @@ public final class BattleController {
         return sb.toString();
     }
 
+    /**
+     * Returns a human-readable effect description for a single-use magic item.
+     *
+     * @param item the single-use item
+     * @return a short effect description
+     */
     private String describeEffect(SingleUseItem item) {
         return switch (item.getEffectType()) {
             case HEAL_HP -> "Heals " + item.getEffectValue() + " HP";

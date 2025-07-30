@@ -15,6 +15,9 @@ public class CharacterManagementMenuController {
     private final List<Player> players;
     private final SceneManager sceneManager;
 
+    /**
+     * Constructor for CharacterManagementMenuController
+     */
     public CharacterManagementMenuController(CharacterManagementMenuView view, List<Player> players, SceneManager sceneManager) {
         this.view = view;
         this.players = players;
@@ -23,6 +26,13 @@ public class CharacterManagementMenuController {
         updateLabels();
     }
 
+    /**
+     * Binds the view's buttons to actions handled by this controller.
+     * <p>
+     * Responds to player selection and return-to-menu actions using command strings
+     * defined in {@link CharacterManagementMenuView}.
+     * </p>
+     */
     private void bind() {
         ActionListener l = e -> {
             String cmd = e.getActionCommand();
@@ -40,6 +50,11 @@ public class CharacterManagementMenuController {
         view.setActionListener(l);
     }
 
+    /**
+     * Opens the character management view for the selected player index.
+     *
+     * @param idx index of the player to manage (0 for Player 1, 1 for Player 2)
+     */
     private void openPlayerView(int idx) {
         if (idx >= 0 && idx < players.size()) {
             Player p = players.get(idx);
@@ -47,11 +62,19 @@ public class CharacterManagementMenuController {
         }
     }
 
-    /** Refresh the player button labels based on the current player list. */
+    /**
+     * Refreshes the view's player labels to reflect the current player list.
+     */
     public void refresh() {
         updateLabels();
     }
 
+    /**
+     * Updates the player name labels in the view based on the player list.
+     * <p>
+     * Shows an info dialog if no players are registered.
+     * </p>
+     */
     private void updateLabels() {
         if (players.isEmpty()) {
             JOptionPane.showMessageDialog(view,

@@ -46,11 +46,16 @@ public final class LevelingSystem {
     /* ───────────────────────────── Public API ──────────────────────────── */
 
     /**
-     * Calculates XP awarded to {@code winner} for defeating {@code loser}.
-     * <pre>XP = 25 + 10 × loser.level</pre>
+     * Calculates the experience points (XP) gained by a character
+     * for defeating another character in combat.
+     * <p>
+     * The formula used is: <code>XP = 25 + 10 × loser.level</code>
+     * </p>
      *
-     * @throws GameException if any argument is {@code null} or both references
-     *                       point to the same object
+     * @param winner the character who won the battle
+     * @param loser  the character who lost the battle
+     * @return the XP gained by the winner
+     * @throws GameException if either character is {@code null} or they refer to the same instance
      */
     public static int calculateXpGained(Character winner, Character loser)
             throws GameException {
@@ -64,11 +69,16 @@ public final class LevelingSystem {
     }
 
     /**
-     * Evaluates whether {@code character} should level-up given its current XP.
-     * If so, raises the level, increases max HP/EP, and fully restores both.
+     * Processes a level-up for a given character, if eligible based on current XP.
+     * <p>
+     * If the character gains at least one level, this method increases
+     * the character's level, boosts their max HP and EP based on the number
+     * of levels gained, and fully restores both HP and EP.
+     * </p>
      *
-     * @return {@code true} if at least one level was gained; otherwise {@code false}
-     * @throws GameException if {@code character} is {@code null}
+     * @param character the character whose level-up eligibility will be checked
+     * @return {@code true} if the character levels up; {@code false} otherwise
+     * @throws GameException if the character is {@code null}
      */
     public static boolean processLevelUp(Character character)
             throws GameException {

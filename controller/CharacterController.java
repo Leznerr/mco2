@@ -45,47 +45,58 @@ public final class CharacterController {
     }
 
     // ------------------ CharacterManagementView Integration -----------------------
-
-   private void bindCharacterManagementView() {
-       managementView.setActionListener(e -> {
-    switch (e.getActionCommand()) {
-        case CharacterManagementView.VIEW_CHARACTERS:
-            openCharacterListView();
-            break;
-        case CharacterManagementView.CREATE_CHARACTER:
-            openManualCreationView();
-            break;
-        case CharacterManagementView.EDIT_CHARACTER:
-            openCharacterEditView();
-            break;
-        case CharacterManagementView.DELETE_CHARACTER:
-            openCharacterDeleteView();
-            break;
-        case CharacterManagementView.RETURN:
-            managementView.dispose();
-            break;
-    }
-});
+    /**
+     * Binds actions from the character management main view to their corresponding handler methods.
+     */
+    private void bindCharacterManagementView() {
+        managementView.setActionListener(e -> {
+        switch (e.getActionCommand()) {
+            case CharacterManagementView.VIEW_CHARACTERS:
+                openCharacterListView();
+                break;
+            case CharacterManagementView.CREATE_CHARACTER:
+                openManualCreationView();
+                break;
+            case CharacterManagementView.EDIT_CHARACTER:
+                openCharacterEditView();
+                break;
+            case CharacterManagementView.DELETE_CHARACTER:
+                openCharacterDeleteView();
+                break;
+            case CharacterManagementView.RETURN:
+                managementView.dispose();
+                break;
+        }
+    });
 
 
         updateManagementViewCharacterList();
     }
 
-    /** Opens the manual character creation view for this player. */
-public void openManualCreationView() {
-    CharacterManualCreationView manualView = new CharacterManualCreationView(player.getName(), 1);
-    bindCharacterManualCreationView(manualView);
-    manualView.setVisible(true);
-}
+    /**
+     * Opens the manual character creation view and binds it to the controller.
+     */
+    public void openManualCreationView() {
+        CharacterManualCreationView manualView = new CharacterManualCreationView(player.getName(), 1);
+        bindCharacterManualCreationView(manualView);
+        manualView.setVisible(true);
+    }
 
 
-    /** Opens the character list view for this player. */
+    /**
+     * Opens the character list viewing view and binds it to the controller.
+     */
     public void openCharacterListView() {
         CharacterListViewingView listView = new CharacterListViewingView(1);
         bindCharacterListViewingView(listView);
     }
 
-    /** Opens the character edit view for this player. */
+    /**
+     * Opens the character editing view.
+     * <p>
+     * Currently provides only return navigation functionality.
+     * </p>
+     */
     public void openCharacterEditView() {
         CharacterEditView editView = new CharacterEditView(1);
         // currently no editing logic; just show the view
@@ -96,7 +107,9 @@ public void openManualCreationView() {
         });
     }
 
-    /** Opens the character delete view for this player. */
+    /**
+     * Opens the character deletion view and binds deletion logic to user actions.
+     */
     public void openCharacterDeleteView() {
         CharacterDeleteView delView = new CharacterDeleteView(1);
         // simple deletion implementation
@@ -119,6 +132,11 @@ public void openManualCreationView() {
         refreshCharacterDeleteView(delView);
     }
 
+    /**
+     * Refreshes the character delete view with current characters and their display names.
+     *
+     * @param view the delete view to update
+     */
     private void refreshCharacterDeleteView(CharacterDeleteView view) {
         List<Character> characters = player.getCharacters();
         String details = characters.isEmpty()
@@ -128,6 +146,10 @@ public void openManualCreationView() {
         view.setCharacterOptions(characters.stream().map(Character::getName).toArray(String[]::new));
     }
 
+
+    /**
+     * Updates the character management view with the current player's characters.
+     */
     private void updateManagementViewCharacterList() {
         List<String> summaries = player.getCharacters().stream()
             .map(ch -> String.format("%s [%s | %s]", ch.getName(), ch.getRaceType(), ch.getClassType()))
@@ -138,6 +160,11 @@ public void openManualCreationView() {
 
     // ------------------ CharacterManualCreationView Integration -----------------------
 
+    /**
+     * Binds dropdown and button events for manual character creation.
+     *
+     * @param creationView the manual character creation view to bind
+     */
     public void bindCharacterManualCreationView(CharacterManualCreationView creationView) {
         creationView.setRaceOptions(
             getAvailableRaces().stream().map(Enum::name).toArray(String[]::new)
@@ -154,16 +181,16 @@ public void openManualCreationView() {
         creationView.addCreateCharacterListener(e -> handleCreateButton(creationView));
         creationView.addReturnListener(e -> creationView.dispose());
         creationView.addClassDropdownListener(e -> {
-    String selectedClass = creationView.getSelectedClass();
-    if (selectedClass != null && !selectedClass.isEmpty()) {
-        ClassType classType = ClassType.valueOf(selectedClass);
-        List<String> abilities = getAvailableAbilities(classType)
-            .stream().map(Ability::getName).toList();
-        for (int slot = 1; slot <= 3; slot++) {
-            creationView.setAbilityOptions(slot, abilities.toArray(new String[0]));
-        }
-    }
-});
+            String selectedClass = creationView.getSelectedClass();
+            if (selectedClass != null && !selectedClass.isEmpty()) {
+                ClassType classType = ClassType.valueOf(selectedClass);
+                List<String> abilities = getAvailableAbilities(classType)
+                    .stream().map(Ability::getName).toList();
+                for (int slot = 1; slot <= 3; slot++) {
+                    creationView.setAbilityOptions(slot, abilities.toArray(new String[0]));
+                }
+            }
+        });
 
         creationView.getClassDropdown().addActionListener(e -> {
             String selectedClass = creationView.getSelectedClass();
@@ -178,6 +205,11 @@ public void openManualCreationView() {
         });
     }
 
+    /**
+     * Handles character creation when the user clicks the "Create" button in the manual view.
+     *
+     * @param creationView the manual character creation view
+     */
     private void handleCreateButton(CharacterManualCreationView creationView) {
         String name = creationView.getCharacterName();
         String raceStr = creationView.getSelectedRace();
@@ -203,6 +235,14 @@ public void openManualCreationView() {
 
     // ------------------ Character Creation Logic -----------------------
 
+    /**
+     * Creates and registers a new character for the player.
+     *
+     * @param name      character name
+     * @param race      selected race
+     * @param classType selected class
+     * @param abilities list of selected abilities
+     */
     public void handleCreateCharacterRequest(String name, RaceType race, ClassType classType, List<Ability> abilities) {
         try {
             InputValidator.requireNonBlank(name, "Character name");
@@ -242,7 +282,12 @@ public void openManualCreationView() {
         return character.getInventory().getAllItems();
     }
 
-    /** Refreshes an InventoryView to display the character's current items. */
+    /**
+     * Updates the inventory view UI with the character's current inventory and equipped item.
+     *
+     * @param character the character whose inventory is shown
+     * @param view      the inventory view to update
+     */    
     public void refreshInventoryDisplay(Character character, InventoryView view) {
         InputValidator.requireNonNull(character, "character");
         InputValidator.requireNonNull(view, "view");
@@ -250,7 +295,11 @@ public void openManualCreationView() {
     }
 
     // ------------------ CharacterListViewingView Integration -----------------------
-
+    /**
+     * Binds event listeners to the character list viewing view.
+     *
+     * @param listView the character list view
+     */
     public void bindCharacterListViewingView(CharacterListViewingView listView) {
         listView.setActionListener(e -> {
             String command = e.getActionCommand();
@@ -264,6 +313,11 @@ public void openManualCreationView() {
         refreshCharacterListViewingView(listView);
     }
 
+    /**
+     * Refreshes the character list viewing view with up-to-date information.
+     *
+     * @param listView the view to refresh
+     */
     private void refreshCharacterListViewingView(CharacterListViewingView listView) {
         List<Character> characters = player.getCharacters();
         String details = characters.isEmpty()
@@ -275,6 +329,12 @@ public void openManualCreationView() {
 
     // ------------------ CharacterSpecViewingView Integration -----------------------
 
+    /**
+     * Binds action listeners to the character spec viewing view, allowing for
+     * viewing detailed stats and navigation.
+     *
+     * @param specView the character specification view
+     */
     public void bindCharacterSpecViewingView(CharacterSpecViewingView specView) {
         specView.setCharacterOptions(
             player.getCharacters().stream()

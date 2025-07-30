@@ -16,6 +16,14 @@ public class BattleModesController implements ActionListener {
     private final SceneManager sceneManager;
     private final GameManagerController gameManagerController;
 
+    /**
+     * Constructs a new battle mode selection controller.
+     *
+     * @param view the view associated with the battle mode selection screen
+     * @param players the list of players involved
+     * @param sceneManager handles scene switching logic
+     * @param gm the main game manager controller
+     */
     public BattleModesController(BattleModesView view,
                                  List<Player> players,
                                  SceneManager sceneManager,
@@ -27,6 +35,11 @@ public class BattleModesController implements ActionListener {
         this.view.setActionListener(this);
     }
 
+    /**
+     * Handles user input events such as mode selection or returning to the menu.
+     *
+     * @param e the action event triggered by a button press
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
@@ -40,6 +53,10 @@ public class BattleModesController implements ActionListener {
         }
     }
 
+    /**
+     * Handles logic for starting a Player vs Player battle.
+     * Validates that at least two players are available.
+     */
     private void handlePvP() {
         if (players.size() < 2) {
             JOptionPane.showMessageDialog(view, "Two players required for PvP.",
@@ -51,6 +68,10 @@ public class BattleModesController implements ActionListener {
         }
     }
 
+    /**
+     * Handles logic for starting a Player vs Bot battle.
+     * Validates that at least one player is available.
+     */
     private void handlePvB() {
         if (players.isEmpty()) {
             JOptionPane.showMessageDialog(view, "No players registered.",

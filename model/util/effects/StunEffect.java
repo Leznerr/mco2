@@ -8,7 +8,7 @@ import model.util.StatusEffectType;
 
 /**
  * <h2>StunEffect</h2>
- * <p>Represents the <strong>“Stun”</strong> status in
+ * <p>Represents the <strong>"Stun"</strong> status in
  * <em>Fatal Fantasy: Tactics</em>, which blocks a character's actions
  * for a fixed number of turns.</p>
  *

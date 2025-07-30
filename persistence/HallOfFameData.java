@@ -19,14 +19,22 @@ public class HallOfFameData implements Serializable {
     private List<HallOfFameEntry> players;
     private List<HallOfFameEntry> characters;
 
-    /** Creates an empty Hall of Fame container. */
+    /**
+     * Constructs an empty Hall of Fame container
+     * with no player or character entries.
+     */
     public HallOfFameData() {
         players = new ArrayList<>();
         characters = new ArrayList<>();
     }
 
     /**
-     * Full constructor using defensive copies.
+     * Full constructor that accepts initial leaderboards
+     * for players and characters.
+     *
+     * @param players    the player leaderboard entries (non-null)
+     * @param characters the character leaderboard entries (non-null)
+     * @throws GameException if any argument is {@code null}
      */
     public HallOfFameData(List<HallOfFameEntry> players,
                           List<HallOfFameEntry> characters) throws GameException {
@@ -52,6 +60,14 @@ public class HallOfFameData implements Serializable {
         characters = new ArrayList<>(list);
     }
 
+    /**
+     * Ensures collections are initialized properly
+     * upon deserialization, even if missing.
+     *
+     * @param in the object input stream
+     * @throws java.io.IOException if an I/O error occurs
+     * @throws ClassNotFoundException if class resolution fails
+     */
     private void readObject(java.io.ObjectInputStream in)
             throws java.io.IOException, ClassNotFoundException {
         in.defaultReadObject();

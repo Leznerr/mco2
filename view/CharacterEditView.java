@@ -7,7 +7,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -22,7 +21,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import view.WhiteTextCellRenderer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -172,8 +170,6 @@ public class CharacterEditView extends JFrame {
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
 
         dropdown.setFont(new Font("Serif", Font.BOLD, 18));
-        dropdown.setForeground(Color.WHITE);
-        dropdown.setRenderer(new WhiteTextCellRenderer());
         dropdown.setMaximumSize(new Dimension(250, 35));
         dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 

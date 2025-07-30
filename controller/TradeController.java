@@ -39,15 +39,21 @@ public class TradeController implements ActionListener {
         this.players = players;
     }
 
-    /** Convenience constructor wiring the view immediately. */
+    /**
+     * Convenience constructor wiring the view immediately.
+     */
     public TradeController(TradeView view, List<Player> players) throws GameException {
         this(players);
         setView(view);
     }
 
     /**
-     * Binds a {@link TradeView} to this controller. Primarily used by the GUI
-     * layer but optional for unit testing.
+     * Binds a {@link TradeView} to this controller. 
+     * <p>
+     * Sets up the action listener and triggers initial UI refresh.
+     *
+     * @param view the trade view to associate
+     * @throws GameException if the view is null
      */
     public void setView(TradeView view) throws GameException {
         InputValidator.requireNonNull(view, "view");
@@ -56,6 +62,11 @@ public class TradeController implements ActionListener {
         view.refresh();
     }
 
+    /**
+     * Handles user actions for player trades.
+     *
+     * @param e the action event triggered by a UI component
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
@@ -75,8 +86,9 @@ public class TradeController implements ActionListener {
     // ------------------------------------------------------------------
 
     /**
-     * Returns an immutable list of players that can participate in trading.
-     * Bots (players named "Bot") are excluded.
+     * Returns an unmodifiable list of all eligible (non-bot) players.
+     *
+     * @return list of players excluding bots
      */
     public List<Player> getEligiblePlayers() {
         List<Player> eligible = new ArrayList<>();
@@ -89,7 +101,11 @@ public class TradeController implements ActionListener {
     }
 
     /**
-     * Returns all characters for the specified player.
+     * Retrieves all characters associated with the specified player.
+     *
+     * @param player the player whose characters to fetch
+     * @return list of characters
+     * @throws GameException if {@code player} is null
      */
     public List<Character> getCharactersForPlayer(Player player) throws GameException {
         InputValidator.requireNonNull(player, "player");
@@ -97,7 +113,11 @@ public class TradeController implements ActionListener {
     }
 
     /**
-     * Returns a read-only list of all items owned by the character.
+     * Returns a read-only list of items in the character's inventory.
+     *
+     * @param character the character to inspect
+     * @return unmodifiable list of magic items
+     * @throws GameException if {@code character} is null
      */
     public List<MagicItem> getInventory(Character character) throws GameException {
         InputValidator.requireNonNull(character, "character");
@@ -105,13 +125,15 @@ public class TradeController implements ActionListener {
     }
 
     /**
-     * Executes an item-for-item trade between two characters.
+     * Executes a one-for-one item trade between two characters.
+     * <p>
+     * Validates ownership and prevents self-trading or bot involvement.
      *
-     * @param source      character giving {@code itemFromSource}
-     * @param itemFromSource item owned by {@code source}
-     * @param target      character giving {@code itemFromTarget}
-     * @param itemFromTarget item owned by {@code target}
-     * @throws GameException if validation fails
+     * @param source character giving away {@code itemFromSource}
+     * @param itemFromSource item from {@code source}
+     * @param target character giving away {@code itemFromTarget}
+     * @param itemFromTarget item from {@code target}
+     * @throws GameException on invalid ownership or other rule violation
      */
     public void executeTrade(Character source,
                              MagicItem itemFromSource,
@@ -151,6 +173,15 @@ public class TradeController implements ActionListener {
 
     /**
      * Executes a multi-item trade between two characters.
+     * <p>
+     * Validates ownership, excludes bots, unequips traded equipped items,
+     * and prevents self-trades or empty trades.
+     *
+     * @param source character trading away {@code itemsFromSource}
+     * @param itemsFromSource items to give from {@code source}
+     * @param target character trading away {@code itemsFromTarget}
+     * @param itemsFromTarget items to give from {@code target}
+     * @throws GameException on validation failure
      */
     public void executeTrade(Character source,
                              List<MagicItem> itemsFromSource,
@@ -210,6 +241,12 @@ public class TradeController implements ActionListener {
         return p != null && "Bot".equalsIgnoreCase(p.getName());
     }
 
+    /**
+     * Handles trade logic triggered by the user.
+     * <p>
+     * Validates character selection, performs the exchange, updates the
+     * persistent state, logs the result, and refreshes the view.
+     */
     private void handleTrade() {
         Character merchant = view.getSelectedMerchantCharacter();
         Character client = view.getSelectedClientCharacter();
@@ -232,6 +269,9 @@ public class TradeController implements ActionListener {
         }
     }
 
+    /**
+     * Updates the merchant item list in the UI based on the selected character.
+     */
     private void updateMerchantSelection() {
         Character c = view.getSelectedMerchantCharacter();
         if (c != null) {
@@ -242,6 +282,9 @@ public class TradeController implements ActionListener {
         view.refresh();
     }
 
+    /**
+     * Updates the client item list in the UI based on the selected character.
+     */
     private void updateClientSelection() {
         Character c = view.getSelectedClientCharacter();
         if (c != null) {
@@ -252,6 +295,15 @@ public class TradeController implements ActionListener {
         view.refresh();
     }
 
+    /**
+     * Builds a human-readable trade summary for logging purposes.
+     *
+     * @param m merchant character
+     * @param mItems merchant items traded
+     * @param c client character
+     * @param cItems client items traded
+     * @return formatted log string
+     */
     private String buildLogMessage(Character m, List<MagicItem> mItems,
                                    Character c, List<MagicItem> cItems) {
         StringBuilder sb = new StringBuilder();
@@ -267,10 +319,23 @@ public class TradeController implements ActionListener {
         return sb.toString();
     }
 
+    /**
+     * Joins a list of item names into a comma-separated string.
+     *
+     * @param items list of magic items
+     * @return name list
+     */
     private String itemNames(List<MagicItem> items) {
         return items.stream().map(MagicItem::getName).collect(java.util.stream.Collectors.joining(", "));
     }
 
+    /**
+     * Finds the owning player of a given character.
+     *
+     * @param c character to search for
+     * @return player owning the character
+     * @throws GameException if character is unassigned
+     */
     private Player findPlayerForCharacter(Character c) throws GameException {
         for (Player p : players) {
             if (p.getCharacters().contains(c)) {
@@ -280,6 +345,11 @@ public class TradeController implements ActionListener {
         throw new GameException("Character does not belong to any loaded player.");
     }
 
+    /**
+     * Saves updated player data to persistent storage.
+     *
+     * @throws GameException on save failure
+     */
     private void persist() throws GameException {
         GameData data = SaveLoadService.loadGame();
         data.setAllPlayers(players);

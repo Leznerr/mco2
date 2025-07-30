@@ -17,7 +17,12 @@ public class SaveLoadService {
     private static final String GAME_DATA_FILE = Constants.SAVE_FILE_PATH;
     private static final String HALL_OF_FAME_FILE = Constants.HALL_OF_FAME_SAVE_PATH;
 
-    // Saves the game data to a file
+    /**
+     * Saves the game data to a designated file.
+     *
+     * @param gameData the game data object to be saved
+     * @throws GameException if an I/O error occurs during saving
+     */
     public static void saveGame(GameData gameData) throws GameException {
         Path file = Path.of(GAME_DATA_FILE);
         try {
@@ -36,7 +41,13 @@ public class SaveLoadService {
         }
     }
 
-    // Loads the game data from a file
+    /**
+     * Loads the game data from a designated file.
+     * If no save file is found, a new instance of {@code GameData} is returned.
+     *
+     * @return the loaded game data, or a new game data object if not found
+     * @throws GameException if an error occurs while loading the game data
+     */
     public static GameData loadGame() throws GameException {
         GameData result;
         try (ObjectInputStream gameDataStream = new ObjectInputStream(new FileInputStream(GAME_DATA_FILE))) {
@@ -50,7 +61,12 @@ public class SaveLoadService {
         return result;
     }
 
-    // Saves Hall of Fame data
+    /**
+     * Saves the Hall of Fame data to a designated file.
+     *
+     * @param data the Hall of Fame data object to be saved
+     * @throws GameException if an I/O error occurs during saving
+     */
     public static void saveHallOfFame(HallOfFameData data) throws GameException {
         Path file = Path.of(HALL_OF_FAME_FILE);
         try {
@@ -68,7 +84,13 @@ public class SaveLoadService {
         }
     }
 
-    // Loads the Hall of Fame data with backward compatibility
+    /**
+     * Loads the Hall of Fame data from a file.
+     * Supports both the new format and a legacy format for backward compatibility.
+     *
+     * @return the loaded Hall of Fame data
+     * @throws GameException if an error occurs while loading or upgrading the data
+     */
     public static HallOfFameData loadHallOfFame() throws GameException {
         Path current = Path.of(HALL_OF_FAME_FILE);
         Path legacy = Path.of("model/save/hall_of_fame.dat");
@@ -108,7 +130,12 @@ public class SaveLoadService {
         return result;
     }
 
-    // Adds a new player to the existing game data and saves it
+    /**
+     * Adds a new player to the existing game data and persists the changes.
+     *
+     * @param player the player to be added
+     * @throws GameException if an error occurs while loading or saving game data
+     */
     public static void addPlayer(Player player) throws GameException {
         try {
             // Load the current game data
@@ -129,7 +156,9 @@ public class SaveLoadService {
         }
     }
 
-    // Private constructor to prevent instantiation
+    /**
+     * Private constructor to prevent instantiation of this utility class.
+     */
     private SaveLoadService() {
     }
 }

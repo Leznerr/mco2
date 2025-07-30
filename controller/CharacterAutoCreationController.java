@@ -65,7 +65,10 @@ public final class CharacterAutoCreationController {
     }
 
     /**
-     * Binds all UI actions to their corresponding handler methods.
+     * Binds UI button actions to their corresponding handler methods.
+     * <p>
+     * Handles create, randomize, and return commands from the view.
+     * </p>
      */
     private void bindUI() {
         view.addActionListener(e -> {
@@ -80,8 +83,11 @@ public final class CharacterAutoCreationController {
     }
 
     /**
-     * Handles the creation of a character with randomly generated values.
-     * Performs all validation, updates the player model, and closes the dialog.
+     * Handles character creation based on previously randomized values.
+     * <p>
+     * Validates the input name, checks if generation occurred, constructs a new character,
+     * saves it to the player profile, and updates the UI accordingly.
+     * </p>
      */
     private void handleAutoCreateCharacter() {
         String name = view.getCharacterName();
@@ -108,7 +114,11 @@ public final class CharacterAutoCreationController {
     }
 
     /**
-     * Randomizes and previews a character's details (not persisted until user confirms).
+     * Generates a new character with random attributes for preview.
+     * <p>
+     * Selects a random name, race, class, and ability list. Gnomes receive an additional ability.
+     * Updates the view with the generated preview.
+     * </p>
      */
     private void handleRandomize() {
         String name = generateRandomName();
@@ -131,7 +141,8 @@ public final class CharacterAutoCreationController {
     }
 
     /**
-     * Navigates back to the main menu or previous screen via the GameManagerController.
+     * Handles the return action by disposing of the current view and navigating back to
+     * the character management screen via the game manager controller.
      */
     private void handleReturn() {
         view.dispose();
@@ -173,11 +184,11 @@ public final class CharacterAutoCreationController {
     }
 
     /**
-     * Retrieves the player instance by name.
+     * Retrieves the player object with the given name, ignoring case.
      *
-     * @param playerName the player name (case-insensitive)
-     * @return the Player with matching name
-     * @throws IllegalArgumentException if no player is found with the provided name
+     * @param playerName the name of the player to retrieve
+     * @return the matching Player object
+     * @throws IllegalArgumentException if the player does not exist
      */
     private Player getPlayerByName(String playerName) {
         return gameManagerController.getPlayers().stream()
@@ -187,7 +198,10 @@ public final class CharacterAutoCreationController {
     }
 
     /**
-     * Formats the preview character details including stats and abilities.
+     * Formats a character's attributes and abilities into a readable string for preview display.
+     *
+     * @param c the character to format
+     * @return formatted string with name, race, class, HP/EP stats, and abilities
      */
     private static String formatCharacter(Character c) {
         StringBuilder sb = new StringBuilder();

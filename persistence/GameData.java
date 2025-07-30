@@ -1,5 +1,6 @@
 package persistence;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,18 +39,20 @@ public class GameData implements Serializable {
     /* Constructors                                                       */
     /* ------------------------------------------------------------------ */
 
-    /** Creates an empty container (no players, no HoF). */
+    /**
+     * Creates an empty container (no players, no HoF).
+     */
     public GameData() {
         this.allPlayers = new ArrayList<>();
         this.hallOfFame = new ArrayList<>();
     }
 
     /**
-     * Full constructor.
+     * Constructs a GameData object with the specified players and Hall of Fame entries.
      *
-     * @param allPlayers  list of players (defensively copied, non-null)
-     * @param hallOfFame  list of hall-of-fame entries (non-null)
-     * @throws GameException if any argument is {@code null}
+     * @param allPlayers  list of all players; will be defensively copied
+     * @param hallOfFame  list of Hall of Fame entries; will be defensively copied
+     * @throws GameException if either argument is {@code null}
      */
     public GameData(List<Player> allPlayers,
                     List<HallOfFameEntry> hallOfFame) throws GameException {
@@ -85,7 +88,12 @@ public class GameData implements Serializable {
     }
 
     /**
-     * Ensures transient collections are initialised when deserialised.
+     * Custom deserialization logic to ensure that transient collections are properly
+     * initialized if they were {@code null} upon reading from an object stream.
+     *
+     * @param in the input stream to read from
+     * @throws IOException if an I/O error occurs while reading the stream
+     * @throws ClassNotFoundException if the class of a serialized object cannot be found
      */
     private void readObject(java.io.ObjectInputStream in)
             throws java.io.IOException, ClassNotFoundException {

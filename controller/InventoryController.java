@@ -56,7 +56,11 @@ public final class InventoryController implements ActionListener {
         setView(view);
     }
 
-    /** Binds an InventoryView to this controller. */
+    /**
+     * Refreshes the currently bound inventory view with the character's latest inventory and equipped item.
+     * <p>
+     * Does nothing if no view is currently bound.
+     */
     public void setView(InventoryView view) throws GameException {
         InputValidator.requireNonNull(view, "view");
         this.view = view;
@@ -77,8 +81,10 @@ public final class InventoryController implements ActionListener {
     }
 
     /**
-     * Handles a request to equip a passive {@link MagicItem}.
-     * If a previous item is equipped, it will be replaced.
+     * Handles the request to equip a specified magic item to the character.
+     * <p>
+     * If an item is already equipped, it is replaced by the new one.
+     * Triggers game state persistence and view refresh.
      *
      * @param itemToEquip the magic item to equip (non-null)
      * @throws GameException if {@code itemToEquip} is {@code null}
@@ -95,8 +101,10 @@ public final class InventoryController implements ActionListener {
     }
 
     /**
-     * Handles a request to unequip the currently equipped passive magic item.
-     * If no item is equipped, no action occurs.
+     * Handles the request to unequip the currently equipped magic item from the character.
+     * <p>
+     * If no item is equipped, the operation is ignored.
+     * Triggers game state persistence and view refresh.
      */
     public void handleUnequipItem() {
         character.getInventory().unequipItem();
@@ -109,7 +117,14 @@ public final class InventoryController implements ActionListener {
             gameManagerController.handleSaveGameRequest();
         }
     }
-
+    
+    /**
+     * Responds to all GUI events originating from the {@link InventoryView}.
+     * <p>
+     * This includes equipping, unequipping, viewing, and returning from inventory.
+     *
+     * @param e the action event received from the view
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();

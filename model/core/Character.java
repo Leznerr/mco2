@@ -1,5 +1,6 @@
 package model.core;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,7 +66,12 @@ public class Character implements Serializable {
     private boolean phoenixReviveUsed;
     private boolean vitalityBonusApplied;
 
-    // --- Copy constructor for deep copy ---
+    /**
+     * Creates a deep copy of the given character for use in battle.
+     * 
+     * @param other The character to copy. Must not be null.
+     * @throws GameException if the source character is invalid.
+     */
     public Character(Character other) throws GameException {
         InputValidator.requireNonNull(other, "character to copy");
 
@@ -99,7 +105,12 @@ public class Character implements Serializable {
         this.vitalityBonusApplied = false;
     }
 
-    // --- Method to create a copy for battle ---
+    /**
+     * Creates a new battle-ready copy of this character.
+     * 
+     * @return A deep-copied {@code Character} for battle.
+     * @throws GameException if copying fails due to invalid data.
+     */
     public Character copyForBattle() throws GameException {
         return new Character(this);
     }
@@ -149,13 +160,18 @@ public class Character implements Serializable {
     /**
      * Convenience constructor for creating a character with no initial abilities.
      * Chains to the designated constructor.
+     *
+     * @param name      The character's name.
+     * @param race      The race type.
+     * @param classType The class type.
+     * @throws GameException if character creation fails.
      */
     public Character(String name, RaceType race, ClassType classType) throws GameException {
         this(name, race, classType, new ArrayList<>());
     }
 
     /**
-     * Initializes all stats based on class and race, and resets progression.
+     * Initializes stats (HP, EP, progression) based on class and race bonuses.
      */
     private void initializeStats() {
         // Start with class base stats, then apply race bonuses.
@@ -215,7 +231,9 @@ public class Character implements Serializable {
     // --- Combat State Management ---
 
     /**
-     * Applies a specified amount of damage, ensuring HP does not fall below 0.
+     * Applies a specified amount of damage, modified by status effects.
+     * HP will not drop below zero.
+     * 
      * @param damage The non-negative amount of damage to apply.
      */
     public void takeDamage(int damage) {
@@ -257,11 +275,11 @@ public class Character implements Serializable {
     }
 
     /**
-     * Checks for an equipped Phoenix Feather and revives the character if
-     * conditions are met.
-     *
-     * @param log combat log for messaging
-     * @return {@code true} if the feather triggered
+     * Checks if the Phoenix Feather is equipped and revives the character if eligible.
+     * 
+     * @param log The combat log to add messages to.
+     * @return {@code true} if the character was revived by Phoenix Feather.
+     * @throws GameException if inventory access fails.
      */
     public boolean checkPhoenixFeather(CombatLog log) throws GameException {
         if (!isAlive()
@@ -280,8 +298,9 @@ public class Character implements Serializable {
     }
 
     /**
-     * Restores a specified amount of HP, ensuring it does not exceed max HP.
-     * @param healingAmount The non-negative amount of HP to restore.
+     * Heals the character by the given amount, up to max HP.
+     *
+     * @param healingAmount The amount to heal.
      */
     public void heal(int healingAmount) {
         if (healingAmount >= 0) {
@@ -290,8 +309,9 @@ public class Character implements Serializable {
     }
 
     /**
-     * Permanently increases max HP by the specified amount.
-     * Current HP is boosted by the same value.
+     * Increases both current and max HP by a specified amount.
+     *
+     * @param amount The HP bonus to apply.
      */
     public void increaseMaxHp(int amount) {
         if (amount > 0) {
@@ -301,9 +321,10 @@ public class Character implements Serializable {
     }
 
     /**
-     * Attempts to spend a specified amount of EP.
-     * @param cost The non-negative EP cost.
-     * @return {@code true} if EP was spent, {@code false} if insufficient EP.
+     * Attempts to spend EP from the character.
+     *
+     * @param cost The EP cost to pay.
+     * @return {@code true} if sufficient EP was available and deducted; {@code false} otherwise.
      */
     public boolean spendEp(int cost) {
         if (cost < 0 || this.currentEp < cost) {
@@ -314,8 +335,9 @@ public class Character implements Serializable {
     }
 
     /**
-     * Restores a specified amount of EP, ensuring it does not exceed max EP.
-     * @param amount The non-negative amount of EP to restore.
+     * Restores EP up to the maximum allowed.
+     *
+     * @param amount Amount of EP to restore.
      */
     public void gainEp(int amount) {
         if (amount >= 0) {
@@ -326,9 +348,9 @@ public class Character implements Serializable {
     // --- Progression Management ---
 
     /**
-     * Adds experience points.
+     * Adds experience points to this character.
      *
-     * @param amount The non-negative amount of XP to add.
+     * @param amount The XP to add.
      */
     public void addExperience(int amount) {
         if (amount >= 0) {
@@ -346,12 +368,19 @@ public class Character implements Serializable {
         this.currentEp = newMaxEp;
     }
 
+    /**
+     * Increments battle won
+     */
     public void incrementBattlesWon() { this.battlesWon++; }
 
+    /** 
+     * Checks if can level up
+     */
     public boolean canLevelUp() { return battlesWon >= nextLevelMilestone; }
 
     /**
-     * Levels up the character, increasing stats and unlocking ability slots when applicable.
+     * Levels up the character if enough battles have been won.
+     * Increases stats and may unlock new ability slots.
      */
     public void levelUp() {
         if (canLevelUp()) {
@@ -367,8 +396,10 @@ public class Character implements Serializable {
     }
 
     /**
-     * Unlocks additional ability slots when crossing levels 2 and 4.
-     * Handles scenarios where multiple levels are gained at once.
+     * Unlocks ability slots for milestone levels (e.g., 2, 4).
+     *
+     * @param oldLevel The level before leveling up.
+     * @param newLevel The level after leveling up.
      */
     private void unlockAbilitySlot(int oldLevel, int newLevel) {
         for (int lvl = oldLevel + 1; lvl <= newLevel; lvl++) {
@@ -392,7 +423,9 @@ public class Character implements Serializable {
         inventory.equipItem(item);
     }
 
-    /** Unequips any currently equipped item. */
+    /**
+     * Unequips any currently equipped item.
+     */
     public void unequipItem() {
         inventory.unequipItem();
     }
@@ -419,6 +452,7 @@ public class Character implements Serializable {
 
     /**
      * Replaces the character's current abilities with a new set.
+     * 
      * @param newAbilities A list containing exactly the required number of abilities.
      */
     public void setAbilities(List<Ability> newAbilities) {
@@ -436,6 +470,12 @@ public class Character implements Serializable {
         return activeStatusEffects.stream().anyMatch(effect -> effect.getType() == type);
     }
 
+    /**
+     * Adds a new status effect to this character.
+     * May be blocked by equipped items or effect limits.
+     *
+     * @param effect The status effect to apply.
+     */
     public void addStatusEffect(StatusEffect effect) {
         InputValidator.requireNonNull(effect, "Status effect");
         if (inventory.getEquippedItem() instanceof model.item.PassiveItem p
@@ -450,6 +490,11 @@ public class Character implements Serializable {
         }
     }
 
+    /**
+     * Removes the given type of status effect from the character.
+     *
+     * @param type The status effect type to remove.
+     */
     public void removeStatusEffect(StatusEffectType type) {
         activeStatusEffects.removeIf(effect -> effect.getType() == type);
     }
@@ -465,8 +510,11 @@ public class Character implements Serializable {
     public void setVitalityBonusApplied(boolean applied) { this.vitalityBonusApplied = applied; }
 
     /**
-     * Processes all active status effects at the start of this character's turn.
-     * Effects are updated and removed when their duration expires.
+     * Processes all status effects at the start of the character's turn.
+     * Triggers poison damage and removes expired effects.
+     *
+     * @param log The combat log for output.
+     * @throws GameException if effect logic fails.
      */
     public void processStartOfTurnEffects(CombatLog log) throws GameException {
         InputValidator.requireNonNull(log, "combat log");
@@ -490,8 +538,11 @@ public class Character implements Serializable {
     }
 
     /**
-     * Processes all active status effects at the end of this character's turn.
-     * Effects are updated and removed when their duration expires.
+     * Processes all status effects at the end of the character's turn.
+     * Removes effects whose duration has expired.
+     *
+     * @param log The combat log for output.
+     * @throws GameException if effect logic fails.
      */
     public void processEndOfTurnEffects(CombatLog log) throws GameException {
         InputValidator.requireNonNull(log, "combat log");
@@ -509,6 +560,12 @@ public class Character implements Serializable {
 
     // --- Overridden Methods ---
 
+    /**
+     * Returns a formatted string representation of the character, including their
+     * name, level, race, class, HP, EP, XP, number of wins, and XP milestone for the next level.
+     *
+     * @return A string describing the character’s current state.
+     */
     @Override
     public String toString() {
         return String.format(
@@ -519,10 +576,6 @@ public class Character implements Serializable {
         );
     }
 
-
-
-
-
     public String getAbilitiesDescription() {
         StringBuilder descriptions = new StringBuilder();
         for (Ability ability : abilities) {
@@ -532,8 +585,11 @@ public class Character implements Serializable {
     }
 
     /**
-     * Ensures transient collections are properly initialised when this object
-     * is deserialised from a save file.
+     * Restores transient state during deserialization.
+     *
+     * @param in The input stream used for reading.
+     * @throws IOException if reading fails.
+     * @throws ClassNotFoundException if a class in the stream is not found.
      */
     private void readObject(java.io.ObjectInputStream in)
             throws java.io.IOException, ClassNotFoundException {

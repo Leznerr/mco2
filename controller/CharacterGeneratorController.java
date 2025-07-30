@@ -78,6 +78,14 @@ public final class CharacterGeneratorController {
     }
 
     // --- Event wiring ---
+
+    /**
+     * Wires UI buttons from the view to corresponding event handlers.
+     * <p>
+     * Associates action commands from {@link CharacterAutoCreationView}
+     * with the controller's logic: randomizing characters, creating them, or exiting.
+     * </p>
+     */
     private void wireView() {
         view.addActionListener(e -> {
             String cmd = e.getActionCommand();
@@ -91,7 +99,13 @@ public final class CharacterGeneratorController {
     }
 
     // --- Event Handlers ---
-    /** Generates a preview character and displays its details in the view. */
+
+    /**
+     * Handles the "Randomize" button press.
+     * <p>
+     * Generates a random character and displays its information in the view's preview area.
+     * </p>
+     */
     private void onRandomize() {
         try {
             Character preview = generateRandomCharacter();
@@ -102,7 +116,13 @@ public final class CharacterGeneratorController {
         }
     }
 
-    /** Attempts to persist the character using the user-specified name. */
+    /**
+     * Handles the "Create" button press.
+     * <p>
+     * Attempts to finalize and persist a new character using the name entered by the user.
+     * If creation succeeds, the view resets and shows a confirmation message.
+     * </p>
+     */
     private void onCreate() {
         try {
             String chosenName = view.getCharacterName().trim();
@@ -125,13 +145,28 @@ public final class CharacterGeneratorController {
     }
 
     // --- Core Random Character Generation ---
-    /** Generates a fully random character (including a random name). */
+
+    /**
+     * Generates a fully random character with a system-generated name.
+     *
+     * @return the generated {@link Character} instance
+     * @throws GameException if generation fails due to service errors or insufficient abilities
+     */
     private Character generateRandomCharacter() throws GameException {
         String randomName = "Hero" + (1000 + rng.nextInt(9000));
         return generateRandomCharacterWithName(randomName);
     }
 
-    /** Generates a random character but uses the supplied name. */
+    /**
+     * Generates a random character using a user-defined name.
+     * <p>
+     * Selects a random race, class, and three unique abilities for the class.
+     * </p>
+     *
+     * @param name the name to assign to the generated character
+     * @return the completed {@link Character}
+     * @throws GameException if generation fails (e.g., duplicate abilities, empty race pool)
+     */
     private Character generateRandomCharacterWithName(String name) throws GameException {
         List<RaceType> races = raceService.getAvailableRaces();
         RaceType race = races.get(rng.nextInt(races.size()));
@@ -157,7 +192,13 @@ public final class CharacterGeneratorController {
     }
 
     // --- Utility Helpers ---
-    /** Formats a character for preview display. */
+
+    /**
+     * Creates a formatted string of the given character's stats for preview display.
+     *
+     * @param c the {@link Character} to format
+     * @return a multiline string summarizing the character's name, race, class, and abilities
+     */
     private static String format(Character c) {
         StringBuilder sb = new StringBuilder(128);
         sb.append("Name : ").append(c.getName()).append('\n');

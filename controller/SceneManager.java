@@ -69,6 +69,11 @@ public final class SceneManager {
     private GameManagerController gameManagerController; // Keep the controller instance here
 
     // ---------- Constructor ----------
+
+    /**
+     * Constructs the SceneManager and initializes the primary stage.
+     * Sets up the initial layout and displays the main menu.
+     */
     public SceneManager() {
         stage = new JFrame("Fatal Fantasy: Tactics");
         cards = new CardLayout();
@@ -89,7 +94,10 @@ public final class SceneManager {
 
     // ---------- Navigation Methods ----------
 
-    /** Displays the main menu screen. */
+    /**
+     * Displays the main menu screen.
+     * Initializes the main menu view and Hall of Fame view on first call.
+     */
     public void showMainMenu() {
         if (mainMenuView == null) {
             mainMenuView = new MainMenuView();
@@ -109,7 +117,10 @@ public final class SceneManager {
         cards.show(root, CARD_MAIN_MENU);
     }
 
-    /** Displays the Player Registration screen. */
+    /**
+     * Displays the player registration screen.
+     * Initializes the view and sets its action listener for navigation.
+     */
     public void showPlayerRegistration() {
         if (playerRegView == null) {
             playerRegView = new PlayerRegistrationView();
@@ -127,7 +138,10 @@ public final class SceneManager {
         cards.show(root, CARD_PLAYER_REG);
     }
 
-    /** Shows the new players registration form. */
+    /**
+     * Displays the new players registration screen.
+     * Allows input of two new player names and handles registration logic.
+     */
     public void showNewPlayersRegistration() {
         if (newPlayersRegView == null) {
             newPlayersRegView = new NewPlayersRegistrationView();
@@ -157,7 +171,10 @@ public final class SceneManager {
         cards.show(root, CARD_NEW_PLAYER_REG);
     }
 
-    /** Shows the saved players registration form. */
+    /**
+     * Displays the saved players registration screen.
+     * Loads previously saved players from storage and allows selection of two.
+     */
     public void showSavedPlayersRegistration() {
         if (savedPlayersRegView == null) {
             savedPlayersRegView = new SavedPlayersRegistrationView();
@@ -199,7 +216,10 @@ public final class SceneManager {
         cards.show(root, CARD_SAVED_PLAYER_REG);
     }
 
-    /** Displays the Player Deletion screen. */
+    /**
+     * Displays the player deletion screen.
+     * Initializes the view and controller if not already created.
+     */
     public void showPlayerDelete() {
         if (playerDeleteView == null) {
             playerDeleteView = new PlayerDeleteView();
@@ -211,7 +231,10 @@ public final class SceneManager {
         cards.show(root, CARD_DELETE_PLAYER);
     }
 
-    /** Displays the Hall of Fame screen. */
+    /**
+     * Displays the Hall of Fame management screen.
+     * Initializes the view and controller if necessary.
+     */
     public void showHallOfFameManagement() {
         if (hallOfFameView == null) {
             hallOfFameView = new HallOfFameManagementView();
@@ -226,7 +249,12 @@ public final class SceneManager {
         cards.show(root, CARD_HALL_OF_FAME);
     }
 
-    /** Displays the Trading Hall screen. */
+    /**
+     * Displays the trading hall screen.
+     * Initializes the view and controller with the current list of players.
+     *
+     * @param players the list of players to populate merchant/client options
+     */
     public void showTradingHall(List<Player> players) {
         if (tradingHallView == null) {
             tradingHallView = new TradingHallView();
@@ -240,10 +268,11 @@ public final class SceneManager {
     }
 
     /**
-     * Opens a separate {@link TradeView} window for the two selected players.
-     * The Trading Hall view is disposed before launching the trade window.
-     * When the trade concludes the main stage size is reset and the user is
-     * returned to the Trading Hall.
+     * Opens a separate TradeView window for the specified merchant and client players.
+     * Disposes of the trading hall view and handles trade interaction lifecycle.
+     *
+     * @param merchant the player initiating the trade
+     * @param client the player receiving the trade
      */
     public void showTradeView(Player merchant, Player client) {
         System.out.println("SceneManager.showTradeView merchant="
@@ -281,7 +310,12 @@ public final class SceneManager {
         }
     }
 
-    /** Shows the menu to pick which player's characters to manage. */
+    /**
+     * Displays the character management menu.
+     * Initializes the view and controller with the list of players.
+     *
+     * @param players the current list of players in the game
+     */
     public void showCharacterManagementMenu(List<Player> players) {
         if (characterMenuView == null) {
             characterMenuView = new CharacterManagementMenuView();
@@ -293,7 +327,12 @@ public final class SceneManager {
         cards.show(root, CARD_CHARACTER_MENU);
     }
 
-    /** Shows character management options for a specific player. */
+    /**
+     * Displays the character management options for the specified player.
+     * Allows access to view, delete, or create characters.
+     *
+     * @param player the player whose characters are to be managed
+     */
     public void showPlayerCharacterManagement(Player player) {
         playerCharacterView = new PlayerCharacterManagementView(playersIndex(player));
         new PlayerCharacterManagementController(playerCharacterView, player, gameManagerController);
@@ -301,7 +340,12 @@ public final class SceneManager {
         cards.show(root, CARD_PLAYER_CHARACTER);
     }
 
-    /** FIXED: Shows character management screen for a single player (called by GameManagerController). */
+    /**
+     * Displays character management screen for a specific player.
+     * Called by the GameManagerController.
+     *
+     * @param player the player whose characters are to be managed
+     */
     public void showCharacterManagement(Player player) {
         playerCharacterView = new PlayerCharacterManagementView(playersIndex(player));
         new PlayerCharacterManagementController(playerCharacterView, player, gameManagerController);
@@ -309,6 +353,12 @@ public final class SceneManager {
         cards.show(root, CARD_PLAYER_CHARACTER);
     }
 
+    /**
+     * Returns the 1-based index of a player in the current game.
+     *
+     * @param player the player whose index is to be found
+     * @return the 1-based index if found; otherwise 1
+     */
     private int playersIndex(Player player) {
         List<Player> list = gameManagerController.getPlayers();
         for (int i = 0; i < list.size(); i++) {
@@ -319,7 +369,11 @@ public final class SceneManager {
         return 1;
     }
 
-    /** Shows the battle mode selection screen. */
+    /**
+     * Displays the battle mode selection screen.
+     *
+     * @param players the list of players participating in battle
+     */
     public void showBattleModes(List<Player> players) {
         battleModesView = new view.BattleModesView();
         new BattleModesController(battleModesView, players, this, gameManagerController);
@@ -327,7 +381,15 @@ public final class SceneManager {
         cards.show(root, CARD_BATTLE_MODES);
     }
 
-    /** Displays a battle between two characters. */
+    /**
+     * Displays a player-vs-bot battle screen.
+     * Sets up listeners and starts the battle.
+     *
+     * @param humanPlayer the human player participating in the battle
+     * @param human the character controlled by the human player
+     * @param bot the character controlled by the AI
+     * @param aiController the AI logic used for bot decisions
+     */
     public void showPlayerVsBotBattle(Player humanPlayer, Character human, Character bot, AIController aiController) {
         battleView = new BattleView(BattleView.BATTLE_PVB, human, bot);
         battleView.setPlayer2ControlsEnabled(false);
@@ -369,7 +431,15 @@ public final class SceneManager {
         }
     }
 
-    /** Displays a PvP battle between two players. */
+    /**
+     * Displays a player-vs-player battle screen.
+     * Sets up listeners for both players and starts the battle.
+     *
+     * @param p1 the first player
+     * @param c1 the character controlled by the first player
+     * @param p2 the second player
+     * @param c2 the character controlled by the second player
+     */
     public void showPlayerVsPlayerBattle(Player p1, Character c1, Player p2, Character c2) {
         battleView = new BattleView(c1, c2);
         battleView.setPlayer2ControlsEnabled(true);
@@ -426,12 +496,19 @@ public final class SceneManager {
         }
     }
 
-    /** Entry point for testing this class in isolation. */
+    /**
+     * Entry point for running SceneManager in isolation.
+     * Launches the application on the event-dispatch thread.
+     *
+     * @param args command-line arguments (unused)
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(SceneManager::new);
     }
 
-    /** Launches the main menu — for external triggering. */
+    /**
+     * Launches the main menu — for external triggering.
+     */
     public void start() {
         showMainMenu();
     }

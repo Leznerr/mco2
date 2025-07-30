@@ -22,6 +22,15 @@ public class TradingHallController implements ActionListener {
     private final List<Player> players;
     private final SceneManager sceneManager;
 
+    /**
+     * Constructs the TradingHallController, initializing the view and players, 
+     * and setting up the action listener and dropdown data.
+     *
+     * @param view the trading hall view to control
+     * @param players the list of players available for trading
+     * @param sceneManager the scene manager to switch between views
+     * @throws GameException if any parameter is null
+     */
     public TradingHallController(TradingHallView view, List<Player> players, SceneManager sceneManager) throws GameException {
         InputValidator.requireNonNull(view, "view");
         InputValidator.requireNonNull(players, "players");
@@ -33,6 +42,10 @@ public class TradingHallController implements ActionListener {
         refresh();
     }
 
+    /**
+     * Refreshes the merchant and client dropdown options by excluding bots
+     * and resetting the dropdown selections.
+     */
     public void refresh() {
         String[] names = players.stream()
                 .filter(p -> !"Bot".equalsIgnoreCase(p.getName()))
@@ -43,6 +56,13 @@ public class TradingHallController implements ActionListener {
         view.resetDropdowns();
     }
 
+    /**
+     * Handles UI actions from the TradingHallView.
+     * Supports returning to the main menu or initiating a trade,
+     * and updates button states on dropdown interaction.
+     *
+     * @param e the triggered action event
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
@@ -58,6 +78,11 @@ public class TradingHallController implements ActionListener {
         }
     }
 
+    /**
+     * Validates the merchant and client selections to determine
+     * whether the "Start Trading" button should be enabled.
+     * It ensures both players are selected and are not the same.
+     */
     private void validateSelections() {
         String m = view.getSelectedMerchant();
         String c = view.getSelectedClient();
@@ -65,6 +90,11 @@ public class TradingHallController implements ActionListener {
         view.setStartTradingEnabled(enabled);
     }
 
+    /**
+     * Handles logic for initiating a trade session between two players.
+     * Verifies that both players are selected, distinct, and have characters.
+     * Proceeds to trade view if valid, otherwise shows an error dialog.
+     */
     private void handleStartTrading() {
         String mName = view.getSelectedMerchant();
         String cName = view.getSelectedClient();
@@ -87,6 +117,13 @@ public class TradingHallController implements ActionListener {
         }
     }
 
+    /**
+     * Finds a player by their name (case-insensitive).
+     *
+     * @param name the name of the player to find
+     * @return the matching Player instance
+     * @throws GameException if no player with the given name is found
+     */
     private Player findPlayerByName(String name) {
         return players.stream()
                 .filter(p -> p.getName().equalsIgnoreCase(name))

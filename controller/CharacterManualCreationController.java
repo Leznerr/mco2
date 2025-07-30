@@ -64,6 +64,13 @@ public final class CharacterManualCreationController {
     }
 
     // --- View Data Initialization ---
+
+    /**
+     * Initializes the view with race and class options.
+     * <p>
+     * Ability dropdowns are initially cleared until a class is selected.
+     * </p>
+     */
     private void initViewData() {
         // Populate races and classes; abilities will be refreshed on class selection
         view.setRaceOptions(
@@ -77,6 +84,9 @@ public final class CharacterManualCreationController {
         clearAbilityOptions();
     }
 
+    /**
+     * Clears all ability dropdowns in the view.
+     */
     private void clearAbilityOptions() {
         view.setAbilityOptions(1, new String[0]);
         view.setAbilityOptions(2, new String[0]);
@@ -85,6 +95,11 @@ public final class CharacterManualCreationController {
     }
 
     // --- UI Event Binding ---
+
+    /**
+     * Binds all UI event listeners (button clicks and combo box selections)
+     * to their respective handler methods.
+     */
     private void bindUI() {
         view.addCreateCharacterListener(e -> handleCreateCharacter());
         view.addReturnListener(e -> handleReturn());
@@ -92,6 +107,13 @@ public final class CharacterManualCreationController {
         view.addRaceDropdownListener(e -> handleRaceSelection());
     }
 
+    /**
+     * Handles the "Return" button event.
+     * <p>
+     * Disposes the current view and navigates back to the player's character
+     * management screen.
+     * </p>
+     */
     private void handleReturn() {
         view.dispose();
         Player player = getPlayerByName(this.playerName);
@@ -99,6 +121,19 @@ public final class CharacterManualCreationController {
     }
 
     // --- Event Handlers ---
+
+    /**
+     * Handles the creation of a new character based on user input.
+     * <ul>
+     *   <li>Validates input (name, race, class, and number/uniqueness of abilities).</li>
+     *   <li>Ensures selected abilities match class restrictions.</li>
+     *   <li>Creates a new character and adds it to the appropriate player.</li>
+     *   <li>Persists the game state and closes the view on success.</li>
+     * </ul>
+     * <p>
+     * Shows error messages on validation or business rule failure.
+     * </p>
+     */
     private void handleCreateCharacter() {
         try {
             String name = view.getCharacterName().trim();
@@ -164,10 +199,23 @@ public final class CharacterManualCreationController {
         }
     }
 
+    /**
+     * Handles changes to the selected class.
+     * <p>
+     * Refreshes the ability dropdown options based on the selected class.
+     * </p>
+     */
     private void handleClassSelection() {
         refreshAbilityOptions();
     }
 
+    /**
+     * Handles changes to the selected race.
+     * <p>
+     * Shows or hides the fourth ability dropdown if the selected race is GNOME.
+     * Also refreshes the ability dropdown options.
+     * </p>
+     */
     private void handleRaceSelection() {
         String raceStr = view.getSelectedRace();
         if (raceStr != null && !raceStr.isBlank()) {
@@ -179,6 +227,13 @@ public final class CharacterManualCreationController {
         refreshAbilityOptions();
     }
 
+    /**
+     * Refreshes ability dropdown options based on the selected class and race.
+     * <p>
+     * Populates the first three slots with class-specific abilities and the
+     * fourth slot if the race is GNOME.
+     * </p>
+     */
     private void refreshAbilityOptions() {
         clearAbilityOptions();
 
@@ -210,6 +265,14 @@ public final class CharacterManualCreationController {
     }
 
     // --- Helper: Find Player by Name ---
+
+    /**
+     * Finds a player by their name (case-insensitive).
+     *
+     * @param playerName The name of the player to find
+     * @return The matching {@link Player} instance
+     * @throws IllegalArgumentException if no matching player is found
+     */
     private Player getPlayerByName(String playerName) {
         return gameManagerController.getPlayers().stream()
                 .filter(p -> p.getName().equalsIgnoreCase(playerName))

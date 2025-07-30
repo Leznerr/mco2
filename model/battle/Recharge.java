@@ -25,6 +25,16 @@ public final class Recharge implements MoveAction {
         return 0;
     }
 
+    /**
+     * Executes the Recharge move by restoring a fixed amount of energy points (EP) to the user.
+     *
+     * <p>This action costs no EP and is logged as a combat event.</p>
+     *
+     * @param user   the character performing the Recharge (must not be {@code null})
+     * @param target unused for this move, can be {@code null}
+     * @param log    the combat log used to record the action (must not be {@code null})
+     * @throws GameException if {@code user} or {@code log} is {@code null}
+     */
     @Override
     public void execute(Character user, Character target, CombatLog log) throws GameException {
         InputValidator.requireNonNull(user, "user");

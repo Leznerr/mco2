@@ -130,7 +130,7 @@ public abstract class MagicItem implements Serializable {
         return getName() + " (" + itemType + ")";
     }
 
-    /** @return rarity string (“Common”, “Rare”, etc.) */
+    /** @return rarity string ("Common", "Rare", etc.) */
     public String getRarity() {
         return rarityType.toString();
     }

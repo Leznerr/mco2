@@ -42,7 +42,13 @@ public final class GameException extends RuntimeException {
     /* Private helpers                                                    */
     /* ------------------------------------------------------------------ */
 
-    /** Ensures a user-facing message is present. */
+    /**
+     * Validates that the provided message is non-null and non-blank.
+     *
+     * @param msg the message to validate
+     * @return the validated message string
+     * @throws IllegalArgumentException if {@code msg} is {@code null} or blank
+     */
     private static String validate(final String msg) {
         if (msg == null || msg.isBlank()) {
             throw new IllegalArgumentException("GameException message must not be blank");

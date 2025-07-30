@@ -99,8 +99,6 @@ public final class SingleUseItem extends MagicItem {
         return java.util.Objects.hash(super.hashCode(), effectType, effectValue);
     }
 
-
-
     /**
      * Creates a deep copy of this item.
      *

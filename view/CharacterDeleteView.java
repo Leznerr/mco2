@@ -223,8 +223,6 @@ public class CharacterDeleteView extends JFrame {
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
 
         dropdown.setFont(new Font("Serif", Font.BOLD, 18));
-        dropdown.setForeground(Color.WHITE);
-        dropdown.setRenderer(new WhiteTextCellRenderer());
         dropdown.setMaximumSize(new Dimension(250, 35));
         dropdown.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 

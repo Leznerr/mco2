@@ -31,6 +31,16 @@ public final class Defend implements MoveAction {
         return Constants.DEFEND_EP_COST;
     }
 
+    /**
+     * Executes the Defend action by consuming EP and applying a defense-boosting status effect.
+     *
+     * <p>Logs the action and applies {@code DEFENSE_UP} to the user if sufficient EP is available.</p>
+     *
+     * @param user   the character performing the action (must not be {@code null})
+     * @param target ignored for this action (Defend only affects the user)
+     * @param log    the combat log used to record the action
+     * @throws GameException if the user lacks enough EP to perform the action
+     */
     @Override
     public void execute(Character user, Character target, CombatLog log) throws GameException {
         InputValidator.requireNonNull(user, "user");

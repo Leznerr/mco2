@@ -8,7 +8,7 @@ import model.util.StatusEffectType;
 
 /**
  * <h2>PoisonEffect</h2>
- * <p>Represents the <strong>“Poison”</strong> status condition in
+ * <p>Represents the <strong>"Poison"</strong> status condition in
  * <em>Fatal Fantasy: Tactics</em>, which deals fixed damage to a
  * {@link Character} at the start of each turn.</p>
  *

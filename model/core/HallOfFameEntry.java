@@ -78,19 +78,31 @@ public final class HallOfFameEntry implements Serializable {
     public long getLastUpdated() { return lastUpdated; }
 
     /**
-     * Increments the total win count by one.
+     * Increments the total win count by one and updates the last updated timestamp
+     * to the current system time.
      */
     public void incrementWins() {
         this.wins++;
         this.lastUpdated = System.currentTimeMillis();
     }
 
-    /** Updates XP and refreshes the timestamp. */
+    /**
+     * Sets the XP value associated with this entry and updates the last updated
+     * timestamp to the current system time.
+     *
+     * @param xp the new XP value (must be ≥ 0)
+     */
     public void setXp(int xp) {
         this.xp = xp;
         this.lastUpdated = System.currentTimeMillis();
     }
 
+    /**
+     * Returns a short string representation of the leaderboard entry,
+     * including the name, win count, and XP.
+     *
+     * @return a formatted string describing the entry
+     */
     @Override
     public String toString() {
         return name + " (Wins: " + wins + ", XP: " + xp + ")";

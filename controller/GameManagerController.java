@@ -77,6 +77,11 @@ public final class GameManagerController implements ActionListener {
     }
 
     /** Wires this controller to the main menu buttons. */
+
+    /**
+     * Binds the window closing behavior of the main menu to prompt the user
+     * for confirmation before quitting the application.
+     */
     private void bindUI() {
         mainMenuView.addWindowListener(new WindowAdapter() {
             @Override
@@ -94,57 +99,70 @@ public final class GameManagerController implements ActionListener {
     }
 
     /** Main button dispatcher for MainMenuView. */
-  @Override
-public void actionPerformed(ActionEvent e) {
-    String command = e.getActionCommand();
 
-    switch (command) {
-        case MainMenuView.ACTION_REGISTER_PLAYERS -> {
-            sceneManager.showPlayerRegistration(); // Shows Player Registration View
-            mainMenuView.dispose(); // Close the MainMenuView
-        }
-        case MainMenuView.ACTION_MANAGE_CHARACTERS -> {
-            if (players.isEmpty()) {
-                JOptionPane.showMessageDialog(mainMenuView, "Please register players first.", "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                sceneManager.showCharacterManagementMenu(players);
-                mainMenuView.dispose();
+    /**
+     * Handles button actions from the main menu.
+     * <ul>
+     *   <li>Routes to different scenes (e.g. player registration, character management).</li>
+     *   <li>Validates player list where needed.</li>
+     *   <li>Handles unknown actions gracefully with a warning dialog.</li>
+     * </ul>
+     *
+     * @param e the action event triggered by a button
+     */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String command = e.getActionCommand();
+
+        switch (command) {
+            case MainMenuView.ACTION_REGISTER_PLAYERS -> {
+                sceneManager.showPlayerRegistration(); // Shows Player Registration View
+                mainMenuView.dispose(); // Close the MainMenuView
             }
-        }
-        case MainMenuView.ACTION_HALL_OF_FAME -> showHallOfFameScreen();
-        case MainMenuView.ACTION_TRADING_HALL -> {
-            if (players.isEmpty()) {
-                JOptionPane.showMessageDialog(mainMenuView, "Please register players first.", "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                sceneManager.showTradingHall(players);
-                mainMenuView.dispose();
+            case MainMenuView.ACTION_MANAGE_CHARACTERS -> {
+                if (players.isEmpty()) {
+                    JOptionPane.showMessageDialog(mainMenuView, "Please register players first.", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    sceneManager.showCharacterManagementMenu(players);
+                    mainMenuView.dispose();
+                }
             }
-        }
-        case MainMenuView.ACTION_START_BATTLE -> {
-            if (players.isEmpty()) {
-                JOptionPane.showMessageDialog(mainMenuView, "Please register players first.", "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                sceneManager.showBattleModes(players);
-                mainMenuView.dispose();
+            case MainMenuView.ACTION_HALL_OF_FAME -> showHallOfFameScreen();
+            case MainMenuView.ACTION_TRADING_HALL -> {
+                if (players.isEmpty()) {
+                    JOptionPane.showMessageDialog(mainMenuView, "Please register players first.", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    sceneManager.showTradingHall(players);
+                    mainMenuView.dispose();
+                }
             }
-        }
-        case MainMenuView.ACTION_EXIT -> {
-            quitApplication();
-        }
-        default -> {
-            JOptionPane.showMessageDialog(mainMenuView, "Unknown action: " + command, "Unknown Action", JOptionPane.WARNING_MESSAGE);
+            case MainMenuView.ACTION_START_BATTLE -> {
+                if (players.isEmpty()) {
+                    JOptionPane.showMessageDialog(mainMenuView, "Please register players first.", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    sceneManager.showBattleModes(players);
+                    mainMenuView.dispose();
+                }
+            }
+            case MainMenuView.ACTION_EXIT -> {
+                quitApplication();
+            }
+            default -> {
+                JOptionPane.showMessageDialog(mainMenuView, "Unknown action: " + command, "Unknown Action", JOptionPane.WARNING_MESSAGE);
+            }
         }
     }
-}
 
     // === Navigation & Controller Binding Methods ===
 
     /**
-     * Opens character creation management for a given player.
-     * Called from UI navigation.
+     * Navigates to the character creation management view for the specified player.
+     * <p>
+     * Binds button actions (manual creation, auto creation, return) to appropriate handlers.
+     * </p>
      *
-     * @param playerName the player's unique name
-     * @param playerID   numeric ID of the player (1 or 2)
+     * @param playerName name of the player
+     * @param playerID numeric identifier of the player (1 or 2)
      */
     public void handleNavigateToCharacterCreationManagement(String playerName, int playerID) {
         SwingUtilities.invokeLater(() -> {
@@ -178,7 +196,12 @@ public void actionPerformed(ActionEvent e) {
         });
     }
 
-    
+    /**
+     * Initializes and displays the manual character creation view
+     * for the specified player.
+     *
+     * @param playerName the player's name
+     */
     private void handleNavigateToManualCreation(String playerName) {
         SwingUtilities.invokeLater(() -> {
             int id = players.indexOf(findByName(players, playerName)) + 1;
@@ -190,6 +213,12 @@ public void actionPerformed(ActionEvent e) {
         });
     }
 
+    /**
+     * Initializes and displays the automatic character creation view
+     * for the specified player.
+     *
+     * @param playerName the player's name
+     */
     private void handleNavigateToAutoCreation(String playerName) {
         SwingUtilities.invokeLater(() -> {
             int playerID = getPlayerIndex(playerName);
@@ -201,6 +230,12 @@ public void actionPerformed(ActionEvent e) {
         });
     }
 
+    /**
+     * Retrieves the 1-based index of a player by name.
+     *
+     * @param name the player's name
+     * @return index starting from 1 if found, 1 if not found
+     */
     private int getPlayerIndex(String name) {
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).getName().equalsIgnoreCase(name)) {
@@ -210,12 +245,27 @@ public void actionPerformed(ActionEvent e) {
         return 1;
     }
 
+    /**
+     * Navigates to the character management screen for the given player.
+     *
+     * @param player the player whose characters are to be managed
+     */
     public void handleNavigateToCharacterManagement(Player player) {
         InputValidator.requireNonNull(player, "player");
         SwingUtilities.invokeLater(() -> sceneManager.showCharacterManagement(player));
     }
 
-
+    /**
+     * Handles registration of two new players.
+     * <ul>
+     *   <li>Validates for unique and non-duplicate names.</li>
+     *   <li>Persists new player data to disk on success.</li>
+     * </ul>
+     *
+     * @param player1Name name of first player
+     * @param player2Name name of second player
+     * @return {@code true} if registration was successful
+     */
     public boolean handleRegisterPlayers(String player1Name, String player2Name) {
         boolean hasConflict = false;
         StringBuilder errorMsg = new StringBuilder();
@@ -262,7 +312,7 @@ public void actionPerformed(ActionEvent e) {
     }
 
     /**
-     * Loads two previously saved players and sets them as active for this session.
+     * Loads two players from saved data and sets them as active for this session.
      *
      * @param player1Name name of first player
      * @param player2Name name of second player
@@ -304,6 +354,13 @@ public void actionPerformed(ActionEvent e) {
         return success;
     }
 
+    /**
+     * Searches for a player by name in a given list.
+     *
+     * @param list the list of players
+     * @param name the name to match
+     * @return the matching {@link Player}, or {@code null} if not found
+     */
     private static Player findByName(List<Player> list, String name) {
         for (Player p : list) {
             if (p.getName().equalsIgnoreCase(name)) {
@@ -329,13 +386,16 @@ public void actionPerformed(ActionEvent e) {
         });
     }
 
-
+    /**
+     * Navigates the application back to the main menu screen.
+     */
     public void navigateBackToMainMenu() {
         SwingUtilities.invokeLater(sceneManager::showMainMenu);
     }
 
     /**
-     * Handles all logic required when the application is requested to exit.
+     * Safely quits the application after saving game data and
+     * disposing of all open windows.
      */
     private void quitApplication() {
         handleSaveGameRequest();
@@ -353,7 +413,7 @@ public void actionPerformed(ActionEvent e) {
     // === Game Data Save/Load Methods ===
 
     /**
-     * Saves game state in a background thread.
+     * Saves the current game state in a background thread.
      */
     public void handleSaveGameRequest() {
         new Thread(() -> {
@@ -370,7 +430,7 @@ public void actionPerformed(ActionEvent e) {
     }
 
     /**
-     * Loads game state in a background thread.
+     * Loads the game state from persistent storage in a background thread.
      */
     public void handleLoadGameRequest() {
         new Thread(() -> {
@@ -399,17 +459,20 @@ public void actionPerformed(ActionEvent e) {
     }
 
     /**
-     * Returns a snapshot of current game data used for persistence.
+     * Returns a snapshot of the current game state for saving.
+     *
+     * @return the game data object
+     * @throws GameException if an error occurs while generating the snapshot
      */
     public GameData getGameData() throws GameException {
         return new GameData(players, hallOfFameController.getHallOfFame());
     }
 
     /**
-     * Deletes a player identified by name from the current game state.
+     * Deletes a player from the current session by name.
      *
-     * @param name the player name to remove
-     * @throws GameException if the player does not exist
+     * @param name the name of the player to delete
+     * @throws GameException if the player is not found
      */
     public void deletePlayerByName(String name) throws GameException {
         boolean removed = players.removeIf(p -> p.getName().equals(name));
@@ -459,8 +522,11 @@ public void actionPerformed(ActionEvent e) {
     }
 
     /**
-     * Generates a random magic item not already held by the character, if
-     * possible. Falls back to any random item after several attempts.
+     * Generates a unique magic item not already in the character's inventory.
+     * Attempts up to 10 times to avoid duplicates.
+     *
+     * @param character the character receiving the reward
+     * @return a new {@link MagicItem} instance
      */
     private MagicItem generateUniqueReward(Character character) {
         java.util.List<MagicItem> owned = character.getInventory().getAllItems();
@@ -474,6 +540,13 @@ public void actionPerformed(ActionEvent e) {
     }
 
     /** Formats a popup message describing the awarded item. */
+
+    /**
+     * Builds a formatted message describing the awarded item.
+     *
+     * @param item the awarded item
+     * @return a message string suitable for a dialog box
+     */
     private String formatAwardMessage(MagicItem item) {
         StringBuilder sb = new StringBuilder();
         sb.append("Congratulations! You received a ")
@@ -488,6 +561,12 @@ public void actionPerformed(ActionEvent e) {
         return sb.toString();
     }
 
+    /**
+     * Describes the effect of a single-use item based on its effect type.
+     *
+     * @param item the item whose effect is to be described
+     * @return human-readable description of the item's effect
+     */
     private String describeEffect(model.item.SingleUseItem item) {
         return switch (item.getEffectType()) {
             case HEAL_HP -> "Heals " + item.getEffectValue() + " HP";

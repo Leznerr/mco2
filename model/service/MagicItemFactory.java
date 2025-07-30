@@ -136,7 +136,17 @@ public final class MagicItemFactory {
         return getRandomItemByRarity(rarity, random);
     }
 
-    /** Returns a random item template from the given rarity pool. */
+   /**
+    * Returns a random {@link MagicItem} from the specified rarity pool.
+    *
+    * <p>This method selects a template from the pool corresponding to the
+    * given {@link RarityType}, then returns a deep copy of the item.</p>
+    *
+    * @param rarity the rarity pool to draw from (COMMON, UNCOMMON, or RARE)
+    * @param random a non-null {@link Random} generator for selection
+    * @return a deep copy of a randomly chosen item template from the pool
+    * @throws NullPointerException if either {@code rarity} or {@code random} is {@code null}
+    */
     public static MagicItem getRandomItemByRarity(RarityType rarity, Random random) {
         Objects.requireNonNull(rarity, "rarity");
         Objects.requireNonNull(random, "random");

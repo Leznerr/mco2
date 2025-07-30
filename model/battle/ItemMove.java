@@ -33,6 +33,17 @@ public final class ItemMove implements Move {
         return 0;
     }
 
+    /**
+     * Executes the item-based move by applying the item's effect and consuming it from the inventory.
+     *
+     * <p>Checks if the item exists in the user's inventory, logs the usage, applies its effect,
+     * and then removes it.</p>
+     *
+     * @param user   the character using the item (must not be {@code null})
+     * @param target the character receiving the effect of the item
+     * @param log    the combat log used to record the action
+     * @throws GameException if the item is not in the user's inventory
+     */
     @Override
     public void execute(Character user, Character target, CombatLog log) throws GameException {
         InputValidator.requireNonNull(user, "user");

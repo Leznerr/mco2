@@ -13,7 +13,7 @@ import model.util.GameException;
  *
  * <h3>Specification Mapping</h3>
  * <ul>
- *   <li>MCO2 – Magic Item System → “Item can be equipped for passive effect.”</li>
+ *   <li>MCO2 – Magic Item System → "Item can be equipped for passive effect."</li>
  * </ul>
  *
  * @see MagicItem

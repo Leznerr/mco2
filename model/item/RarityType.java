@@ -13,6 +13,11 @@ public enum RarityType {
 
     private final int dropChance;
 
+    /**
+     * Constructs a rarity type with the specified drop chance percentage.
+     *
+     * @param chance the drop chance associated with this rarity tier
+     */
     RarityType(int chance) {
         this.dropChance = chance;
     }
@@ -22,6 +27,11 @@ public enum RarityType {
         return dropChance;
     }
 
+    /**
+     * Returns a capitalized version of the enum name (e.g., "Common" instead of "COMMON").
+     *
+     * @return a human-readable string representing the rarity type
+     */
     @Override
     public String toString() {
         String n = name().toLowerCase();
