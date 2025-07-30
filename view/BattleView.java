@@ -32,6 +32,7 @@ import javax.swing.text.StyledDocument;
 import model.battle.CombatLog;
 import model.core.Character;
 import view.OutlinedLabel;
+import view.WhiteTextCellRenderer;
 
 /**
  * The battle view for Fatal Fantasy: Tactics Game.
@@ -422,6 +423,8 @@ public class BattleView extends JFrame {
         label.setFont(new Font("Serif", Font.BOLD, 17));
 
         dropdown.setFont(new Font("Serif", Font.BOLD, 18));
+        dropdown.setForeground(Color.WHITE);
+        dropdown.setRenderer(new WhiteTextCellRenderer());
         dropdown.setMaximumSize(new Dimension(250, 35));
         dropdown.setAlignmentX(Component.CENTER_ALIGNMENT);
 
