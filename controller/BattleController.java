@@ -425,6 +425,18 @@ public final class BattleController {
                 c.heal(5);
                 log.addEntry(c.getName() + " gains 5 HP from " + name + ".");
             }
+            case "Ring of Focus" -> {
+                c.gainEp(2);
+                log.addEntry(c.getName() + " gains 2 EP from " + name + ".");
+            }
+            case "Orb of Resilience" -> {
+                c.heal(5);
+                log.addEntry(c.getName() + " gains 5 HP from " + name + ".");
+            }
+            case "Ancient Tome of Power" -> {
+                c.gainEp(5);
+                log.addEntry(c.getName() + " gains 5 EP from " + name + ".");
+            }
             case "Amulet of Vitality" -> {
                 if (!c.isVitalityBonusApplied()) {
                     c.increaseMaxHp(20);
