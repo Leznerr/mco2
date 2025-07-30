@@ -271,6 +271,7 @@ public class TradeView extends JFrame {
                 setOpaque(false);
                 if (value instanceof model.item.MagicItem mi) {
                     setText((index + 1) + ". " + mi.getName());
+                    setForeground(Color.WHITE);
                 }
                 return this;
             }
