@@ -267,13 +267,15 @@ public class TradeView extends JFrame {
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         list.setCellRenderer(new DefaultListCellRenderer() {
             @Override
-            public Component getListCellRendererComponent(JList<?> l, Object value, int index, boolean s, boolean f) {
-                super.getListCellRendererComponent(l, value, index, s, f);
+            public Component getListCellRendererComponent(
+                    JList<?> l, Object value, int index,
+                    boolean selected, boolean focused) {
+                super.getListCellRendererComponent(l, value, index, selected, focused);
                 setOpaque(false);
                 if (value instanceof model.item.MagicItem mi) {
                     setText((index + 1) + ". " + mi.getName());
-                    setForeground(Color.WHITE);
                 }
+                setForeground(Color.WHITE); // enforce white text for all entries
                 return this;
             }
         });
