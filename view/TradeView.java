@@ -60,6 +60,22 @@ public class TradeView extends JFrame {
     private final JComboBox<String> merchantDropdown = new JComboBox<>();
     private final JComboBox<String> clientDropdown = new JComboBox<>();
     private JTextArea tradeLogArea;
+
+    /** Simple renderer to display magic item names in white. */
+    private static class MagicItemListRenderer extends DefaultListCellRenderer {
+        @Override
+        public Component getListCellRendererComponent(
+                JList<?> list, Object value, int index,
+                boolean isSelected, boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            setOpaque(false);
+            if (value instanceof model.item.MagicItem mi) {
+                setText((index + 1) + ". " + mi.getName());
+            }
+            setForeground(Color.WHITE);
+            return this;
+        }
+    }
     
     /**
      * Constructs the Trading UI of Fatal Fantasy: Tactics Game.
@@ -266,18 +282,7 @@ public class TradeView extends JFrame {
         list.setOpaque(false);
         list.setVisibleRowCount(6);
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        list.setCellRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> l, Object value, int index, boolean s, boolean f) {
-                super.getListCellRendererComponent(l, value, index, s, f);
-                setOpaque(false);
-                if (value instanceof model.item.MagicItem mi) {
-                    setText((index + 1) + ". " + mi.getName());
-                }
-                setForeground(Color.WHITE);
-                return this;
-            }
-        });
+        list.setCellRenderer(new MagicItemListRenderer());
 
         JScrollPane pane = new JScrollPane(list);
         pane.setOpaque(false);
